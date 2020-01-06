@@ -224,6 +224,46 @@ function drawRectangle(
   }
 }
 
+/**
+ * Function draws a filled triangle at the given coordinates
+ *
+ * @param ctx
+ * @param c1
+ * @param c2
+ * @param c3
+ * @param fillStyle
+ * @param edgingWidth
+ * @param edgingColor
+ */
+function drawTriangle(
+  ctx: CanvasRenderingContext2D,
+  c1: number[],
+  c2: number[],
+  c3: number[],
+  fillStyle?: string,
+  edgingWidth?: number,
+  edgingColor?: string,
+): void {
+  ctx.beginPath();
+  ctx.moveTo(c1[0], c1[1]);
+  ctx.lineTo(c2[0], c2[1]);
+  ctx.lineTo(c3[0], c3[1]);
+  ctx.closePath();
+
+  if (fillStyle) {
+    ctx.fillStyle = fillStyle;
+
+    ctx.fill();
+  }
+
+  if (edgingWidth) {
+    ctx.lineWidth = edgingWidth;
+    ctx.strokeStyle = edgingColor || 'rgba(0, 0, 0, 0)';
+
+    ctx.stroke();
+  }
+}
+
 export {
   drawCircle,
   drawSector,
@@ -231,4 +271,5 @@ export {
   drawLineToAngle,
   drawStar,
   drawRectangle,
+  drawTriangle,
 };
