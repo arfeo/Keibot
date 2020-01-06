@@ -61,6 +61,7 @@ function renderGridCell(x: number, y: number): void {
   const ctx: CanvasRenderingContext2D = this.boardCanvas.getContext('2d');
   const left: number = this.cellSize * x;
   const top: number = this.cellSize * y;
+  const cellCornerSize = 10;
 
   drawRectangle(
     ctx,
@@ -78,8 +79,8 @@ function renderGridCell(x: number, y: number): void {
   drawTriangle(
     ctx,
     [left, top],
-    [left + this.cellSize / 10, top],
-    [left, top + this.cellSize / 10],
+    [left + this.cellSize / cellCornerSize, top],
+    [left, top + this.cellSize / cellCornerSize],
     {
       fillColor: 'rgb(0, 0, 0)',
     },
@@ -88,8 +89,8 @@ function renderGridCell(x: number, y: number): void {
   drawTriangle(
     ctx,
     [left + this.cellSize, top],
-    [left + this.cellSize - this.cellSize / 10, top],
-    [left + this.cellSize, top + this.cellSize / 10],
+    [left + this.cellSize - this.cellSize / cellCornerSize, top],
+    [left + this.cellSize, top + this.cellSize / cellCornerSize],
     {
       fillColor: 'rgb(0, 0, 0)',
     },
@@ -98,8 +99,8 @@ function renderGridCell(x: number, y: number): void {
   drawTriangle(
     ctx,
     [left, top + this.cellSize],
-    [left + this.cellSize / 10, top + this.cellSize],
-    [left, top + this.cellSize - this.cellSize / 10],
+    [left + this.cellSize / cellCornerSize, top + this.cellSize],
+    [left, top + this.cellSize - this.cellSize / cellCornerSize],
     {
       fillColor: 'rgb(0, 0, 0)',
     },
@@ -108,8 +109,8 @@ function renderGridCell(x: number, y: number): void {
   drawTriangle(
     ctx,
     [left + this.cellSize, top + this.cellSize],
-    [left + this.cellSize - this.cellSize / 10, top + this.cellSize],
-    [left + this.cellSize, top + this.cellSize - this.cellSize / 10],
+    [left + this.cellSize - this.cellSize / cellCornerSize, top + this.cellSize],
+    [left + this.cellSize, top + this.cellSize - this.cellSize / cellCornerSize],
     {
       fillColor: 'rgb(0, 0, 0)',
     },
