@@ -231,18 +231,14 @@ function drawRectangle(
  * @param c1
  * @param c2
  * @param c3
- * @param fillStyle
- * @param edgingWidth
- * @param edgingColor
+ * @param options
  */
 function drawTriangle(
   ctx: CanvasRenderingContext2D,
   c1: number[],
   c2: number[],
   c3: number[],
-  fillStyle?: string,
-  edgingWidth?: number,
-  edgingColor?: string,
+  options: DrawOptions = {},
 ): void {
   ctx.beginPath();
   ctx.moveTo(c1[0], c1[1]);
@@ -250,15 +246,15 @@ function drawTriangle(
   ctx.lineTo(c3[0], c3[1]);
   ctx.closePath();
 
-  if (fillStyle) {
-    ctx.fillStyle = fillStyle;
+  if (options.fillColor) {
+    ctx.fillStyle = options.fillColor;
 
     ctx.fill();
   }
 
-  if (edgingWidth) {
-    ctx.lineWidth = edgingWidth;
-    ctx.strokeStyle = edgingColor || 'rgba(0, 0, 0, 0)';
+  if (options.edgingWidth) {
+    ctx.lineWidth = options.edgingWidth;
+    ctx.strokeStyle = options.edgingColor || 'rgba(0, 0, 0, 0)';
 
     ctx.stroke();
   }
