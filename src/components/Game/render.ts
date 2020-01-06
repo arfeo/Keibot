@@ -82,7 +82,7 @@ function renderGridCell(x: number, y: number): void {
   for (let i = 0; i <= hmTimes; i += 1) {
     const randomX = Math.floor((Math.random() * this.cellSize) + 1);
     const randomY = Math.floor((Math.random() * this.cellSize) + 1);
-    const randomSize = Math.floor((Math.random() * 1.5) + 1);
+    const randomSize = Math.floor((Math.random() * 1.3) + 1);
     const randomOpacityOne = Math.floor((Math.random() * 9) + 1);
     const randomOpacityTwo = Math.floor((Math.random() * 9) + 1);
 
