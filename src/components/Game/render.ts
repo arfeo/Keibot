@@ -1,4 +1,4 @@
-import { drawRectangle } from '../../utils/drawing';
+import { drawRectangle, drawTriangle } from '../../utils/drawing';
 
 /**
  * Function creates game window element, game panel and all needed canvases
@@ -72,6 +72,46 @@ function renderGridCell(x: number, y: number): void {
       fillColor: 'rgb(200, 200, 200)',
       edgingColor: 'rgb(0, 0, 0)',
       edgingWidth: 2,
+    },
+  );
+
+  drawTriangle(
+    ctx,
+    [left, top],
+    [left + this.cellSize / 10, top],
+    [left, top + this.cellSize / 10],
+    {
+      fillColor: 'rgb(0, 0, 0)',
+    },
+  );
+
+  drawTriangle(
+    ctx,
+    [left + this.cellSize, top],
+    [left + this.cellSize - this.cellSize / 10, top],
+    [left + this.cellSize, top + this.cellSize / 10],
+    {
+      fillColor: 'rgb(0, 0, 0)',
+    },
+  );
+
+  drawTriangle(
+    ctx,
+    [left, top + this.cellSize],
+    [left + this.cellSize / 10, top + this.cellSize],
+    [left, top + this.cellSize - this.cellSize / 10],
+    {
+      fillColor: 'rgb(0, 0, 0)',
+    },
+  );
+
+  drawTriangle(
+    ctx,
+    [left + this.cellSize, top + this.cellSize],
+    [left + this.cellSize - this.cellSize / 10, top + this.cellSize],
+    [left + this.cellSize, top + this.cellSize - this.cellSize / 10],
+    {
+      fillColor: 'rgb(0, 0, 0)',
     },
   );
 }
