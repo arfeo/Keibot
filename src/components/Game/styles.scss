@@ -3,13 +3,14 @@
 .gameWindow {
   position: relative;
   display: flex;
-  width: calc(#{$cellSize * 8} + #{$boardPanelSize});
-  height: calc(#{$cellSize * 8});
-  border: 1vmin solid yellow;
+  width: calc(#{$cellSize * $boardSize} + #{$boardPanelSize} + #{$mainMargin * 2});
+  height: calc(#{$cellSize * $boardSize} + #{$mainMargin * 2});
+  border: $windowBorderSize solid yellow;
 
   .boardGrid {
-    width: calc(#{$cellSize * 8});
-    height: calc(#{$cellSize * 8});
+    width: calc(#{$cellSize * $boardSize});
+    height: calc(#{$cellSize * $boardSize});
+    margin: $mainMargin;
 
     .-board-canvas {
       z-index: 100;
@@ -22,10 +23,10 @@
     .-board-canvas,
     .-pieces-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: calc(#{$cellSize * 8});
-      height: calc(#{$cellSize * 8});
+      top: $mainMargin;
+      left: $mainMargin;
+      width: calc(#{$cellSize * $boardSize});
+      height: calc(#{$cellSize * $boardSize});
     }
   }
 
