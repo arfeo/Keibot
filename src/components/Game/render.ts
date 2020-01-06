@@ -76,6 +76,31 @@ function renderGridCell(x: number, y: number): void {
     },
   );
 
+  // Random background noise
+  const hmTimes = Math.round(this.cellSize * 2);
+
+  for (let i = 0; i <= hmTimes; i += 1) {
+    const randomX = Math.floor((Math.random() * this.cellSize) + 1);
+    const randomY = Math.floor((Math.random() * this.cellSize) + 1);
+    const randomSize = Math.floor((Math.random() * 1.5) + 1);
+    const randomOpacityOne = Math.floor((Math.random() * 9) + 1);
+    const randomOpacityTwo = Math.floor((Math.random() * 9) + 1);
+
+    if (randomSize > 1) {
+      ctx.shadowBlur = Math.floor((Math.random() * 15) + 5);
+      ctx.shadowColor = 'rgb(0, 0, 0)';
+    }
+
+    ctx.fillStyle = `hsla(0, 0%, 0%, .${randomOpacityOne + randomOpacityTwo})`;
+
+    ctx.fillRect(
+      randomX + this.cellSize * x,
+      randomY + this.cellSize * y,
+      randomSize,
+      randomSize,
+    );
+  }
+
   drawTriangle(
     ctx,
     [left, top],
