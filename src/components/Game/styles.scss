@@ -1,0 +1,35 @@
+@import '../../assets/styles/variables';
+
+.gameWindow {
+  position: relative;
+  display: flex;
+  width: calc(#{$cellSize * 8} + #{$boardPanelSize});
+  height: calc(#{$cellSize * 8});
+  border: 1vmin solid yellow;
+
+  .boardGrid {
+    width: calc(#{$cellSize * 8});
+    height: calc(#{$cellSize * 8});
+
+    .-board-canvas {
+      z-index: 100;
+    }
+
+    .-pieces-canvas {
+      z-index: 101;
+    }
+
+    .-board-canvas,
+    .-pieces-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(#{$cellSize * 8});
+      height: calc(#{$cellSize * 8});
+    }
+  }
+
+  .boardPanel {
+    width: $boardPanelSize;
+  }
+}
