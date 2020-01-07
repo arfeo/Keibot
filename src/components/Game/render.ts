@@ -150,10 +150,6 @@ function renderMap(): void {
       renderMapItem.call(this, x, y);
     }
   }
-
-  if (this.lockedCell.length > 0) {
-    renderShield.call(this);
-  }
 }
 
 /**
@@ -271,11 +267,17 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   this.cursor = [];
 
+  if (this.lockedCell.length > 0) {
+    renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
+  }
+
   this.lockedCell = [cellY, cellX];
 
-  clearCanvas.call(this, this.cursorCanvas);
+  renderMapItem.call(this, itemX, itemY);
+  renderMapItem.call(this, cellX, cellY);
+  renderShield.call(this);
 
-  renderMap.call(this);
+  clearCanvas.call(this, this.cursorCanvas);
 }
 
 /**
