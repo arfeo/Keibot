@@ -1,3 +1,5 @@
+import { ELEMENTS_COLORS } from '../../constants/game';
+
 import { animateCursor } from './animations';
 
 import { drawRectangle, drawTriangle } from '../../utils/drawing';
@@ -71,8 +73,8 @@ function renderGridCell(x: number, y: number): void {
     this.cellSize,
     this.cellSize,
     {
-      fillColor: 'rgb(200, 200, 200)',
-      edgingColor: 'rgb(0, 0, 0)',
+      fillColor: ELEMENTS_COLORS.cell.background,
+      edgingColor: ELEMENTS_COLORS.cell.border,
       edgingWidth: 2,
     },
   );
@@ -108,7 +110,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top],
     [left, top + this.cellSize / cellCornerSize],
     {
-      fillColor: 'rgb(0, 0, 0)',
+      fillColor: ELEMENTS_COLORS.cell.border,
     },
   );
 
@@ -118,7 +120,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top],
     [left + this.cellSize, top + this.cellSize / cellCornerSize],
     {
-      fillColor: 'rgb(0, 0, 0)',
+      fillColor: ELEMENTS_COLORS.cell.border,
     },
   );
 
@@ -128,7 +130,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top + this.cellSize],
     [left, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: 'rgb(0, 0, 0)',
+      fillColor: ELEMENTS_COLORS.cell.border,
     },
   );
 
@@ -138,7 +140,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top + this.cellSize],
     [left + this.cellSize, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: 'rgb(0, 0, 0)',
+      fillColor: ELEMENTS_COLORS.cell.border,
     },
   );
 }
