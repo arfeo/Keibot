@@ -9,6 +9,8 @@ import {
   setUpEventHandlers,
 } from './events';
 
+import { Player } from '../../typings/game';
+
 class Game {
   protected cellSize: number;
   protected boardSize: number;
@@ -18,6 +20,7 @@ class Game {
   protected boardMap: number[][];
   protected cursor: number[];
   protected eventHandlers: EventHandler[];
+  protected players: { [key: string]: Player };
 
   constructor(boardSize = DEFAULT_BOARD_SIZE) {
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
@@ -56,6 +59,17 @@ class Game {
         listener: onBoardClick.bind(this),
       },
     ];
+
+    this.players = {
+      red: {
+        captured: 0,
+        beads: 10,
+      },
+      blue: {
+        captured: 0,
+        beads: 10,
+      },
+    };
 
     this.render();
   }
