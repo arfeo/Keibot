@@ -23,6 +23,7 @@ class Game {
   protected cursor: number[];
   protected eventHandlers: EventHandler[];
   protected players: { [key: string]: Player };
+  protected lockedCell: number[];
 
   public constructor() {
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
@@ -41,6 +42,10 @@ class Game {
       statueBlue: {
         element: new Image(),
         src: './static/statue_blue.svg',
+      },
+      shield: {
+        element: new Image(),
+        src: './static/shield.svg',
       },
     };
 
@@ -86,6 +91,8 @@ class Game {
         beads: 10,
       },
     };
+
+    this.lockedCell = [];
 
     waitForImagesLoad(this.images).then(() => {
       this.render();

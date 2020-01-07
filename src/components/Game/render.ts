@@ -150,6 +150,10 @@ function renderMap(): void {
       renderMapItem.call(this, x, y);
     }
   }
+
+  if (this.lockedCell.length > 0) {
+    renderShield.call(this);
+  }
 }
 
 /**
@@ -206,7 +210,22 @@ function renderMapItem(x: number, y: number): void {
 }
 
 /**
- * ...
+ * Function renders a shield icon for the locked cell
+ */
+function renderShield(): void {
+  const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+
+  ctx.drawImage(
+    this.images.shield.element,
+    this.cellSize * this.lockedCell[1] + this.cellSize / 3,
+    this.cellSize * this.lockedCell[0] + this.cellSize / 2,
+    this.cellSize / 3,
+    this.cellSize / 3,
+  );
+}
+
+/**
+ * Function renders a statue movement from one cell to another
  *
  * @param moves
  */
@@ -251,6 +270,8 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   this.boardMap[cellY][cellX] = itemType;
 
   this.cursor = [];
+
+  this.lockedCell = [cellY, cellX];
 
   clearCanvas.call(this, this.cursorCanvas);
 
