@@ -91,55 +91,54 @@ function checkBeadsPlacing(x: number, y: number): void {
   const ownBead: number = itemType === 1 ? 2 : 4;
   const enemyType: number = itemType === 1 ? 3 : 1;
 
+  const reduceBeads = (beadX: number, beadY: number): void => {
+    const playerType: string = itemType === 1 ? 'red' : 'blue';
+
+    this.boardMap[beadY][beadX] = ownBead;
+
+    renderMapItem.call(this, beadX, beadY);
+
+    this.players[playerType].beads -= 1;
+
+    if (this.players[playerType].beads === 0) {
+      // TODO: GAME OVER: make it louder!
+      console.log(itemType === 1 ? 'You lost!' : 'You win!');
+    }
+  };
+
   if (this.boardMap[y - 2] !== undefined) {
     if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0) {
-      this.boardMap[y - 1][x - 1] = ownBead;
-
-      renderMapItem.call(this, x - 1, y - 1);
+      reduceBeads(x - 1, y - 1);
     }
 
     if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0) {
-      this.boardMap[y - 1][x] = ownBead;
-
-      renderMapItem.call(this, x, y - 1);
+      reduceBeads(x, y - 1);
     }
 
     if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0) {
-      this.boardMap[y - 1][x + 1] = ownBead;
-
-      renderMapItem.call(this, x + 1, y - 1);
+      reduceBeads(x + 1, y - 1);
     }
   }
 
   if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0) {
-    this.boardMap[y][x - 1] = ownBead;
-
-    renderMapItem.call(this, x - 1, y);
+    reduceBeads(x - 1, y);
   }
 
   if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0) {
-    this.boardMap[y][x + 1] = ownBead;
-
-    renderMapItem.call(this, x + 1, y);
+    reduceBeads(x + 1, y);
   }
 
   if (this.boardMap[y + 2] !== undefined) {
     if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0) {
-      this.boardMap[y + 1][x - 1] = ownBead;
-
-      renderMapItem.call(this, x - 1, y + 1);
+      reduceBeads(x - 1, y + 1);
     }
 
     if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0) {
-      this.boardMap[y + 1][x] = ownBead;
-
-      renderMapItem.call(this, x, y + 1);
+      reduceBeads(x, y + 1);
     }
 
     if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0) {
-      this.boardMap[y + 1][x + 1] = ownBead;
-
-      renderMapItem.call(this, x + 1, y + 1);
+      reduceBeads(x + 1, y + 1);
     }
   }
 }
