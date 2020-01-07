@@ -23,4 +23,4 @@ export const ELEMENTS_COLORS: HashMap = {
   },
 };
 
-export const ITEM_LABEL_FONT = '400 8vmin Helvetica, Arial';
+export const ITEM_LABEL_FONT = '400 10vmin Helvetica, Arial';
