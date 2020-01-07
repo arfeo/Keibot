@@ -1,7 +1,5 @@
 import { ELEMENTS_COLORS } from '../../constants/game';
 
-import { animateCursor } from './animations';
-
 import { drawRectangle, drawTriangle } from '../../utils/drawing';
 
 /**
@@ -32,10 +30,6 @@ function renderGameWindow(): void {
   boardGrid.appendChild(this.piecesCanvas);
   boardGrid.appendChild(this.cursorCanvas);
   gameWindow.appendChild(boardPanel);
-
-  renderGrid.call(this);
-
-  animateCursor.call(this);
 }
 
 /**
@@ -150,4 +144,7 @@ function renderGridCell(x: number, y: number): void {
   );
 }
 
-export { renderGameWindow };
+export {
+  renderGameWindow,
+  renderGrid,
+};

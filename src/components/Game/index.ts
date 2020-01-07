@@ -1,7 +1,8 @@
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE } from '../../constants/game';
 
-import { renderGameWindow } from './render';
+import { renderGameWindow, renderGrid } from './render';
 import { setCellSize } from './helpers';
+import { animateCursor } from './animations';
 
 import {
   onBoardClick,
@@ -76,6 +77,8 @@ class Game {
 
   public render(): void {
     renderGameWindow.call(this);
+    renderGrid.call(this);
+    animateCursor.call(this);
     setUpEventHandlers.call(this);
   }
 
