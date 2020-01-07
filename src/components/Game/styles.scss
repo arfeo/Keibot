@@ -20,8 +20,13 @@
       z-index: 101;
     }
 
+    .-cursor-canvas {
+      z-index: 101;
+    }
+
     .-board-canvas,
-    .-pieces-canvas {
+    .-pieces-canvas,
+    .-cursor-canvas{
       position: absolute;
       top: $mainMargin;
       left: $mainMargin;

@@ -1,3 +1,5 @@
+import { animateCursor } from './animations';
+
 import { drawRectangle, drawTriangle } from '../../utils/drawing';
 
 /**
@@ -10,19 +12,15 @@ function renderGameWindow(): void {
   const boardPanel: HTMLElement = document.createElement('div');
   const canvasSize: number = this.cellSize * 8;
 
-  this.boardCanvas = document.createElement('canvas');
-  this.piecesCanvas = document.createElement('canvas');
-
   gameWindow.className = 'gameWindow';
   boardGrid.className = 'boardGrid';
   boardPanel.className = 'boardPanel';
   this.boardCanvas.className = '-board-canvas';
   this.piecesCanvas.className = '-pieces-canvas';
+  this.cursorCanvas.className = '-cursor-canvas';
 
-  this.boardCanvas.width = canvasSize;
-  this.boardCanvas.height = canvasSize;
-  this.piecesCanvas.width = canvasSize;
-  this.piecesCanvas.height = canvasSize;
+  this.boardCanvas.width = this.piecesCanvas.width = this.cursorCanvas.width = canvasSize;
+  this.boardCanvas.height = this.piecesCanvas.height = this.cursorCanvas.height = canvasSize;
 
   appRoot.innerHTML = '';
 
@@ -30,9 +28,12 @@ function renderGameWindow(): void {
   gameWindow.appendChild(boardGrid);
   boardGrid.appendChild(this.boardCanvas);
   boardGrid.appendChild(this.piecesCanvas);
+  boardGrid.appendChild(this.cursorCanvas);
   gameWindow.appendChild(boardPanel);
 
   renderGrid.call(this);
+
+  animateCursor.call(this);
 }
 
 /**
@@ -142,6 +143,4 @@ function renderGridCell(x: number, y: number): void {
   );
 }
 
-export {
-  renderGameWindow,
-};
+export { renderGameWindow };
