@@ -40,17 +40,19 @@ class Game {
      *  3 - Blue statue
      *  4 - Blue bead
      */
-    // TODO: Generate the map automatically depending on the given `boardSize`
-    this.boardMap = [
-      [1, 1, 0, 0, 0, 0, 0, 0],
-      [1, 1, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 3, 3],
-      [0, 0, 0, 0, 0, 0, 3, 3],
-    ];
+    this.boardMap = [...new Array(this.boardSize)].map((itemY: number[], index: number): number[] => {
+      const itemX: number[] = new Array(this.boardSize).fill(0);
+
+      if (index === 0 || index === 1) {
+        itemX[0] = itemX[1] = 1;
+      }
+
+      if (index === this.boardSize - 2 || index === this.boardSize - 1) {
+        itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = 3;
+      }
+
+      return itemX;
+    });
 
     this.cursor = [];
 
