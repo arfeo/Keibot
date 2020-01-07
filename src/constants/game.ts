@@ -8,6 +8,8 @@ export const STORAGE_PREFIX = 'keibot';
 
 export const CELL_SIZE_VMIN = 10;
 
+export const DEFAULT_BOARD_SIZE = 8;
+
 export const ELEMENTS_COLORS: HashMap = {
   cell: {
     background: 'rgb(200, 200, 200)',

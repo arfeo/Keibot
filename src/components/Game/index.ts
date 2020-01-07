@@ -1,4 +1,4 @@
-import { CELL_SIZE_VMIN } from '../../constants/game';
+import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE } from '../../constants/game';
 
 import { renderGameWindow } from './render';
 import { setCellSize } from './helpers';
@@ -11,6 +11,7 @@ import {
 
 class Game {
   protected cellSize: number;
+  protected boardSize: number;
   protected boardCanvas: HTMLCanvasElement;
   protected piecesCanvas: HTMLCanvasElement;
   protected cursorCanvas: HTMLCanvasElement;
@@ -18,8 +19,10 @@ class Game {
   protected cursor: number[];
   protected eventHandlers: EventHandler[];
 
-  constructor() {
+  constructor(boardSize = DEFAULT_BOARD_SIZE) {
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
+
+    this.boardSize = boardSize;
 
     this.boardCanvas = document.createElement('canvas');
     this.piecesCanvas = document.createElement('canvas');

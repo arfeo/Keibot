@@ -12,7 +12,7 @@ function renderGameWindow(): void {
   const gameWindow: HTMLElement = document.createElement('div');
   const boardGrid: HTMLElement = document.createElement('div');
   const boardPanel: HTMLElement = document.createElement('div');
-  const canvasSize: number = this.cellSize * 8;
+  const canvasSize: number = this.cellSize * this.boardSize;
 
   gameWindow.className = 'gameWindow';
   boardGrid.className = 'boardGrid';
@@ -39,16 +39,21 @@ function renderGameWindow(): void {
 }
 
 /**
- * Function renders game board 8x8 chess type grid
+ * Function renders game board 8x8 grid
  */
 function renderGrid(): void {
   const ctx: CanvasRenderingContext2D = this.boardCanvas.getContext('2d');
 
-  ctx.clearRect(0, 0, this.cellSize * 8, this.cellSize * 8);
+  ctx.clearRect(
+    0,
+    0,
+    this.cellSize * this.boardSize,
+    this.cellSize * this.boardSize,
+  );
 
   // The grid
-  for (let y = 0; y < 8; y += 1) {
-    for (let x = 0; x < 8; x += 1) {
+  for (let y = 0; y < this.boardSize; y += 1) {
+    for (let x = 0; x < this.boardSize; x += 1) {
       renderGridCell.call(this, x, y);
     }
   }

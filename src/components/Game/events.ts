@@ -49,11 +49,16 @@ function removeEventHandlers(): void {
  */
 function onBoardClick(event: MouseEvent): void {
   const ctx: CanvasRenderingContext2D = this.cursorCanvas.getContext('2d');
-  const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / 8;
+  const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / this.boardSize;
   const x: number = Math.trunc(event.offsetX / actualCellSize);
   const y: number = Math.trunc(event.offsetY / actualCellSize);
 
-  ctx.clearRect(0, 0, this.cellSize * 8, this.cellSize * 8);
+  ctx.clearRect(
+    0,
+    0,
+    this.cellSize * this.boardSize,
+    this.cellSize * this.boardSize,
+  );
 
   // Remove cursor if click the already selected item
   this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[0] === x && this.cursor[1] === y
