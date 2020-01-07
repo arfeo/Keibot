@@ -9,48 +9,61 @@ import { renderMapItem } from './render';
  * @param y
  */
 function checkPossibleMoves(x: number, y: number): number[][] | undefined {
-  if (this.boardMap[y] === undefined || !(this.boardMap[y][x] === 1 || this.boardMap[y][x] === 3)) {
-    return undefined;
+  const itemType: number = this.boardMap[y] ? this.boardMap[y][x] : 0;
+
+  if (itemType !== 1 && itemType !== 3) {
+    return;
   }
 
+  const enemyType: number = itemType === 1 ? 3 : 1;
   const moves: number[][] = [];
 
+  const checkCell = (targetX: number, targetY: number): boolean => {
+    if (this.boardMap[targetY][targetX] === enemyType) {
+      return this.lockedCell.length > 0
+        ? this.lockedCell[1] !== targetX || this.lockedCell[0] !== targetY
+        : true;
+    }
+
+    return this.boardMap[targetY][targetX] === 0;
+  };
+
   if (this.boardMap[y - 2] !== undefined) {
-    if (this.boardMap[y - 2][x - 1] === 0) {
+    if (checkCell(x - 1, y - 2)) {
       moves.push([y - 2, x - 1]);
     }
 
-    if (this.boardMap[y - 2][x + 1] === 0) {
+    if (checkCell(x + 1, y - 2)) {
       moves.push([y - 2, x + 1]);
     }
   }
 
   if (this.boardMap[y + 1] !== undefined) {
-    if (this.boardMap[y + 1][x - 2] === 0) {
+    if (checkCell(x - 2, y + 1)) {
       moves.push([y + 1, x - 2]);
     }
 
-    if (this.boardMap[y + 1][x + 2] === 0) {
+    if (checkCell(x + 2, y + 1)) {
       moves.push([y + 1, x + 2]);
     }
   }
 
   if (this.boardMap[y + 2] !== undefined) {
-    if (this.boardMap[y + 2][x - 1] === 0) {
+    if (checkCell(x - 1, y + 2)) {
       moves.push([y + 2, x - 1]);
     }
 
-    if (this.boardMap[y + 2][x + 1] === 0) {
+    if (checkCell(x + 1, y + 2)) {
       moves.push([y + 2, x + 1]);
     }
   }
 
   if (this.boardMap[y - 1] !== undefined) {
-    if (this.boardMap[y - 1][x - 2] === 0) {
+    if (checkCell(x - 2, y - 1)) {
       moves.push([y - 1, x - 2]);
     }
 
-    if (this.boardMap[y - 1][x + 2] === 0) {
+    if (checkCell(x + 2, y - 1)) {
       moves.push([y - 1, x + 2]);
     }
   }
@@ -86,7 +99,7 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
  * @param y
  */
 function checkBeadsPlacing(x: number, y: number): void {
-  const itemType: number = this.boardMap[y][x];
+  const itemType: number = this.boardMap[y] ? this.boardMap[y][x] : 0;
 
   if (itemType !== 1 && itemType !== 3) {
     return;
