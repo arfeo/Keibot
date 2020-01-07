@@ -1,5 +1,5 @@
-import { renderPossibleMoves } from './render';
-import { checkPossibleMoves } from './actions';
+import { clearCanvas, renderMove, renderPossibleMoves } from './render';
+import { checkMoveToCell, checkPossibleMoves } from './actions';
 
 /**
  * Function creates all game's event listeners
@@ -51,18 +51,12 @@ function removeEventHandlers(): void {
  * @param event
  */
 function onBoardClick(event: MouseEvent): void {
-  const ctx: CanvasRenderingContext2D = this.cursorCanvas.getContext('2d');
   const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / this.boardSize;
   const x: number = Math.trunc(event.offsetX / actualCellSize);
   const y: number = Math.trunc(event.offsetY / actualCellSize);
 
   if (this.boardMap[y][x] === 3) {
-    ctx.clearRect(
-      0,
-      0,
-      this.cellSize * this.boardSize,
-      this.cellSize * this.boardSize,
-    );
+    clearCanvas.call(this, this.cursorCanvas);
 
     // Remove cursor if click the already selected item
     this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[1] === x && this.cursor[0] === y
@@ -71,6 +65,12 @@ function onBoardClick(event: MouseEvent): void {
 
     if (this.cursor.length > 0) {
       renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
+    }
+  } else {
+    if (this.cursor.length > 0) {
+      if (checkMoveToCell.call(this, this.cursor[1], this.cursor[0], x, y)) {
+        renderMove.call(this, this.cursor[1], this.cursor[0], x, y);
+      }
     }
   }
 }

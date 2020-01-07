@@ -36,14 +36,7 @@ function renderGameWindow(): void {
  * Function renders game board grid according to the `boardSize` prop
  */
 function renderGrid(): void {
-  const ctx: CanvasRenderingContext2D = this.boardCanvas.getContext('2d');
-
-  ctx.clearRect(
-    0,
-    0,
-    this.cellSize * this.boardSize,
-    this.cellSize * this.boardSize,
-  );
+  clearCanvas.call(this, this.boardCanvas);
 
   // The grid
   for (let y = 0; y < this.boardSize; y += 1) {
@@ -166,13 +159,24 @@ function renderMap(): void {
  * @param y
  */
 function renderMapItem(x: number, y: number): void {
-  const item: number = this.boardMap[y][x];
+  if (!this.boardMap[y]) {
+    return;
+  }
+
+  const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+  const item: number | undefined = this.boardMap[y][x];
+
+  ctx.clearRect(
+    this.cellSize * x,
+    this.cellSize * y,
+    this.cellSize,
+    this.cellSize,
+  );
 
   if (!item) {
     return;
   }
 
-  const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
   const posX: number = this.cellSize * x + this.cellSize / 2;
   const posY: number = this.cellSize * y + this.cellSize / 2;
 
@@ -215,9 +219,49 @@ function renderPossibleMoves(moves: number[][]): void {
   });
 }
 
+/**
+ * Function renders the movement of a statue from its original position to a cell
+ * with the given coordinates
+ *
+ * @param itemX
+ * @param itemY
+ * @param cellX
+ * @param cellY
+ */
+function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): void {
+  const itemType: number = this.boardMap[itemY][itemX];
+
+  this.boardMap[itemY][itemX] = 0;
+  this.boardMap[cellY][cellX] = itemType;
+
+  this.cursor = [];
+
+  clearCanvas.call(this, this.cursorCanvas);
+
+  renderMap.call(this);
+}
+
+/**
+ * Function clears the canvas given by the corresponding HTML element
+ *
+ * @param canvas
+ */
+function clearCanvas(canvas: HTMLCanvasElement): void {
+  const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+
+  ctx.clearRect(
+    0,
+    0,
+    this.cellSize * this.boardSize,
+    this.cellSize * this.boardSize,
+  );
+}
+
 export {
   renderGameWindow,
   renderGrid,
   renderMap,
   renderPossibleMoves,
+  renderMove,
+  clearCanvas,
 };
