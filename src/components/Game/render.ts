@@ -1,4 +1,4 @@
-import { ELEMENTS_COLORS, ITEM_LABEL_FONT } from '../../constants/game';
+import { ELEMENTS_COLORS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 
@@ -177,16 +177,32 @@ function renderMapItem(x: number, y: number): void {
     return;
   }
 
-  const posX: number = this.cellSize * x + this.cellSize / 2;
-  const posY: number = this.cellSize * y + this.cellSize / 2;
+  // Statues
+  if (item === 1 || item === 3) {
+    ctx.drawImage(
+      (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+      this.cellSize * x + 5,
+      this.cellSize * y + 5,
+      this.cellSize - 10,
+      this.cellSize - 10,
+    );
+  }
 
-  ctx.font = ITEM_LABEL_FONT;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  // Beads
+  if (item === 2 || item === 4) {
+    const posX: number = this.cellSize * x + this.cellSize / 2;
+    const posY: number = this.cellSize * y + this.cellSize / 2;
 
-  ctx.fillStyle = item === 1 || item === 2 ? 'red' : 'blue';
-
-  ctx.fillText(item === 1 || item === 3 ? '♞': '⚈', posX, posY);
+    drawCircle(
+      ctx,
+      posX,
+      posY,
+      20,
+      {
+        fillColor: item === 2 ? ELEMENTS_COLORS.bead.red : ELEMENTS_COLORS.bead.blue,
+      },
+    );
+  }
 }
 
 /**

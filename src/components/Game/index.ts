@@ -1,7 +1,7 @@
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap } from './render';
-import { setCellSize } from './helpers';
+import { setCellSize, waitForImagesLoad } from './helpers';
 import { animateCursor } from './animations';
 
 import {
@@ -18,6 +18,7 @@ class Game {
   protected boardCanvas: HTMLCanvasElement;
   protected itemCanvas: HTMLCanvasElement;
   protected cursorCanvas: HTMLCanvasElement;
+  protected images: { [key: string]: { element: HTMLImageElement; src: string } };
   protected boardMap: number[][];
   protected cursor: number[];
   protected eventHandlers: EventHandler[];
@@ -31,6 +32,17 @@ class Game {
     this.boardCanvas = document.createElement('canvas');
     this.itemCanvas = document.createElement('canvas');
     this.cursorCanvas = document.createElement('canvas');
+
+    this.images = {
+      statueRed: {
+        element: new Image(),
+        src: './static/statue_red.svg',
+      },
+      statueBlue: {
+        element: new Image(),
+        src: './static/statue_blue.svg',
+      },
+    };
 
     /**
      * Map legend:
@@ -75,7 +87,9 @@ class Game {
       },
     };
 
-    this.render();
+    waitForImagesLoad(this.images).then(() => {
+      this.render();
+    });
   }
 
   public render(): void {

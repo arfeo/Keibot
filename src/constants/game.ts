@@ -26,6 +26,8 @@ export const ELEMENTS_COLORS: HashMap = {
     background: 'rgb(0, 165, 0)',
     border: 'rgb(255, 255, 255)',
   },
+  bead: {
+    red: 'rgb(255, 0, 0)',
+    blue: 'rgb(0, 0, 255)',
+  },
 };
-
-export const ITEM_LABEL_FONT = '400 10vmin Helvetica, Arial';

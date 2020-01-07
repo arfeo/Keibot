@@ -17,4 +17,23 @@ function setCellSize(vmin: number): number {
   return Math.round(calculateVMin() * vmin  / 10) * 10;
 }
 
-export { setCellSize };
+/**
+ * Function returns a resolved promise when all images from the given
+ * images object are loaded
+ *
+ * @param images
+ */
+function waitForImagesLoad(images: { [key: string]: { element: HTMLImageElement; src: string } }): Promise<void[]> {
+  return Promise.all(Object.keys(images).map((key: string): Promise<void> => new Promise((resolve): void => {
+    images[key].element.src = images[key].src;
+
+    images[key].element.onload = () => {
+      resolve();
+    };
+  })));
+}
+
+export {
+  setCellSize,
+  waitForImagesLoad,
+};

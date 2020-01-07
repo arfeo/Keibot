@@ -1,3 +1,4 @@
+/* eslint-disable */
 const gulp = require('gulp');
 const del = require('del');
 const buffer = require('vinyl-buffer');
@@ -21,6 +22,7 @@ function build(done) {
     linter,
     ts,
     scss,
+    assets,
   )(done);
 }
 
@@ -48,8 +50,8 @@ function run(done) {
 }
 
 function watchers() {
-  gulp.watch('./src/**/*.ts', gulp.series(linter, ts, reload));
-  gulp.watch('./src/**/*.scss', gulp.series(scss, reload));
+  gulp.watch('./src/**/*.ts', gulp.series(linter, ts, assets, reload));
+  gulp.watch('./src/**/*.scss', gulp.series(scss, assets, reload));
 }
 
 function scss() {
@@ -57,6 +59,11 @@ function scss() {
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(concat('app.css'))
     .pipe(gulp.dest('./dist'));
+}
+
+function assets() {
+  return gulp.src('./src/assets/images/**/*')
+    .pipe(gulp.dest('./dist/static'));
 }
 
 function linter() {
