@@ -7,7 +7,6 @@ import { checkBeadsPlacing } from './actions';
  * Function creates all needed game window elements
  */
 function renderGameWindow(): void {
-  const appRoot: HTMLElement = document.getElementById('root');
   const gameWindow: HTMLElement = document.createElement('div');
   const boardGrid: HTMLElement = document.createElement('div');
   const boardPanel: HTMLElement = document.createElement('div');
@@ -23,9 +22,9 @@ function renderGameWindow(): void {
   this.boardCanvas.width = this.itemCanvas.width = this.cursorCanvas.width = canvasSize;
   this.boardCanvas.height = this.itemCanvas.height = this.cursorCanvas.height = canvasSize;
 
-  appRoot.innerHTML = '';
+  this.appRoot.innerHTML = '';
 
-  appRoot.appendChild(gameWindow);
+  this.appRoot.appendChild(gameWindow);
   gameWindow.appendChild(boardGrid);
   boardGrid.appendChild(this.boardCanvas);
   boardGrid.appendChild(this.itemCanvas);

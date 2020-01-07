@@ -13,6 +13,7 @@ import {
 import { Player } from '../../typings/game';
 
 class Game {
+  protected appRoot: HTMLElement;
   protected cellSize: number;
   protected boardSize: number;
   protected boardCanvas: HTMLCanvasElement;
@@ -26,6 +27,9 @@ class Game {
   protected lockedCell: number[];
 
   public constructor() {
+    this.appRoot = document.getElementById('root');
+    this.appRoot.innerText = 'Loading...';
+
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
 
     this.boardSize = DEFAULT_BOARD_SIZE;
