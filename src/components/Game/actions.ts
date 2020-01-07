@@ -108,6 +108,8 @@ function checkBeadsPlacing(x: number, y: number): void {
       // TODO: GAME OVER: make it louder!
       console.log(itemType === 1 ? 'You lost!' : 'You win!');
     }
+
+    // TODO: Check for 3 beads in a row (horizontally, vertically, or diagonally)
   };
 
   if (this.boardMap[y - 2] !== undefined) {
