@@ -15,11 +15,4 @@ export const ELEMENTS_COLORS: HashMap = {
     border3: 'rgba(145, 180, 250, 0.7)',
     border4: 'rgba(100, 145, 220, 0.7)',
   },
-  item: {
-    label: 'rgb(0, 0, 0)',
-  },
-  cell: {
-    white: 'rgb(190, 190, 190)',
-    black: 'rgb(95, 95, 95)',
-  },
 };
