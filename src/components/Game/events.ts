@@ -2,7 +2,7 @@ import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
 
 /**
- * Function creates all game's event listeners
+ * Helper function which creates all game's event listeners
  */
 function setUpEventHandlers(): void {
   if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
@@ -24,7 +24,7 @@ function setUpEventHandlers(): void {
 }
 
 /**
- * Function removes all game's event listeners
+ * Helper function which removes all game's event listeners
  */
 function removeEventHandlers(): void {
   if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
@@ -46,7 +46,7 @@ function removeEventHandlers(): void {
 }
 
 /**
- * Function fires on the items canvas click event
+ * Function fires on the cursor canvas click event
  *
  * @param event
  */
@@ -58,7 +58,7 @@ function onBoardClick(event: MouseEvent): void {
   if (this.boardMap[y][x] === 3) {
     clearCanvas.call(this, this.cursorCanvas);
 
-    // Remove cursor if click the already selected item
+    // Remove cursor if we click on an item which was already selected before
     this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[1] === x && this.cursor[0] === y
       ? []
       : [y, x];

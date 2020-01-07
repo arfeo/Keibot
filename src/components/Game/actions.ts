@@ -18,6 +18,9 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   const enemyType: number = itemType === 1 ? 3 : 1;
   const moves: number[][] = [];
 
+  // If the target cell is empty, return true.
+  // If there's an enemy statue on the target cell -- check whether it is locked or not;
+  // if it's not locked, return true, otherwise return false
   const checkCell = (targetX: number, targetY: number): boolean => {
     if (this.boardMap[targetY][targetX] === enemyType) {
       return this.lockedCell.length > 0
@@ -107,10 +110,11 @@ function checkBeadsPlacing(x: number, y: number): void {
 
   const ownBead: number = itemType === 1 ? 2 : 4;
   const enemyType: number = itemType === 1 ? 3 : 1;
+  const playerType: string = itemType === 1 ? 'red' : 'blue';
 
+  // If we place a bead on the game board, we should reduce `beads` count of the
+  // corresponding player object. If there's no beads left, the player wins.
   const reduceBeads = (beadX: number, beadY: number): void => {
-    const playerType: string = itemType === 1 ? 'red' : 'blue';
-
     this.boardMap[beadY][beadX] = ownBead;
 
     renderMapItem.call(this, beadX, beadY);
