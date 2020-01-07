@@ -1,3 +1,6 @@
+import { renderPossibleMoves } from './render';
+import { checkPossibleMoves } from './actions';
+
 /**
  * Function creates all game's event listeners
  */
@@ -65,6 +68,10 @@ function onBoardClick(event: MouseEvent): void {
     this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[0] === x && this.cursor[1] === y
       ? []
       : [x, y];
+
+    if (this.cursor.length > 0) {
+      renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
+    }
   }
 }
 

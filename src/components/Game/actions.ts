@@ -6,7 +6,7 @@
  * @param x
  * @param y
  */
-function checkAvailableMoves(x: number, y: number): number[][] | undefined {
+function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   if (this.boardMap[y] === undefined || !(this.boardMap[y][x] === 1 || this.boardMap[y][x] === 3)) {
     return undefined;
   }
@@ -56,4 +56,4 @@ function checkAvailableMoves(x: number, y: number): number[][] | undefined {
   return moves;
 }
 
-export { checkAvailableMoves };
+export { checkPossibleMoves };
