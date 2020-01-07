@@ -1,6 +1,6 @@
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE } from '../../constants/game';
 
-import { renderGameWindow, renderGrid } from './render';
+import { renderGameWindow, renderGrid, renderMap } from './render';
 import { setCellSize } from './helpers';
 import { animateCursor } from './animations';
 
@@ -16,20 +16,20 @@ class Game {
   protected cellSize: number;
   protected boardSize: number;
   protected boardCanvas: HTMLCanvasElement;
-  protected piecesCanvas: HTMLCanvasElement;
+  protected itemCanvas: HTMLCanvasElement;
   protected cursorCanvas: HTMLCanvasElement;
   protected boardMap: number[][];
   protected cursor: number[];
   protected eventHandlers: EventHandler[];
   protected players: { [key: string]: Player };
 
-  constructor(boardSize = DEFAULT_BOARD_SIZE) {
+  public constructor() {
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
 
-    this.boardSize = boardSize;
+    this.boardSize = DEFAULT_BOARD_SIZE;
 
     this.boardCanvas = document.createElement('canvas');
-    this.piecesCanvas = document.createElement('canvas');
+    this.itemCanvas = document.createElement('canvas');
     this.cursorCanvas = document.createElement('canvas');
 
     /**
@@ -40,6 +40,7 @@ class Game {
      *  3 - Blue statue
      *  4 - Blue bead
      */
+    // TODO: Generate the map automatically depending on the given `boardSize`
     this.boardMap = [
       [1, 1, 0, 0, 0, 0, 0, 0],
       [1, 1, 0, 0, 0, 0, 0, 0],
@@ -78,6 +79,7 @@ class Game {
   public render(): void {
     renderGameWindow.call(this);
     renderGrid.call(this);
+    renderMap.call(this);
     animateCursor.call(this);
     setUpEventHandlers.call(this);
   }

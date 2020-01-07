@@ -22,3 +22,5 @@ export const ELEMENTS_COLORS: HashMap = {
     border4: 'rgba(100, 145, 220, 0.7)',
   },
 };
+
+export const ITEM_LABEL_FONT = '400 8vmin Helvetica, Arial';

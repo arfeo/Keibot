@@ -1,9 +1,9 @@
-import { ELEMENTS_COLORS } from '../../constants/game';
+import { ELEMENTS_COLORS, ITEM_LABEL_FONT } from '../../constants/game';
 
 import { drawRectangle, drawTriangle } from '../../utils/drawing';
 
 /**
- * Function creates game window element, game panel and all needed canvases
+ * Function creates all needed game window elements
  */
 function renderGameWindow(): void {
   const appRoot: HTMLElement = document.getElementById('root');
@@ -16,18 +16,18 @@ function renderGameWindow(): void {
   boardGrid.className = 'boardGrid';
   boardPanel.className = 'boardPanel';
   this.boardCanvas.className = '-board-canvas';
-  this.piecesCanvas.className = '-pieces-canvas';
+  this.itemCanvas.className = '-item-canvas';
   this.cursorCanvas.className = '-cursor-canvas';
 
-  this.boardCanvas.width = this.piecesCanvas.width = this.cursorCanvas.width = canvasSize;
-  this.boardCanvas.height = this.piecesCanvas.height = this.cursorCanvas.height = canvasSize;
+  this.boardCanvas.width = this.itemCanvas.width = this.cursorCanvas.width = canvasSize;
+  this.boardCanvas.height = this.itemCanvas.height = this.cursorCanvas.height = canvasSize;
 
   appRoot.innerHTML = '';
 
   appRoot.appendChild(gameWindow);
   gameWindow.appendChild(boardGrid);
   boardGrid.appendChild(this.boardCanvas);
-  boardGrid.appendChild(this.piecesCanvas);
+  boardGrid.appendChild(this.itemCanvas);
   boardGrid.appendChild(this.cursorCanvas);
   gameWindow.appendChild(boardPanel);
 }
@@ -144,7 +144,49 @@ function renderGridCell(x: number, y: number): void {
   );
 }
 
+/**
+ * Function renders players' statues and beads according to the `boardMap` prop
+ */
+function renderMap(): void {
+  if (!Array.isArray(this.boardMap) || this.boardMap.length === 0) {
+    return;
+  }
+
+  for (let y = 0; y < this.boardMap.length; y += 1) {
+    for (let x = 0; x < this.boardMap[y].length; x += 1) {
+      renderMapItem.call(this, x, y);
+    }
+  }
+}
+
+/**
+ * Function renders a single game board map item found by its position
+ *
+ * @param x
+ * @param y
+ */
+function renderMapItem(x: number, y: number): void {
+  const item: number = this.boardMap[y][x];
+
+  if (!item) {
+    return;
+  }
+
+  const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+  const posX: number = this.cellSize * x + this.cellSize / 2;
+  const posY: number = this.cellSize * y + this.cellSize / 2;
+
+  ctx.font = ITEM_LABEL_FONT;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = item === 1 || item === 2 ? 'red' : 'blue';
+
+  ctx.fillText(item === 1 || item === 3 ? '♞': '⚈', posX, posY);
+}
+
 export {
   renderGameWindow,
   renderGrid,
+  renderMap,
 };
