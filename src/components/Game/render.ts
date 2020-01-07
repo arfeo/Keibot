@@ -1,6 +1,7 @@
 import { ELEMENTS_COLORS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
+import { checkBeadsPlacing } from './actions';
 
 /**
  * Function creates all needed game window elements
@@ -277,6 +278,8 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   renderMapItem.call(this, cellX, cellY);
   renderShield.call(this);
 
+  checkBeadsPlacing.call(this, cellX, cellY);
+
   clearCanvas.call(this, this.cursorCanvas);
 }
 
@@ -300,6 +303,7 @@ export {
   renderGameWindow,
   renderGrid,
   renderMap,
+  renderMapItem,
   renderPossibleMoves,
   renderMove,
   clearCanvas,

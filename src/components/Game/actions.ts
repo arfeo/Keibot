@@ -1,3 +1,5 @@
+import { renderMapItem } from './render';
+
 /**
  * Function checks the ability of a statue with the given coordinates to move;
  * it returns an array of possible coordiantes or undefined if no statue found
@@ -76,7 +78,74 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
     && possibleMoves.map((move: number[]) => JSON.stringify(move)).indexOf(JSON.stringify([cellY, cellX])) > -1;
 }
 
+/**
+ * Function checks whether new neads are needed to be placed on the board or not
+ */
+function checkBeadsPlacing(x: number, y: number): void {
+  const itemType: number = this.boardMap[y][x];
+
+  if (itemType !== 1 && itemType !== 3) {
+    return;
+  }
+
+  const ownBead: number = itemType === 1 ? 2 : 4;
+  const enemyType: number = itemType === 1 ? 3 : 1;
+
+  if (this.boardMap[y - 2] !== undefined) {
+    if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0) {
+      this.boardMap[y - 1][x - 1] = ownBead;
+
+      renderMapItem.call(this, x - 1, y - 1);
+    }
+
+    if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0) {
+      this.boardMap[y - 1][x] = ownBead;
+
+      renderMapItem.call(this, x, y - 1);
+    }
+
+    if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0) {
+      this.boardMap[y - 1][x + 1] = ownBead;
+
+      renderMapItem.call(this, x + 1, y - 1);
+    }
+  }
+
+  if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0) {
+    this.boardMap[y][x - 1] = ownBead;
+
+    renderMapItem.call(this, x - 1, y);
+  }
+
+  if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0) {
+    this.boardMap[y][x + 1] = ownBead;
+
+    renderMapItem.call(this, x + 1, y);
+  }
+
+  if (this.boardMap[y + 2] !== undefined) {
+    if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0) {
+      this.boardMap[y + 1][x - 1] = ownBead;
+
+      renderMapItem.call(this, x - 1, y + 1);
+    }
+
+    if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0) {
+      this.boardMap[y + 1][x] = ownBead;
+
+      renderMapItem.call(this, x, y + 1);
+    }
+
+    if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0) {
+      this.boardMap[y + 1][x + 1] = ownBead;
+
+      renderMapItem.call(this, x + 1, y + 1);
+    }
+  }
+}
+
 export {
   checkPossibleMoves,
   checkMoveToCell,
+  checkBeadsPlacing,
 };
