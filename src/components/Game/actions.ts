@@ -80,6 +80,10 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
 
 /**
  * Function checks whether new neads are needed to be placed on the board or not
+ * after placing a statue to a cell with the given coordinates
+ *
+ * @param x
+ * @param y
  */
 function checkBeadsPlacing(x: number, y: number): void {
   const itemType: number = this.boardMap[y][x];
