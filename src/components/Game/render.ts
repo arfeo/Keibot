@@ -39,7 +39,6 @@ function renderGameWindow(): void {
 function renderGrid(): void {
   clearCanvas.call(this, this.boardCanvas);
 
-  // The grid
   for (let y = 0; y < this.boardSize; y += 1) {
     for (let x = 0; x < this.boardSize; x += 1) {
       renderGridCell.call(this, x, y);
@@ -261,13 +260,33 @@ function renderPossibleMoves(moves: number[][]): void {
  * @param cellY
  */
 function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): void {
-  const itemType: number = this.boardMap[itemY][itemX];
+  const itemType: number = this.boardMap[itemY] ? this.boardMap[itemY][itemX] : 0;
+
+  if (itemType !== 1 && itemType !== 3) {
+    return;
+  }
+
+  const enemyType: number = itemType === 1 ? 3 : 1;
+  const playerType: string = itemType === 1 ? 'red' : 'blue';
+
+  // If we land on an enemy statue, we should increase
+  // the `captured` prop of the corresponding player object.
+  // If the player captures the 3rd enemy statue, the game overs.
+  if (this.boardMap[cellY][cellX] === enemyType) {
+    this.players[playerType].captured += 1;
+
+    if (this.players[playerType].captured === 3) {
+      // TODO: GAME OVER: make it louder!
+      console.log(itemType === 1 ? 'You lost!' : 'You win!');
+    }
+  }
 
   this.boardMap[itemY][itemX] = 0;
   this.boardMap[cellY][cellX] = itemType;
 
   this.cursor = [];
 
+  // Redraw previously locked statue, removing the shield icon from it
   if (this.lockedCell.length > 0) {
     renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
   }
@@ -276,6 +295,8 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   renderMapItem.call(this, itemX, itemY);
   renderMapItem.call(this, cellX, cellY);
+
+  // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
   checkBeadsPlacing.call(this, cellX, cellY);
