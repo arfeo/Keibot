@@ -39,7 +39,7 @@ function renderGameWindow(): void {
 }
 
 /**
- * Function renders game board 8x8 grid
+ * Function renders game board grid according to the `boardSize` prop
  */
 function renderGrid(): void {
   const ctx: CanvasRenderingContext2D = this.boardCanvas.getContext('2d');
