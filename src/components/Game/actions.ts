@@ -56,4 +56,27 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   return moves;
 }
 
-export { checkPossibleMoves };
+/**
+ * Function checks the ability to move a statue with the given coordinates to move to a cell
+ * with the given coordinates; returns true if the move is possible, otherwise returns false
+ *
+ * @param itemX
+ * @param itemY
+ * @param cellX
+ * @param cellY
+ */
+function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: number): boolean {
+  if (!this.boardMap[itemY] || this.boardMap[itemY][itemX] === undefined) {
+    return false;
+  }
+
+  const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, itemX, itemY);
+
+  return Array.isArray(possibleMoves)
+    && possibleMoves.map((move: number[]) => JSON.stringify(move)).indexOf(JSON.stringify([cellY, cellX])) > -1;
+}
+
+export {
+  checkPossibleMoves,
+  checkMoveToCell,
+};
