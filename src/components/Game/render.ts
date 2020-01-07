@@ -1,6 +1,6 @@
 import { ELEMENTS_COLORS, ITEM_LABEL_FONT } from '../../constants/game';
 
-import { drawRectangle, drawTriangle } from '../../utils/drawing';
+import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 
 /**
  * Function creates all needed game window elements
@@ -89,8 +89,8 @@ function renderGridCell(x: number, y: number): void {
     const randomOpacityTwo = Math.floor((Math.random() * 9) + 1);
 
     if (randomSize > 1) {
-      ctx.shadowBlur = Math.floor((Math.random() * 15) + 5);
-      ctx.shadowColor = 'rgb(0, 0, 0)';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ELEMENTS_COLORS.cell.shadow;
     }
 
     ctx.fillStyle = `hsla(0, 0%, 0%, .${randomOpacityOne + randomOpacityTwo})`;
@@ -185,8 +185,39 @@ function renderMapItem(x: number, y: number): void {
   ctx.fillText(item === 1 || item === 3 ? '♞': '⚈', posX, posY);
 }
 
+/**
+ * ...
+ *
+ * @param moves
+ */
+function renderPossibleMoves(moves: number[][]): void {
+  if (!Array.isArray(moves) || moves.length === 0) {
+    return;
+  }
+
+  const ctx: CanvasRenderingContext2D = this.cursorCanvas.getContext('2d');
+
+  moves.forEach((move: number[]) => {
+    const posX: number = this.cellSize * move[1] + this.cellSize / 2;
+    const posY: number = this.cellSize * move[0] + this.cellSize / 2;
+
+    drawCircle(
+      ctx,
+      posX,
+      posY,
+      10,
+      {
+        fillColor: ELEMENTS_COLORS.move.background,
+        edgingColor: ELEMENTS_COLORS.move.border,
+        edgingWidth: 4,
+      },
+    );
+  });
+}
+
 export {
   renderGameWindow,
   renderGrid,
   renderMap,
+  renderPossibleMoves,
 };
