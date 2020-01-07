@@ -14,8 +14,8 @@ function animateCursor(): void {
 
   const animate = (time: number): void => {
     if (Array.isArray(this.cursor) && this.cursor.length > 0) {
-      const posX: number = this.cellSize * this.cursor[0];
-      const posY: number = this.cellSize * this.cursor[1];
+      const posX: number = this.cellSize * this.cursor[1];
+      const posY: number = this.cellSize * this.cursor[0];
 
       if (time - start > step) {
         state = state < 4 ? state + 1 : 1;

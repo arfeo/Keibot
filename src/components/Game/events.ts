@@ -65,9 +65,9 @@ function onBoardClick(event: MouseEvent): void {
     );
 
     // Remove cursor if click the already selected item
-    this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[0] === x && this.cursor[1] === y
+    this.cursor = Array.isArray(this.cursor) && this.cursor.length > 0 && this.cursor[1] === x && this.cursor[0] === y
       ? []
-      : [x, y];
+      : [y, x];
 
     if (this.cursor.length > 0) {
       renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
