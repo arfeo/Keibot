@@ -1,0 +1,89 @@
+.menuContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 4vmin;
+  min-width: 35vmin;
+  background-color: rgb(190, 190, 190);
+  user-select: none;
+  -moz-user-select: none;
+
+  .menuItem {
+    width: 100%;
+
+    &:not(:last-child) {
+      margin: 0 0 2vmin;
+    }
+
+    .h1 {
+      font-size: 3vmin;
+      font-weight: 700;
+      color: rgb(0, 0, 0);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .h2 {
+      font-size: 2.5vmin;
+      font-weight: 700;
+      color: rgb(0, 0, 0);
+      text-align: center;
+    }
+
+    .label {
+      margin: 0;
+      padding: 0;
+      font-size: 2.5vmin;
+      color: rgb(0, 0, 0);
+    }
+
+    .break {
+      display: block;
+      height: 0;
+    }
+
+    p {
+      margin: 0 0 2vmin;
+      padding: 0;
+    }
+
+    hr {
+      margin: 0;
+    }
+
+    input:not([type=checkbox]):not([type=radio]) {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 100%;
+      font-size: 3vmin;
+      outline: none;
+
+      &[type=text],
+      &[type=password] {
+        box-sizing: border-box;
+      }
+
+      &[type=button] {
+        cursor: pointer;
+
+        &:hover {
+          animation: glowing 1000ms infinite;
+        }
+      }
+    }
+
+    select {
+      width: 100%;
+      font-size: 3vmin;
+      outline: none;
+    }
+  }
+}
+
+@keyframes glowing {
+  0% { box-shadow: 0 0 -2vmin gold; }
+  40% { box-shadow: 0 0 4.5vmin gold; }
+  60% { box-shadow: 0 0 4.5vmin gold; }
+  100% { box-shadow: 0 0 -2vmin gold; }
+}
