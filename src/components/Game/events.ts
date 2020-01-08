@@ -1,6 +1,7 @@
-import { APP } from '../../constants/game';
-
 import { Game } from './';
+import { Menu } from '../Menu';
+
+import { APP } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
@@ -46,7 +47,17 @@ function onNewGameButtonClick(): void {
   APP.pageInstance = new Game();
 }
 
+/**
+ * Function destroys current game and creates a new instance of the `Menu` class
+ */
+function onBackToMenuButtonClick(): void {
+  this.destroy();
+
+  APP.pageInstance = new Menu();
+}
+
 export {
   onBoardClick,
   onNewGameButtonClick,
+  onBackToMenuButtonClick,
 };

@@ -5,7 +5,7 @@ import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { setCellSize } from './helpers';
 import { animateCursor } from './animations';
-import { onBoardClick, onNewGameButtonClick } from './events';
+import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
 
 import { Player } from '../../typings/game';
 
@@ -96,7 +96,7 @@ class Game extends PageComponent {
       {
         target: this.backToMenuButton,
         type: 'click',
-        listener: () => console.log('Back to menu'),
+        listener: onBackToMenuButtonClick.bind(this),
       },
     ];
 

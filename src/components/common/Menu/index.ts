@@ -27,7 +27,7 @@ export interface MenuItemAction {
 }
 
 export abstract class MenuComponent extends PageComponent {
-  public root: HTMLElement;
+  public appRoot: HTMLElement;
   public items: MenuItem[];
 
   private static processElementProps(
@@ -60,8 +60,8 @@ export abstract class MenuComponent extends PageComponent {
 
     menuContainer.className = 'menuContainer';
 
-    this.root.innerHTML = '';
-    this.root.appendChild(menuContainer);
+    this.appRoot.innerHTML = '';
+    this.appRoot.appendChild(menuContainer);
 
     for (const item of this.items) {
       const menuItem: HTMLElement = document.createElement('div');

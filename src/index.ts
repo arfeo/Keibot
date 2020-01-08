@@ -1,7 +1,7 @@
-import { Game } from './components/Game';
+import { Menu } from './components/Menu';
 
 import { APP } from './constants/game';
 
 window.onload = (): void => {
-  APP.pageInstance = new Game();
+  APP.pageInstance = new Menu();
 };
