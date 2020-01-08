@@ -24,7 +24,15 @@ function setCellSize(vmin: number): number {
  * @param images
  */
 function waitForImagesLoad(images: { [key: string]: { element: HTMLImageElement; src: string } }): Promise<void[]> {
-  return Promise.all(Object.keys(images).map((key: string): Promise<void> => new Promise((resolve): void => {
+  if (Object.keys(images).length === 0) {
+    return Promise.resolve([]);
+  }
+
+  return Promise.all(Object.keys(images).map((key: string): Promise<void> => new Promise((resolve, reject): void => {
+    if (images[key] === undefined) {
+      return reject();
+    }
+
     images[key].element.src = images[key].src;
 
     images[key].element.onload = () => {
