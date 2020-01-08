@@ -115,6 +115,10 @@ function checkBeadsPlacing(x: number, y: number): void {
   // If we place a bead on the game board, we should reduce `beads` count of the
   // corresponding player object. If there's no beads left, the player wins.
   const reduceBeads = (beadX: number, beadY: number): void => {
+    if (this.players[playerType].beads === 0) {
+      return;
+    }
+
     this.boardMap[beadY][beadX] = ownBead;
 
     renderMapItem.call(this, beadX, beadY);
@@ -122,7 +126,7 @@ function checkBeadsPlacing(x: number, y: number): void {
     this.players[playerType].beads -= 1;
 
     if (this.players[playerType].beads === 0) {
-      processGameOver.call(this, itemType);
+      this.isGameOver = true;
     }
 
     // TODO: Check for 3 beads in a row (horizontally, vertically, or diagonally)

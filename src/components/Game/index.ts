@@ -29,6 +29,7 @@ class Game {
   protected eventHandlers: EventHandler[];
   protected players: { [key: string]: Player };
   protected lockedCell: number[];
+  protected isGameOver: boolean;
 
   public constructor() {
     this.appRoot = document.getElementById('root');
@@ -119,6 +120,8 @@ class Game {
     };
 
     this.lockedCell = [];
+
+    this.isGameOver = false;
 
     waitForImagesLoad(this.images).then(() => {
       this.render();

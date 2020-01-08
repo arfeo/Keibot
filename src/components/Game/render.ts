@@ -280,7 +280,6 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   const enemyType: number = itemType === 1 ? 3 : 1;
   const playerType: string = itemType === 1 ? 'red' : 'blue';
-  let isGameOver = false;
 
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
@@ -289,7 +288,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
     this.players[playerType].captured += 1;
 
     if (this.players[playerType].captured === 3) {
-      isGameOver = true;
+      this.isGameOver = true;
     }
   }
 
@@ -316,7 +315,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   clearCanvas.call(this, this.cursorCanvas);
 
   // End of turn
-  if (!isGameOver) {
+  if (!this.isGameOver) {
     this.players = {
       red: {
         ...this.players.red,
