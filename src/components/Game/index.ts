@@ -1,21 +1,15 @@
+import { PageComponent } from '../common/Page';
+
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
-
-import {
-  setCellSize,
-  waitForImagesLoad,
-  setUpEventHandlers,
-  removeEventHandlers,
-} from './helpers';
-
+import { setCellSize } from './helpers';
 import { animateCursor } from './animations';
-
 import { onBoardClick, onNewGameButtonClick } from './events';
 
 import { Player } from '../../typings/game';
 
-class Game {
+class Game extends PageComponent {
   protected appRoot: HTMLElement;
   protected cellSize: number;
   protected boardSize: number;
@@ -25,15 +19,13 @@ class Game {
   protected panelCanvas: HTMLCanvasElement;
   protected newGameButton: HTMLButtonElement;
   protected backToMenuButton: HTMLButtonElement;
-  protected images: { [key: string]: { element: HTMLImageElement; src: string } };
   protected boardMap: number[][];
   protected cursor: number[];
-  protected eventHandlers: EventHandler[];
   protected players: { [key: string]: Player };
   protected lockedCell: number[];
   protected isGameOver: boolean;
 
-  public constructor() {
+  public init(): void {
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
 
@@ -124,23 +116,14 @@ class Game {
     this.lockedCell = [];
 
     this.isGameOver = false;
-
-    waitForImagesLoad(this.images).then(() => {
-      this.render();
-    });
   }
 
-  private render(): void {
+  public render(): void {
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);
     renderPanel.call(this);
     animateCursor.call(this);
-    setUpEventHandlers.call(this);
-  }
-
-  public destroy(): void {
-    removeEventHandlers.call(this);
   }
 }
 
