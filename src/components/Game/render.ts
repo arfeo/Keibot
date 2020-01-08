@@ -10,6 +10,7 @@ function renderGameWindow(): void {
   const gameWindow: HTMLElement = document.createElement('div');
   const boardGrid: HTMLElement = document.createElement('div');
   const boardPanel: HTMLElement = document.createElement('div');
+  const panelButtons: HTMLElement = document.createElement('div');
   const canvasSize: number = this.cellSize * this.boardSize;
 
   gameWindow.className = 'gameWindow';
@@ -18,11 +19,19 @@ function renderGameWindow(): void {
   this.boardCanvas.className = '-board-canvas';
   this.itemCanvas.className = '-item-canvas';
   this.cursorCanvas.className = '-cursor-canvas';
+  this.panelCanvas.className = '-panel-canvas';
+  panelButtons.className = '-panel-buttons';
+  this.newGameButton.className = '-button';
+  this.backToMenuButton.className = '-button';
 
   this.boardCanvas.width = this.itemCanvas.width = this.cursorCanvas.width = canvasSize;
   this.boardCanvas.height = this.itemCanvas.height = this.cursorCanvas.height = canvasSize;
+  this.panelCanvas.width = this.cellSize * 4;
+  this.panelCanvas.height = this.cellSize * 7;
 
   this.appRoot.innerHTML = '';
+  this.newGameButton.innerText = 'New game...';
+  this.backToMenuButton.innerText = 'Back to menu';
 
   this.appRoot.appendChild(gameWindow);
   gameWindow.appendChild(boardGrid);
@@ -30,6 +39,10 @@ function renderGameWindow(): void {
   boardGrid.appendChild(this.itemCanvas);
   boardGrid.appendChild(this.cursorCanvas);
   gameWindow.appendChild(boardPanel);
+  boardPanel.appendChild(this.panelCanvas);
+  boardPanel.appendChild(panelButtons);
+  panelButtons.appendChild(this.newGameButton);
+  panelButtons.appendChild(this.backToMenuButton);
 }
 
 /**

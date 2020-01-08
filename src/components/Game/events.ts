@@ -1,3 +1,7 @@
+import { APP } from '../../constants/game';
+
+import { Game } from './';
+
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
 
@@ -77,8 +81,18 @@ function onBoardClick(event: MouseEvent): void {
   }
 }
 
+/**
+ * Function destroys current game and creates a new instance of the `Game` class
+ */
+function onNewGameButtonClick(): void {
+  this.destroy();
+
+  APP.pageInstance = new Game();
+}
+
 export {
   setUpEventHandlers,
   removeEventHandlers,
   onBoardClick,
+  onNewGameButtonClick,
 };

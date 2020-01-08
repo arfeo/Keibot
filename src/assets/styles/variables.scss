@@ -2,6 +2,8 @@
  *  Sizes
  */
 $mainMargin: 2vmin;
+$buttonMargin: 0.5vmin 1.5vmin;
+$baseFontSize: 2vmin;
 
 /**
  *  Game
@@ -9,4 +11,4 @@ $mainMargin: 2vmin;
 $cellSize: 10vmin;
 $windowBorderSize: 1vmin;
 $boardSize: 8;
-$boardPanelSize: 35vmin;
+$boardPanelSize: calc(#{$cellSize} * 4 + #{$mainMargin});

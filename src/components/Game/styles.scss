@@ -36,6 +36,29 @@
   }
 
   .boardPanel {
-    width: $boardPanelSize;
+    width: calc(#{$cellSize} * 4 + #{$mainMargin});
+
+    .-panel-canvas {
+      margin: $mainMargin $mainMargin 0 0;
+      border: 1px solid red;
+      width: calc(#{$cellSize} * 4);
+      height: calc(#{$cellSize} * 7);
+    }
+
+    .-panel-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: $cellSize;
+      margin: 0 $mainMargin 0 0;
+
+      .-button {
+        -webkit-appearance: none;
+        outline: none;
+        margin: 0 $mainMargin;
+        padding: $buttonMargin;
+        font-size: $baseFontSize;
+      }
+    }
   }
 }

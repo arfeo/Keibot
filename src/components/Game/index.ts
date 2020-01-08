@@ -8,6 +8,7 @@ import {
   onBoardClick,
   removeEventHandlers,
   setUpEventHandlers,
+  onNewGameButtonClick,
 } from './events';
 
 import { Player } from '../../typings/game';
@@ -19,6 +20,9 @@ class Game {
   protected boardCanvas: HTMLCanvasElement;
   protected itemCanvas: HTMLCanvasElement;
   protected cursorCanvas: HTMLCanvasElement;
+  protected panelCanvas: HTMLCanvasElement;
+  protected newGameButton: HTMLButtonElement;
+  protected backToMenuButton: HTMLButtonElement;
   protected images: { [key: string]: { element: HTMLImageElement; src: string } };
   protected boardMap: number[][];
   protected cursor: number[];
@@ -37,6 +41,10 @@ class Game {
     this.boardCanvas = document.createElement('canvas');
     this.itemCanvas = document.createElement('canvas');
     this.cursorCanvas = document.createElement('canvas');
+    this.panelCanvas = document.createElement('canvas');
+
+    this.newGameButton = document.createElement('button');
+    this.backToMenuButton = document.createElement('button');
 
     this.images = {
       statueRed: {
@@ -85,6 +93,16 @@ class Game {
         type: 'click',
         listener: onBoardClick.bind(this),
       },
+      {
+        target: this.newGameButton,
+        type: 'click',
+        listener: onNewGameButtonClick.bind(this),
+      },
+      {
+        target: this.backToMenuButton,
+        type: 'click',
+        listener: () => console.log('Back to menu'),
+      },
     ];
 
     this.players = {
@@ -107,7 +125,7 @@ class Game {
     });
   }
 
-  public render(): void {
+  private render(): void {
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);
