@@ -1,4 +1,4 @@
-import { PageComponent } from '../common/Page';
+import { PageComponent } from '../core/Page';
 
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
 

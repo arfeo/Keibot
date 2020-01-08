@@ -1,4 +1,4 @@
-import { MenuComponent } from '../common/Menu';
+import { MenuComponent } from '../core/Menu';
 import { Game } from '../Game';
 
 import { APP } from '../../constants/game';
