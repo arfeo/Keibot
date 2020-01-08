@@ -6,8 +6,8 @@ interface Images {
 }
 
 export abstract class PageComponent {
-  protected eventHandlers: EventHandler[];
-  protected images: Images;
+  public eventHandlers: EventHandler[];
+  public images: Images;
   public init?(...args: any[]): Promise<any> | void;
   public abstract render(): void;
   public beforeUnmount?(): void;
