@@ -363,6 +363,19 @@ function renderPanel(): void {
     },
   );
 
+  // Red statues captured by the blue player
+  for (let x = 0; x < 3; x += 1) {
+    if (x < this.players.blue.captured) {
+      ctx.drawImage(
+        this.images.statueRed.element,
+        this.cellSize + this.cellSize / 1.5 * x,
+        this.cellSize * 2.2,
+        this.cellSize / 2,
+        this.cellSize / 2,
+      );
+    }
+  }
+
   // Red beads
   let redBeadsCounter = 0;
 
@@ -388,6 +401,19 @@ function renderPanel(): void {
     }
   }
 
+  // Blue statues captured by the red player
+  for (let x = 0; x < 3; x += 1) {
+    if (x < this.players.red.captured) {
+      ctx.drawImage(
+        this.images.statueBlue.element,
+        this.cellSize + this.cellSize / 1.5 * x,
+        this.cellSize * 4.7,
+        this.cellSize / 2,
+        this.cellSize / 2,
+      );
+    }
+  }
+
   // Blue beads
   let blueBeadsCounter = 0;
 
@@ -401,7 +427,7 @@ function renderPanel(): void {
             + this.cellSize / 1.5
             + this.cellSize / 15 * x
             + this.cellSize / 10),
-          this.cellSize * 5.5 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 5,
+          this.cellSize * 5.4 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 5,
           this.cellSize / 5,
           {
             fillColor: ELEMENTS_COLORS.bead.blue,
