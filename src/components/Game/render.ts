@@ -1,7 +1,7 @@
 import { BEADS_COUNT, ELEMENTS_COLORS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing } from './actions';
+import { checkBeadsPlacing, processGameOver } from './actions';
 
 /**
  * Function creates all needed game window elements
@@ -280,6 +280,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   const enemyType: number = itemType === 1 ? 3 : 1;
   const playerType: string = itemType === 1 ? 'red' : 'blue';
+  let isGameOver = false;
 
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
@@ -288,8 +289,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
     this.players[playerType].captured += 1;
 
     if (this.players[playerType].captured === 3) {
-      // TODO: GAME OVER: make it louder!
-      console.log(itemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+      isGameOver = true;
     }
   }
 
@@ -316,18 +316,22 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   clearCanvas.call(this, this.cursorCanvas);
 
   // End of turn
-  this.players = {
-    red: {
-      ...this.players.red,
-      active: itemType === 3,
-    },
-    blue: {
-      ...this.players.blue,
-      active: itemType === 1,
-    },
-  };
+  if (!isGameOver) {
+    this.players = {
+      red: {
+        ...this.players.red,
+        active: itemType === 3,
+      },
+      blue: {
+        ...this.players.blue,
+        active: itemType === 1,
+      },
+    };
 
-  renderPanel.call(this);
+    renderPanel.call(this);
+  } else {
+    processGameOver.call(this, itemType);
+  }
 }
 
 /**

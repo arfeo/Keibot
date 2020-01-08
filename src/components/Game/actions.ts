@@ -1,4 +1,4 @@
-import { renderMapItem } from './render';
+import { renderMapItem, renderPanel } from './render';
 
 /**
  * Function checks the ability of a statue with the given coordinates to move;
@@ -122,8 +122,7 @@ function checkBeadsPlacing(x: number, y: number): void {
     this.players[playerType].beads -= 1;
 
     if (this.players[playerType].beads === 0) {
-      // TODO: GAME OVER: make it louder!
-      console.log(itemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+      processGameOver.call(this, itemType);
     }
 
     // TODO: Check for 3 beads in a row (horizontally, vertically, or diagonally)
@@ -166,8 +165,31 @@ function checkBeadsPlacing(x: number, y: number): void {
   }
 }
 
+/**
+ * Function deactivates both users and re-renders the game panel
+ * on game over
+ */
+function processGameOver(lastItemType: number): void {
+  this.players = {
+    red: {
+      ...this.players.red,
+      active: false,
+    },
+    blue: {
+      ...this.players.blue,
+      active: false,
+    },
+  };
+
+  renderPanel.call(this);
+
+  // TODO: GAME OVER: make it louder!
+  console.log(lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+}
+
 export {
   checkPossibleMoves,
   checkMoveToCell,
   checkBeadsPlacing,
+  processGameOver,
 };
