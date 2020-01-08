@@ -207,13 +207,6 @@ function checkThreeInARow(): boolean {
       const item = this.boardMap[y][x];
 
       if (item === 2 || item === 4) {
-        if (
-          this.boardMap[y][x - 1] === item
-          || (this.boardMap[y - 1] !== undefined && this.boardMap[y - 1][x] === item)
-        ) {
-          break;
-        }
-
         if (this.boardMap[y][x + 1] === item && this.boardMap[y][x + 2] === item) {
           return true;
         }
