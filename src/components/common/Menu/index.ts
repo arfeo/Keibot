@@ -60,6 +60,7 @@ export abstract class MenuComponent extends PageComponent {
 
     menuContainer.className = 'menuContainer';
 
+    this.appRoot = this.appRoot ?? document.body;
     this.appRoot.innerHTML = '';
     this.appRoot.appendChild(menuContainer);
 
