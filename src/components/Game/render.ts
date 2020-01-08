@@ -276,7 +276,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
     if (this.players[playerType].captured === 3) {
       // TODO: GAME OVER: make it louder!
-      console.log(itemType === 1 ? 'You lost!' : 'You win!');
+      console.log(itemType === 1 ? 'Red player wins!' : 'Blue player wins!');
     }
   }
 
@@ -301,6 +301,18 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   checkBeadsPlacing.call(this, cellX, cellY);
 
   clearCanvas.call(this, this.cursorCanvas);
+
+  // End of turn
+  this.players = {
+    red: {
+      ...this.players.red,
+      active: itemType === 3,
+    },
+    blue: {
+      ...this.players.blue,
+      active: itemType === 1,
+    },
+  };
 }
 
 /**

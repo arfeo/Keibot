@@ -123,7 +123,7 @@ function checkBeadsPlacing(x: number, y: number): void {
 
     if (this.players[playerType].beads === 0) {
       // TODO: GAME OVER: make it louder!
-      console.log(itemType === 1 ? 'You lost!' : 'You win!');
+      console.log(itemType === 1 ? 'Red player wins!' : 'Blue player wins!');
     }
 
     // TODO: Check for 3 beads in a row (horizontally, vertically, or diagonally)

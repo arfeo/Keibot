@@ -54,8 +54,10 @@ function onBoardClick(event: MouseEvent): void {
   const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / this.boardSize;
   const x: number = Math.trunc(event.offsetX / actualCellSize);
   const y: number = Math.trunc(event.offsetY / actualCellSize);
+  const isRedTurn: boolean = this.players.red.active;
+  const isBlueTurn: boolean = this.players.blue.active;
 
-  if (this.boardMap[y][x] === 3) {
+  if ((isRedTurn && this.boardMap[y][x] === 1) || (isBlueTurn && this.boardMap[y][x] === 3)) {
     clearCanvas.call(this, this.cursorCanvas);
 
     // Remove cursor if we click on an item which was already selected before

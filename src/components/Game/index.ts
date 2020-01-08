@@ -64,10 +64,12 @@ class Game {
     this.boardMap = [...new Array(this.boardSize)].map((itemY: number[], index: number): number[] => {
       const itemX: number[] = new Array(this.boardSize).fill(0);
 
+      // Always place initially four red statues in the top left corner of the game board
       if (index === 0 || index === 1) {
         itemX[0] = itemX[1] = 1;
       }
 
+      // Always place initially four blue statues in the bottom right corner of the game board
       if (index === this.boardSize - 2 || index === this.boardSize - 1) {
         itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = 3;
       }
@@ -89,10 +91,12 @@ class Game {
       red: {
         captured: 0,
         beads: 10,
+        active: false,
       },
       blue: {
         captured: 0,
         beads: 10,
+        active: true,
       },
     };
 
