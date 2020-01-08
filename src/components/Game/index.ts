@@ -1,15 +1,17 @@
 import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
-import { setCellSize, waitForImagesLoad } from './helpers';
-import { animateCursor } from './animations';
 
 import {
-  onBoardClick,
-  removeEventHandlers,
+  setCellSize,
+  waitForImagesLoad,
   setUpEventHandlers,
-  onNewGameButtonClick,
-} from './events';
+  removeEventHandlers,
+} from './helpers';
+
+import { animateCursor } from './animations';
+
+import { onBoardClick, onNewGameButtonClick } from './events';
 
 import { Player } from '../../typings/game';
 

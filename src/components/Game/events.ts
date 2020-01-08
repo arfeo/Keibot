@@ -6,50 +6,6 @@ import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
 
 /**
- * Helper function which creates all game's event listeners
- */
-function setUpEventHandlers(): void {
-  if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
-    return;
-  }
-
-  for (const prop of this.eventHandlers) {
-    const { target, type, listener } = prop;
-    const element: HTMLElement = target instanceof Element || target instanceof HTMLDocument
-      ? target as HTMLElement
-      : document.getElementById(target as string);
-
-    if (!element) {
-      break;
-    }
-
-    element.addEventListener(type, listener);
-  }
-}
-
-/**
- * Helper function which removes all game's event listeners
- */
-function removeEventHandlers(): void {
-  if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
-    return;
-  }
-
-  for (const prop of this.eventHandlers) {
-    const { target, type, listener } = prop;
-    const element: HTMLElement = target instanceof Element || target instanceof HTMLDocument
-      ? target as HTMLElement
-      : document.getElementById(target as string);
-
-    if (!element) {
-      break;
-    }
-
-    element.removeEventListener(type, listener);
-  }
-}
-
-/**
  * Function fires on the cursor canvas click event
  *
  * @param event
@@ -91,8 +47,6 @@ function onNewGameButtonClick(): void {
 }
 
 export {
-  setUpEventHandlers,
-  removeEventHandlers,
   onBoardClick,
   onNewGameButtonClick,
 };
