@@ -36,7 +36,7 @@ function waitForImagesLoad(images: { [key: string]: { element: HTMLImageElement;
     images[key].element.src = images[key].src;
 
     images[key].element.onload = () => {
-      resolve();
+      return resolve();
     };
   })));
 }
