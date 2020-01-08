@@ -40,7 +40,6 @@
 
     .-panel-canvas {
       margin: $mainMargin $mainMargin 0 0;
-      border: 1px solid red;
       width: calc(#{$cellSize} * 4);
       height: calc(#{$cellSize} * 7);
     }

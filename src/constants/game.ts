@@ -10,6 +10,8 @@ export const CELL_SIZE_VMIN = 10;
 
 export const DEFAULT_BOARD_SIZE = 8;
 
+export const BEADS_COUNT = 10;
+
 export const ELEMENTS_COLORS: HashMap = {
   cell: {
     background: 'rgb(192, 192, 192)',
@@ -27,6 +29,10 @@ export const ELEMENTS_COLORS: HashMap = {
     border: 'rgb(255, 255, 255)',
   },
   bead: {
+    red: 'rgb(255, 0, 0)',
+    blue: 'rgb(0, 0, 255)',
+  },
+  panel: {
     red: 'rgb(255, 0, 0)',
     blue: 'rgb(0, 0, 255)',
   },

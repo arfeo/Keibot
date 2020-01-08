@@ -1,4 +1,4 @@
-import { ELEMENTS_COLORS } from '../../constants/game';
+import { BEADS_COUNT, ELEMENTS_COLORS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing } from './actions';
@@ -326,6 +326,92 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
       active: itemType === 1,
     },
   };
+
+  renderPanel.call(this);
+}
+
+/**
+ * Function renders the game panel which contains visual representation
+ * of captured statues count and beads count for each player
+ */
+function renderPanel(): void {
+  const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
+
+  clearCanvas.call(this, this.panelCanvas);
+
+  drawRectangle(
+    ctx,
+    this.cellSize * 0.5 / 2,
+    this.cellSize * 2,
+    this.cellSize * 3.5,
+    this.cellSize * 2,
+    {
+      edgingColor: ELEMENTS_COLORS.panel.red,
+      edgingWidth: this.players.red.active ? 10 : 2,
+    },
+  );
+
+  drawRectangle(
+    ctx,
+    this.cellSize * 0.5 / 2,
+    this.cellSize * 4.5,
+    this.cellSize * 3.5,
+    this.cellSize * 2,
+    {
+      edgingColor: ELEMENTS_COLORS.panel.blue,
+      edgingWidth: this.players.blue.active ? 10 : 2,
+    },
+  );
+
+  // Red beads
+  let redBeadsCounter = 0;
+
+  for (let y = 0; y < 2; y += 1) {
+    for (let x = 0; x < BEADS_COUNT / 2; x += 1) {
+      if (BEADS_COUNT - redBeadsCounter <= this.players.red.beads) {
+        drawCircle(
+          ctx,
+          (this.cellSize * 0.5 / 2
+            + this.cellSize / 2.5 * x
+            + this.cellSize / 1.5
+            + this.cellSize / 15 * x
+            + this.cellSize / 10),
+          this.cellSize * 3 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 10,
+          this.cellSize / 5,
+          {
+            fillColor: ELEMENTS_COLORS.bead.red,
+          },
+        );
+      }
+
+      redBeadsCounter += 1;
+    }
+  }
+
+  // Blue beads
+  let blueBeadsCounter = 0;
+
+  for (let y = 0; y < 2; y += 1) {
+    for (let x = 0; x < BEADS_COUNT / 2; x += 1) {
+      if (BEADS_COUNT - blueBeadsCounter <= this.players.blue.beads) {
+        drawCircle(
+          ctx,
+          (this.cellSize * 0.5 / 2
+            + this.cellSize / 2.5 * x
+            + this.cellSize / 1.5
+            + this.cellSize / 15 * x
+            + this.cellSize / 10),
+          this.cellSize * 5.5 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 5,
+          this.cellSize / 5,
+          {
+            fillColor: ELEMENTS_COLORS.bead.blue,
+          },
+        );
+      }
+
+      blueBeadsCounter += 1;
+    }
+  }
 }
 
 /**
@@ -351,5 +437,6 @@ export {
   renderMapItem,
   renderPossibleMoves,
   renderMove,
+  renderPanel,
   clearCanvas,
 };

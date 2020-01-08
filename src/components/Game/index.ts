@@ -1,6 +1,6 @@
-import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE } from '../../constants/game';
+import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
 
-import { renderGameWindow, renderGrid, renderMap } from './render';
+import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { setCellSize, waitForImagesLoad } from './helpers';
 import { animateCursor } from './animations';
 
@@ -108,12 +108,12 @@ class Game {
     this.players = {
       red: {
         captured: 0,
-        beads: 10,
+        beads: BEADS_COUNT,
         active: false,
       },
       blue: {
         captured: 0,
-        beads: 10,
+        beads: BEADS_COUNT,
         active: true,
       },
     };
@@ -129,6 +129,7 @@ class Game {
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);
+    renderPanel.call(this);
     animateCursor.call(this);
     setUpEventHandlers.call(this);
   }
