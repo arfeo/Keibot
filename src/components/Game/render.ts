@@ -30,7 +30,7 @@ function renderGameWindow(): void {
   this.panelCanvas.height = this.cellSize * 7;
 
   this.appRoot.innerHTML = '';
-  this.newGameButton.innerText = 'New game...';
+  this.newGameButton.innerText = 'New game';
   this.backToMenuButton.innerText = 'Back to menu';
 
   this.appRoot.appendChild(gameWindow);
@@ -350,7 +350,7 @@ function renderPanel(): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENTS_COLORS.panel.red,
-      edgingWidth: this.players.red.active ? 10 : 2,
+      edgingWidth: this.players.red.active ? 15 : 2,
     },
   );
 
@@ -362,7 +362,7 @@ function renderPanel(): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENTS_COLORS.panel.blue,
-      edgingWidth: this.players.blue.active ? 10 : 2,
+      edgingWidth: this.players.blue.active ? 15 : 2,
     },
   );
 
