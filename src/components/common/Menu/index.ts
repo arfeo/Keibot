@@ -32,10 +32,10 @@ export abstract class MenuComponent extends PageComponent {
 
   private static processElementProps(
     element: Partial<HTMLInputElement>,
-    menuItem: HashMap,
+    menuItem: { [key: string]: any },
     props: string[],
   ): Partial<HTMLInputElement> {
-    const elementCopy: Partial<HTMLInputElement> & HashMap = element;
+    const elementCopy: Partial<HTMLInputElement> & { [key: string]: any } = element;
 
     for (const prop of props) {
       if (menuItem[prop]) {
