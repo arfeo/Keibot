@@ -15,14 +15,15 @@ export abstract class PageComponent {
   public constructor(...args: any[]) {
     this.eventHandlers = [];
 
-    this.beforeMount(...args).then((): void => {
-      this.loadImages(this.images).then(() => {
-        typeof this.render === 'function' && this.render();
+    Promise.all([
+      this.beforeMount(...args),
+      this.loadImages(this.images),
+    ]).then(() => {
+      typeof this.render === 'function' && this.render();
 
-        if (Array.isArray(this.eventHandlers) && this.eventHandlers.length > 0) {
-          this.setUpEventHandlers();
-        }
-      });
+      if (Array.isArray(this.eventHandlers) && this.eventHandlers.length > 0) {
+        this.setUpEventHandlers();
+      }
     });
   }
 
