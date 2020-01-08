@@ -27,7 +27,7 @@ export abstract class PageComponent {
     });
   }
 
-  private async beforeMount(...args: any[]): Promise<void> {
+  protected async beforeMount(...args: any[]): Promise<void> {
     typeof this.init === 'function' && await this.init(...args);
 
     return Promise.resolve();
