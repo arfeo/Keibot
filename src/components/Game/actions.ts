@@ -190,10 +190,7 @@ function processGameOver(lastItemType: number): void {
     },
   };
 
-  renderPanel.call(this);
-
-  // TODO: GAME OVER: make it louder!
-  console.log(lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+  renderPanel.call(this, lastItemType);
 }
 
 /**

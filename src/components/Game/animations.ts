@@ -1,4 +1,4 @@
-import { ELEMENTS_COLORS } from '../../constants/game';
+import { ELEMENT_PROPS } from '../../constants/game';
 
 import { drawRectangle } from '../../utils/drawing';
 
@@ -30,7 +30,7 @@ function animateCursor(): void {
         this.cellSize - this.cellSize / 20,
         {
           edgingWidth: this.cellSize / 20,
-          edgingColor: ELEMENTS_COLORS.cursor[`border${state}`],
+          edgingColor: ELEMENT_PROPS.cursor[`border${state}`],
         },
       );
     }

@@ -1,4 +1,4 @@
-import { BEADS_COUNT, ELEMENTS_COLORS } from '../../constants/game';
+import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, processGameOver } from './actions';
@@ -77,8 +77,8 @@ function renderGridCell(x: number, y: number): void {
     this.cellSize,
     this.cellSize,
     {
-      fillColor: ELEMENTS_COLORS.cell.background,
-      edgingColor: ELEMENTS_COLORS.cell.border,
+      fillColor: ELEMENT_PROPS.cell.background,
+      edgingColor: ELEMENT_PROPS.cell.border,
       edgingWidth: 2,
     },
   );
@@ -95,7 +95,7 @@ function renderGridCell(x: number, y: number): void {
 
     if (randomSize > 1) {
       ctx.shadowBlur = 10;
-      ctx.shadowColor = ELEMENTS_COLORS.cell.shadow;
+      ctx.shadowColor = ELEMENT_PROPS.cell.shadow;
     }
 
     ctx.fillStyle = `hsla(0, 0%, 0%, .${randomOpacityOne + randomOpacityTwo})`;
@@ -114,7 +114,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top],
     [left, top + this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENTS_COLORS.cell.border,
+      fillColor: ELEMENT_PROPS.cell.border,
     },
   );
 
@@ -124,7 +124,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top],
     [left + this.cellSize, top + this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENTS_COLORS.cell.border,
+      fillColor: ELEMENT_PROPS.cell.border,
     },
   );
 
@@ -134,7 +134,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top + this.cellSize],
     [left, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENTS_COLORS.cell.border,
+      fillColor: ELEMENT_PROPS.cell.border,
     },
   );
 
@@ -144,7 +144,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top + this.cellSize],
     [left + this.cellSize, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENTS_COLORS.cell.border,
+      fillColor: ELEMENT_PROPS.cell.border,
     },
   );
 }
@@ -211,7 +211,7 @@ function renderMapItem(x: number, y: number): void {
       posY,
       20,
       {
-        fillColor: item === 2 ? ELEMENTS_COLORS.bead.red : ELEMENTS_COLORS.bead.blue,
+        fillColor: item === 2 ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
       },
     );
   }
@@ -254,8 +254,8 @@ function renderPossibleMoves(moves: number[][]): void {
       posY,
       10,
       {
-        fillColor: ELEMENTS_COLORS.move.background,
-        edgingColor: ELEMENTS_COLORS.move.border,
+        fillColor: ELEMENT_PROPS.move.background,
+        edgingColor: ELEMENT_PROPS.move.border,
         edgingWidth: 4,
       },
     );
@@ -337,10 +337,23 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
  * Function renders the game panel which contains visual representation
  * of captured statues count and beads count for each player
  */
-function renderPanel(): void {
+function renderPanel(lastItemType?: number): void {
   const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
 
   clearCanvas.call(this, this.panelCanvas);
+
+  if (this.isGameOver === true && lastItemType !== undefined) {
+    ctx.font = ELEMENT_PROPS.gameOver.font;
+    ctx.fillStyle = ELEMENT_PROPS.gameOver.color;
+    ctx.textAlign = ELEMENT_PROPS.gameOver.align;
+    ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
+
+    ctx.fillText(
+      lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!',
+      this.cellSize * 2,
+      this.cellSize,
+    );
+  }
 
   drawRectangle(
     ctx,
@@ -349,7 +362,7 @@ function renderPanel(): void {
     this.cellSize * 3.5,
     this.cellSize * 2,
     {
-      edgingColor: ELEMENTS_COLORS.panel.red,
+      edgingColor: ELEMENT_PROPS.panel.red,
       edgingWidth: this.players.red.active ? 15 : 2,
     },
   );
@@ -361,7 +374,7 @@ function renderPanel(): void {
     this.cellSize * 3.5,
     this.cellSize * 2,
     {
-      edgingColor: ELEMENTS_COLORS.panel.blue,
+      edgingColor: ELEMENT_PROPS.panel.blue,
       edgingWidth: this.players.blue.active ? 15 : 2,
     },
   );
@@ -395,7 +408,7 @@ function renderPanel(): void {
           this.cellSize * 3 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 10,
           this.cellSize / 5,
           {
-            fillColor: ELEMENTS_COLORS.bead.red,
+            fillColor: ELEMENT_PROPS.bead.red,
           },
         );
       }
@@ -433,7 +446,7 @@ function renderPanel(): void {
           this.cellSize * 5.4 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 5,
           this.cellSize / 5,
           {
-            fillColor: ELEMENTS_COLORS.bead.blue,
+            fillColor: ELEMENT_PROPS.bead.blue,
           },
         );
       }

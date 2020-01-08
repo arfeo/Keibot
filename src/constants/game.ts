@@ -12,7 +12,7 @@ export const DEFAULT_BOARD_SIZE = 8;
 
 export const BEADS_COUNT = 10;
 
-export const ELEMENTS_COLORS: HashMap = {
+export const ELEMENT_PROPS: HashMap = {
   cell: {
     background: 'rgb(192, 192, 192)',
     border: 'rgb(0, 0, 0)',
@@ -35,5 +35,11 @@ export const ELEMENTS_COLORS: HashMap = {
   panel: {
     red: 'rgb(255, 0, 0)',
     blue: 'rgb(0, 0, 255)',
+  },
+  gameOver: {
+    font: '700 4vmin Helvetica, Arial',
+    color: 'rgb(255, 255, 255)',
+    align: 'center',
+    baseline: 'middle',
   },
 };
