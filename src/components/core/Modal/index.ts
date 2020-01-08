@@ -1,14 +1,14 @@
 import { PageComponent } from '../Page';
 
 export abstract class ModalComponent {
-  public parent: PageComponent;
-  public modalContainer: HTMLElement;
-  public mask: HTMLElement;
-  public modalWindow: HTMLElement;
-  public modalClose: HTMLElement;
-  public modal: HTMLElement;
-  public modalContent: string;
-  public eventHandlers: EventHandler[];
+  protected parent: PageComponent;
+  protected modalContainer: HTMLElement;
+  protected mask: HTMLElement;
+  protected modalWindow: HTMLElement;
+  protected modalClose: HTMLElement;
+  protected modal: HTMLElement;
+  protected modalContent: string;
+  protected eventHandlers: EventHandler[];
   public init?(...args: any[]): Promise<any> | void;
   public abstract render(): void;
   public beforeUnmount?(): void;
@@ -119,7 +119,7 @@ export abstract class ModalComponent {
 
     this.modalContainer.remove();
 
-    if (restoreParentHandlers === true && Array.isArray(parentEventHandlers) && parentEventHandlers.length > 0) {
+    if (restoreParentHandlers && Array.isArray(parentEventHandlers) && parentEventHandlers.length > 0) {
       this.parent.setUpEventHandlers.call(this.parent);
     }
   }
