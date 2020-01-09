@@ -7,6 +7,8 @@ import { setCellSize } from './helpers';
 import { animateCursor } from './animations';
 import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
 
+import { getStorageData } from '../../utils/storage';
+
 import { Player } from '../../typings/game';
 
 class Game extends PageComponent {
@@ -26,12 +28,15 @@ class Game extends PageComponent {
   protected isGameOver: boolean;
 
   public init(): void {
+    const storageBoardSize: string | undefined = getStorageData('boardSize');
+    const storageFirstMove: string | undefined = getStorageData('firstMove');
+
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
 
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
 
-    this.boardSize = DEFAULT_BOARD_SIZE;
+    this.boardSize = storageBoardSize ? parseInt(storageBoardSize, 10) : DEFAULT_BOARD_SIZE;
 
     this.boardCanvas = document.createElement('canvas');
     this.itemCanvas = document.createElement('canvas');
@@ -104,12 +109,12 @@ class Game extends PageComponent {
       red: {
         captured: 0,
         beads: BEADS_COUNT,
-        active: false,
+        active: storageFirstMove === '1',
       },
       blue: {
         captured: 0,
         beads: BEADS_COUNT,
-        active: true,
+        active: storageFirstMove === '2' || storageFirstMove === undefined,
       },
     };
 
