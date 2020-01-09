@@ -68,6 +68,7 @@
       }
     ],
     "prefer-template": "warn",
+    "prefer-spread": "off",
     "max-len": [
       "warn",
       {
