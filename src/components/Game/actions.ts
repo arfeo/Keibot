@@ -96,10 +96,14 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
 
 /**
  * Function checks whether new beads are needed to be placed on the board or not
- * after placing a statue to a cell with the given coordinates
+ * after placing a statue to a cell with the given coordinates;
+ * if `countOnly` param is set to true, function doesn't actually place any beads
+ * on the map, but returns the total beads count instead
  *
  * @param x
  * @param y
+ * @param countOnly
+ * @param countFor
  */
 function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): void | number {
   const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
