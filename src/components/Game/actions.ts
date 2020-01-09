@@ -2,7 +2,7 @@ import { renderMapItem, renderPanel } from './render';
 
 /**
  * Function checks the ability of a statue with the given coordinates to move;
- * it returns an array of possible coordiantes or undefined if no statue found
+ * it returns an array of possible coordinates or undefined if no statue found
  * on the board by the given coordinates
  *
  * @param x
@@ -95,7 +95,7 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
 }
 
 /**
- * Function checks whether new neads are needed to be placed on the board or not
+ * Function checks whether new beads are needed to be placed on the board or not
  * after placing a statue to a cell with the given coordinates
  *
  * @param x
