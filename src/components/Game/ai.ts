@@ -1,9 +1,16 @@
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkPossibleMoves } from './actions';
+import { checkPossibleMoves, processGameOver } from './actions';
 import { renderMove } from './render';
 
 function aiMove(): void {
   const move: number[][] = aiChooseBestMove.call(this);
+
+  // No moves for computer -- the blue player wins
+  if (move.length === 0) {
+    this.isGameOver = true;
+
+    processGameOver.call(this, 3);
+  }
 
   // Computer is too quick, so we set a timeout
   window.setTimeout(() => {
@@ -18,6 +25,10 @@ function aiChooseBestMove(): number[][] {
   while(result.length === 0) {
     const randomStatue: number[] = ownStatues[getRandomNum(0, ownStatues.length - 1)];
     const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, randomStatue[1], randomStatue[0]);
+
+    if (possibleMoves === undefined || possibleMoves.length === 0) {
+      break;
+    }
 
     if (possibleMoves !== undefined && Array.isArray(possibleMoves)) {
       result = [
