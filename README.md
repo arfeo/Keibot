@@ -2,7 +2,7 @@
 
 A board game that combines elements of chess and tic-tac-toe with Easter Island-inspired graphics originally developed by Glen Solosky (released for the Macintosh in 1995).
 
-[![Keibot interface](https://static.arfeo.net/keibot/interface.png)](https://youtu.be/K1YZK74eRvI "Keibot interface")
+![Keibot interface](https://static.arfeo.net/keibot/interface.png)
 
 Live demo: https://tests.arfeo.net/keibot/
 
