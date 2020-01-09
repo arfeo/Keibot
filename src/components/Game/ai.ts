@@ -1,7 +1,15 @@
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkPossibleMoves, processGameOver } from './actions';
+import { checkBeadsPlacing, checkPossibleMoves, processGameOver } from './actions';
 import { renderMove } from './render';
 
+interface Move {
+  evaluation: number;
+  move: number[][];
+}
+
+/**
+ * Function renders the chosen best move
+ */
 function aiMove(): void {
   const move: number[][] = aiChooseBestMove.call(this);
 
@@ -18,25 +26,50 @@ function aiMove(): void {
   }, 1000);
 }
 
+/**
+ * Function finds all possible moves for all computer's statues,
+ * evaluates each of them, picks ones with the max evaluation,
+ * and returns one random move from the result array
+ */
 function aiChooseBestMove(): number[][] {
   const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
-  let result: number[][] = [];
+  const moves: Move[] = [];
 
-  while(result.length === 0) {
-    const randomStatue: number[] = ownStatues[getRandomNum(0, ownStatues.length - 1)];
-    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, randomStatue[1], randomStatue[0]);
+  for (const statue of ownStatues) {
+    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
 
-    if (possibleMoves === undefined || possibleMoves.length === 0) {
+    if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       break;
     }
 
-    if (possibleMoves !== undefined && Array.isArray(possibleMoves)) {
-      result = [
-        randomStatue,
-        possibleMoves[getRandomNum(0, possibleMoves.length - 1)],
-      ];
+    for (const possibleMove of possibleMoves) {
+      moves.push({
+        evaluation: aiEvaluateMove.call(this, possibleMove[1], possibleMove[0]),
+        move: [
+          statue,
+          possibleMove,
+        ],
+      });
     }
   }
+
+  const maxEvauation: number = Math.max.apply(Math, moves.map((i: Move): number => i.evaluation));
+  const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === maxEvauation);
+
+  return processedMoves[getRandomNum(0, processedMoves.length - 1)].move;
+}
+
+/**
+ * Function evaluates a computer's statue move by several parameters,
+ * and returns the total evaluation
+ *
+ * @param x
+ * @param y
+ */
+function aiEvaluateMove(x: number, y: number): number {
+  let result = 0;
+
+  result += checkBeadsPlacing.call(this, x, y, true, 1);
 
   return result;
 }
