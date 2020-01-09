@@ -80,7 +80,7 @@ class Settings extends MenuComponent {
         id: 'isComputerOn',
         type: 'checkbox',
         label: 'Computer plays',
-        checked: this.isComputerOn,
+        checked: this.isComputerOn || this.isComputerOn === undefined,
         style: 'display: flex; align-items: center',
         action: {
           type: 'change',
