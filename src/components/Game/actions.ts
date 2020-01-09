@@ -194,6 +194,49 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
 }
 
 /**
+ * Function checks is there any enemies within one turn reach about
+ * the cell with the given coordinates
+ *
+ * @param x
+ * @param y
+ */
+function checkUnderAttack(x: number, y: number): boolean {
+  const itemType = this.boardMap[y] ? this.boardMap[y][x] : 0;
+
+  if (itemType !== 1 && itemType !== 3) {
+    return false;
+  }
+
+  const enemyType: number = itemType === 1 ? 3 : 1;
+
+  if (this.boardMap[y - 2] !== undefined) {
+    if (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType) {
+      return true;
+    }
+  }
+
+  if (this.boardMap[y + 1] !== undefined) {
+    if (this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType) {
+      return true;
+    }
+  }
+
+  if (this.boardMap[y + 2] !== undefined) {
+    if (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType) {
+      return true;
+    }
+  }
+
+  if (this.boardMap[y - 1] !== undefined) {
+    if (this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Function deactivates both users and re-renders the game panel
  * on game over
  */
@@ -216,5 +259,6 @@ export {
   checkPossibleMoves,
   checkMoveToCell,
   checkBeadsPlacing,
+  checkUnderAttack,
   processGameOver,
 };
