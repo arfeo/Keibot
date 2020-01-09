@@ -15,7 +15,7 @@ export interface MenuItem {
 }
 
 export interface MenuItemOption {
-  value: string | number;
+  value: string;
   text: string;
   label?: string;
   selected?: boolean;
@@ -102,7 +102,7 @@ export abstract class MenuComponent extends PageComponent {
           for (const opt of item.options) {
             const option: HTMLOptionElement = document.createElement('option');
 
-            option.value = opt.value ? opt.value.toString() : '';
+            option.value = opt.value;
             option.text = opt.text;
             option.selected = opt.selected || false;
 
