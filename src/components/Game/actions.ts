@@ -101,10 +101,15 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
  * @param x
  * @param y
  */
-function checkBeadsPlacing(x: number, y: number): void {
-  const itemType: number = this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countForItem?: number): void | number {
+  const itemType: number = countForItem ?? this.boardMap[y] ? this.boardMap[y][x] : 0;
+  let count = 0;
 
   if (itemType !== 1 && itemType !== 3) {
+    if (countOnly === true) {
+      return count;
+    }
+
     return;
   }
 
@@ -120,20 +125,24 @@ function checkBeadsPlacing(x: number, y: number): void {
       return;
     }
 
-    this.boardMap[beadY][beadX] = ownBead;
+    if (!countOnly) {
+      this.boardMap[beadY][beadX] = ownBead;
 
-    renderMapItem.call(this, beadX, beadY);
+      renderMapItem.call(this, beadX, beadY);
 
-    this.players[playerType].beads -= 1;
+      this.players[playerType].beads -= 1;
 
-    // No beads left -- game over
-    if (this.players[playerType].beads === 0) {
-      this.isGameOver = true;
-    }
+      // No beads left -- game over
+      if (this.players[playerType].beads === 0) {
+        this.isGameOver = true;
+      }
 
-    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-    if (checkThreeInARow.call(this) === true) {
-      this.isGameOver = true;
+      // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
+      if (checkThreeInARow.call(this) === true) {
+        this.isGameOver = true;
+      }
+    } else {
+      count += 1;
     }
   };
 
@@ -171,6 +180,10 @@ function checkBeadsPlacing(x: number, y: number): void {
     if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0 && !this.isGameOver) {
       placeBeads(x + 1, y + 1);
     }
+  }
+
+  if (countOnly === true) {
+    return count;
   }
 }
 
