@@ -101,8 +101,8 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
  * @param x
  * @param y
  */
-function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countForItem?: number): void | number {
-  const itemType: number = countForItem ?? this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): void | number {
+  const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
   let count = 0;
 
   if (itemType !== 1 && itemType !== 3) {
@@ -120,12 +120,12 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countForIt
   // If we place a bead on the game board, we should reduce `beads` count of the
   // corresponding player object. If there's no beads left, the player wins.
   // If the player got three beads in a row, he also wins.
-  const placeBeads = (beadX: number, beadY: number): void => {
+  const placeBead = (beadX: number, beadY: number): void => {
     if (this.players[playerType].beads === 0) {
       return;
     }
 
-    if (!countOnly) {
+    if (countOnly !== true) {
       this.boardMap[beadY][beadX] = ownBead;
 
       renderMapItem.call(this, beadX, beadY);
@@ -142,43 +142,44 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countForIt
         this.isGameOver = true;
       }
     } else {
+
       count += 1;
     }
   };
 
   if (this.boardMap[y - 2] !== undefined) {
     if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0 && !this.isGameOver) {
-      placeBeads(x - 1, y - 1);
+      placeBead(x - 1, y - 1);
     }
 
     if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0 && !this.isGameOver) {
-      placeBeads(x, y - 1);
+      placeBead(x, y - 1);
     }
 
     if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0 && !this.isGameOver) {
-      placeBeads(x + 1, y - 1);
+      placeBead(x + 1, y - 1);
     }
   }
 
   if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0 && !this.isGameOver) {
-    placeBeads(x - 1, y);
+    placeBead(x - 1, y);
   }
 
   if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0 && !this.isGameOver) {
-    placeBeads(x + 1, y);
+    placeBead(x + 1, y);
   }
 
   if (this.boardMap[y + 2] !== undefined) {
     if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0 && !this.isGameOver) {
-      placeBeads(x - 1, y + 1);
+      placeBead(x - 1, y + 1);
     }
 
     if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0 && !this.isGameOver) {
-      placeBeads(x, y + 1);
+      placeBead(x, y + 1);
     }
 
     if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0 && !this.isGameOver) {
-      placeBeads(x + 1, y + 1);
+      placeBead(x + 1, y + 1);
     }
   }
 
