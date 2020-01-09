@@ -1,4 +1,5 @@
 import { renderMapItem, renderPanel } from './render';
+import { isThreeInARow } from './helpers';
 
 /**
  * Function checks the ability of a statue with the given coordinates to move;
@@ -142,7 +143,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
       }
 
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (checkThreeInARow.call(this) === true) {
+      if (isThreeInARow(this.boardMap) === true) {
         this.isGameOver = true;
       }
     } else {
@@ -209,51 +210,6 @@ function processGameOver(lastItemType: number): void {
   };
 
   renderPanel.call(this, lastItemType);
-}
-
-/**
- * Function checks whether there're three beads in a row on the game board
- * (vertically, horizontally, or diagonally)
- */
-function checkThreeInARow(): boolean {
-  if (!Array.isArray(this.boardMap)) {
-    return false;
-  }
-
-  for (let y = 0; y < this.boardMap.length; y += 1) {
-    for (let x = 0; x < this.boardMap[y].length; x += 1) {
-      const item = this.boardMap[y][x];
-
-      if (item === 2 || item === 4) {
-        if (this.boardMap[y][x + 1] === item && this.boardMap[y][x + 2] === item) {
-          return true;
-        }
-
-        if (
-          (this.boardMap[y + 1] !== undefined && this.boardMap[y + 1][x] === item)
-          && (this.boardMap[y + 2] !== undefined && this.boardMap[y + 2][x] === item)
-        ) {
-          return true;
-        }
-
-        if (
-          (this.boardMap[y + 1] !== undefined && this.boardMap[y + 1][x + 1] === item)
-          && (this.boardMap[y + 2] !== undefined && this.boardMap[y + 2][x + 2] === item)
-        ) {
-          return true;
-        }
-
-        if (
-          (this.boardMap[y + 1] !== undefined && this.boardMap[y + 1][x - 1] === item)
-          && (this.boardMap[y + 2] !== undefined && this.boardMap[y + 2][x - 2] === item)
-        ) {
-          return true;
-        }
-      }
-    }
-  }
-
-  return false;
 }
 
 export {
