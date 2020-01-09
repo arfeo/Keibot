@@ -355,8 +355,12 @@ function renderPanel(lastItemType?: number): void {
     ctx.textAlign = ELEMENT_PROPS.gameOver.align;
     ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
 
+    const message = this.isComputerOn
+      ? (lastItemType === 1 ? 'You lose!' : 'You win!')
+      : (lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+
     ctx.fillText(
-      lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!',
+      message,
       this.cellSize * 2,
       this.cellSize,
     );
