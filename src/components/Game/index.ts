@@ -28,15 +28,15 @@ class Game extends PageComponent {
   protected isGameOver: boolean;
 
   public init(): void {
-    const storageBoardSize: string | undefined = getStorageData('boardSize');
-    const storageFirstMove: string | undefined = getStorageData('firstMove');
+    const storageBoardSize: number | undefined = getStorageData('boardSize');
+    const storageFirstMove: number | undefined = getStorageData('firstMove');
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
 
     this.cellSize = setCellSize(CELL_SIZE_VMIN);
 
-    this.boardSize = storageBoardSize ? parseInt(storageBoardSize, 10) : DEFAULT_BOARD_SIZE;
+    this.boardSize = storageBoardSize ?? DEFAULT_BOARD_SIZE;
 
     this.boardCanvas = document.createElement('canvas');
     this.itemCanvas = document.createElement('canvas');
@@ -109,12 +109,12 @@ class Game extends PageComponent {
       red: {
         captured: 0,
         beads: BEADS_COUNT,
-        active: storageFirstMove === '1',
+        active: storageFirstMove === 1,
       },
       blue: {
         captured: 0,
         beads: BEADS_COUNT,
-        active: storageFirstMove === '2' || storageFirstMove === undefined,
+        active: storageFirstMove === 2 || storageFirstMove === undefined,
       },
     };
 

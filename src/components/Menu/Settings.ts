@@ -6,8 +6,8 @@ import { APP } from '../../constants/game';
 import { saveStorageData, getStorageData } from '../../utils/storage';
 
 class Settings extends MenuComponent {
-  protected firstMove: string;
-  protected boardSize: string;
+  protected firstMove: number | undefined;
+  protected boardSize: number | undefined;
 
   public init(): void {
     this.appRoot = document.getElementById('root');
@@ -34,18 +34,18 @@ class Settings extends MenuComponent {
           {
             value: '1',
             text: 'Red',
-            selected: this.firstMove === '1',
+            selected: this.firstMove === 1,
           },
           {
             value: '2',
             text: 'Blue',
-            selected: this.firstMove === '2' || this.firstMove === undefined,
+            selected: this.firstMove === 2 || this.firstMove === undefined,
           },
         ],
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
-            saveStorageData('firstMove', event.target.value);
+            saveStorageData('firstMove', parseInt(event.target.value, 10));
           },
         },
       },
@@ -59,18 +59,18 @@ class Settings extends MenuComponent {
           {
             value: '7',
             text: '7x7',
-            selected: this.boardSize === '7',
+            selected: this.boardSize === 7,
           },
           {
             value: '8',
             text: '8x8',
-            selected: this.boardSize === '8' || this.boardSize === undefined,
+            selected: this.boardSize === 8 || this.boardSize === undefined,
           },
         ],
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
-            saveStorageData('boardSize', event.target.value);
+            saveStorageData('boardSize', parseInt(event.target.value, 10));
           },
         },
       },
