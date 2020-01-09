@@ -1,5 +1,5 @@
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkBeadsPlacing, checkPossibleMoves, processGameOver } from './actions';
+import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack, processGameOver } from './actions';
 import { renderMove } from './render';
 
 interface Move {
@@ -44,7 +44,7 @@ function aiChooseBestMove(): number[][] {
 
     for (const possibleMove of possibleMoves) {
       moves.push({
-        evaluation: aiEvaluateMove.call(this, possibleMove[1], possibleMove[0]),
+        evaluation: aiEvaluateMove.call(this, possibleMove[1], possibleMove[0], statue),
         move: [
           statue,
           possibleMove,
@@ -65,11 +65,28 @@ function aiChooseBestMove(): number[][] {
  *
  * @param x
  * @param y
+ * @param item
  */
-function aiEvaluateMove(x: number, y: number): number {
+function aiEvaluateMove(x: number, y: number, item: number[]): number {
+  const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
+  const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
+    return statue[1] !== item[1] && statue[0] !== item[0];
+  });
+
   let result = 0;
 
+  // Count of beads to be placed (positive)
   result += checkBeadsPlacing.call(this, x, y, true, 1);
+
+  // Is there an enemy statue on the target cell (positive)
+  if (this.boardMap[y][x] === 3) {
+    result += 2;
+  }
+
+  // Is there any other statue under attack (negative)
+  if (otherStatues.map((s: number[]) => checkUnderAttack.call(this, s[1], s[0])).some((r: boolean) => r === true)) {
+    result -= 2;
+  }
 
   return result;
 }
