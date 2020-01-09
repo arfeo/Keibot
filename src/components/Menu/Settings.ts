@@ -34,12 +34,12 @@ class Settings extends MenuComponent {
           {
             value: '1',
             text: 'Red',
-            selected: this.firstMove === '1' || this.firstMove === undefined,
+            selected: this.firstMove === '1',
           },
           {
             value: '2',
             text: 'Blue',
-            selected: this.firstMove === '2',
+            selected: this.firstMove === '2' || this.firstMove === undefined,
           },
         ],
         action: {
@@ -59,12 +59,12 @@ class Settings extends MenuComponent {
           {
             value: '7',
             text: '7x7',
-            selected: this.boardSize === '7' || this.boardSize === undefined,
+            selected: this.boardSize === '7',
           },
           {
             value: '8',
             text: '8x8',
-            selected: this.boardSize === '8',
+            selected: this.boardSize === '8' || this.boardSize === undefined,
           },
         ],
         action: {
