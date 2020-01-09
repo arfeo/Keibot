@@ -75,6 +75,11 @@
       }
     }
 
+    input[type=checkbox],
+    input[type=radio] {
+      margin: 0 1.5vmin 0 0;
+    }
+
     select {
       width: 100%;
       font-size: 3vmin;

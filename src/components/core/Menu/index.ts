@@ -12,6 +12,7 @@ export interface MenuItem {
   autocomplete?: string;
   options?: MenuItemOption[];
   action?: MenuItemAction;
+  style?: string;
 }
 
 export interface MenuItemOption {
@@ -71,6 +72,10 @@ export abstract class MenuComponent extends PageComponent {
 
       menuItem.className = 'menuItem';
 
+      if (item.style) {
+        menuItem.style.cssText = item.style;
+      }
+
       menuContainer.appendChild(menuItem);
 
       // TODO: radio groups
@@ -92,7 +97,7 @@ export abstract class MenuComponent extends PageComponent {
           menuElement = MenuComponent.processElementProps(menuElement, item, ['type', 'name', 'checked']);
 
           elementLabel = document.createElement('label');
-          elementLabel.htmlFor = `${item.type}-${item.id}`;
+          elementLabel.htmlFor = item.id;
           elementLabel.innerHTML = item.label || '';
           break;
         }
