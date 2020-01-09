@@ -25,7 +25,6 @@ Capture your opponent's statues by landing on them (except for the last to move 
 ## Scheduled features
    
 - [ ] Timers
-- [ ] Computer player
 
 ## Installation
 

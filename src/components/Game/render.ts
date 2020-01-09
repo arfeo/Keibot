@@ -2,6 +2,7 @@ import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, processGameOver } from './actions';
+import { aiMove } from './ai';
 
 /**
  * Function creates all needed game window elements
@@ -315,6 +316,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   clearCanvas.call(this, this.cursorCanvas);
 
   // End of turn
+  // TODO: check possible moves for the next player
   if (!this.isGameOver) {
     this.players = {
       red: {
@@ -328,6 +330,11 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
     };
 
     renderPanel.call(this);
+
+    // Computer plays if it's on
+    if (itemType === 3 && this.isComputerOn === true) {
+      aiMove.call(this);
+    }
   } else {
     processGameOver.call(this, itemType);
   }

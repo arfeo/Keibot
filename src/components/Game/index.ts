@@ -6,6 +6,7 @@ import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { setCellSize } from './helpers';
 import { animateCursor } from './animations';
 import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
+import { aiMove } from './ai';
 
 import { getStorageData } from '../../utils/storage';
 
@@ -25,11 +26,13 @@ class Game extends PageComponent {
   protected cursor: number[];
   protected players: { [key: string]: Player };
   protected lockedCell: number[];
+  protected isComputerOn: boolean;
   protected isGameOver: boolean;
 
   public init(): void {
     const storageBoardSize: number | undefined = getStorageData('boardSize');
     const storageFirstMove: number | undefined = getStorageData('firstMove');
+    const storageIsComputerOn: boolean | undefined = getStorageData('isComputerOn');
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
@@ -120,6 +123,8 @@ class Game extends PageComponent {
 
     this.lockedCell = [];
 
+    this.isComputerOn = storageIsComputerOn ?? true;
+
     this.isGameOver = false;
   }
 
@@ -128,7 +133,13 @@ class Game extends PageComponent {
     renderGrid.call(this);
     renderMap.call(this);
     renderPanel.call(this);
+
     animateCursor.call(this);
+
+    // Computer plays if it's on, and the red player is the first to move
+    if (this.isComputerOn === true && this.players.red.active === true) {
+      aiMove.call(this);
+    }
   }
 }
 

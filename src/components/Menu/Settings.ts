@@ -8,11 +8,13 @@ import { saveStorageData, getStorageData } from '../../utils/storage';
 class Settings extends MenuComponent {
   protected firstMove: number | undefined;
   protected boardSize: number | undefined;
+  protected isComputerOn: boolean | undefined;
 
   public init(): void {
     this.appRoot = document.getElementById('root');
     this.firstMove = getStorageData('firstMove');
     this.boardSize = getStorageData('boardSize');
+    this.isComputerOn = getStorageData('isComputerOn');
 
     this.items = [
       {
@@ -71,6 +73,19 @@ class Settings extends MenuComponent {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
             saveStorageData('boardSize', parseInt(event.target.value, 10));
+          },
+        },
+      },
+      {
+        id: 'isComputerOn',
+        type: 'checkbox',
+        label: 'Computer plays (Red)',
+        checked: this.isComputerOn || this.isComputerOn === undefined,
+        style: 'display: flex; align-items: center',
+        action: {
+          type: 'change',
+          handler: (event: Event & { target: { value: string; checked: boolean }}) => {
+            saveStorageData('isComputerOn', event.target.checked);
           },
         },
       },
