@@ -1,6 +1,7 @@
 import { MenuComponent } from '../core/Menu';
 import { Game } from '../Game';
 import { Alert } from '../common/Alert';
+import { Settings } from './Settings';
 
 import { APP } from '../../constants/game';
 
@@ -33,11 +34,12 @@ class Menu extends MenuComponent {
     this.items = [
       {
         type: 'html',
-        value: (`
-          <p>Keibot</p>
-          <hr />
-        `),
+        value: 'Keibot',
         className: 'h1',
+      },
+      {
+        type: 'html',
+        value: '<hr />',
       },
       {
         type: 'button',
@@ -57,7 +59,9 @@ class Menu extends MenuComponent {
         action: {
           type: 'click',
           handler: () => {
-            console.log('Settings');
+            this.destroy();
+
+            APP.pageInstance = new Settings();
           },
         },
       },
