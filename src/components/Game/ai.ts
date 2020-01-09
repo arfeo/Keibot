@@ -53,8 +53,8 @@ function aiChooseBestMove(): number[][] {
     }
   }
 
-  const maxEvauation: number = Math.max.apply(Math, moves.map((i: Move): number => i.evaluation));
-  const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === maxEvauation);
+  const maxEvaluation: number = Math.max.apply(Math, moves.map((i: Move): number => i.evaluation));
+  const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === maxEvaluation);
 
   return processedMoves[getRandomNum(0, processedMoves.length - 1)].move;
 }
@@ -69,10 +69,7 @@ function aiChooseBestMove(): number[][] {
  */
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
   const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
-  const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
-    return statue[1] !== item[1] && statue[0] !== item[0];
-  });
-
+  const otherStatues: number[][] = ownStatues.filter((s: number[]) => JSON.stringify(s) !== JSON.stringify(item));
   let result = 0;
 
   // Count of beads to be placed (positive)
