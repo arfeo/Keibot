@@ -1,4 +1,4 @@
-interface Images {
+export interface Images {
   [key: string]: {
     element: HTMLImageElement;
     src: string;

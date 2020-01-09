@@ -4,7 +4,7 @@ import { Alert } from '../common/Alert';
 
 import { APP } from '../../constants/game';
 
-export class Menu extends MenuComponent {
+class Menu extends MenuComponent {
   protected helpMessage: string;
 
   public init(): void {
@@ -74,3 +74,5 @@ export class Menu extends MenuComponent {
     ];
   }
 }
+
+export { Menu };
