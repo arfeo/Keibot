@@ -316,6 +316,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   clearCanvas.call(this, this.cursorCanvas);
 
   // End of turn
+  // TODO: check possible moves for the next player
   if (!this.isGameOver) {
     this.players = {
       red: {
