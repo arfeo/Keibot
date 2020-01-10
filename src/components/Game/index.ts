@@ -28,6 +28,7 @@ class Game extends PageComponent {
   protected lockedCell: number[];
   protected isComputerOn: boolean;
   protected isGameOver: boolean;
+  protected isMoving: boolean;
 
   public init(): void {
     const storageBoardSize: number | undefined = getStorageData('boardSize');
@@ -126,6 +127,8 @@ class Game extends PageComponent {
     this.isComputerOn = storageIsComputerOn ?? true;
 
     this.isGameOver = false;
+
+    this.isMoving = false;
   }
 
   public render(): void {

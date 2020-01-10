@@ -12,6 +12,8 @@ export const DEFAULT_BOARD_SIZE = 8;
 
 export const BEADS_COUNT = 10;
 
+export const FADE_OUT_ANIMATION_SPEED = 0.2;
+
 export const ELEMENT_PROPS: HashMap = {
   cell: {
     background: 'rgb(192, 192, 192)',

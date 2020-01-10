@@ -18,6 +18,10 @@ function onBoardClick(event: MouseEvent): void {
   const isRedTurn: boolean = this.players.red.active;
   const isBlueTurn: boolean = this.players.blue.active;
 
+  if (this.isMoving === true) {
+    return;
+  }
+
   if ((isRedTurn && this.boardMap[y][x] === 1 && !this.isComputerOn) || (isBlueTurn && this.boardMap[y][x] === 3)) {
     clearCanvas.call(this, this.cursorCanvas);
 
@@ -42,6 +46,10 @@ function onBoardClick(event: MouseEvent): void {
  * Function destroys current game and creates a new instance of the `Game` class
  */
 function onNewGameButtonClick(): void {
+  if (this.isMoving === true) {
+    return;
+  }
+
   this.destroy();
 
   APP.pageInstance = new Game();
@@ -51,6 +59,10 @@ function onNewGameButtonClick(): void {
  * Function destroys current game and creates a new instance of the `Menu` class
  */
 function onBackToMenuButtonClick(): void {
+  if (this.isMoving === true) {
+    return;
+  }
+
   this.destroy();
 
   APP.pageInstance = new Menu();

@@ -2,6 +2,7 @@ import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, processGameOver } from './actions';
+import { animateItemFadeOut, animateItemFadeIn } from './animations';
 import { aiMove } from './ai';
 
 /**
@@ -279,65 +280,69 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
     return;
   }
 
-  const enemyType: number = itemType === 1 ? 3 : 1;
-  const playerType: string = itemType === 1 ? 'red' : 'blue';
-
-  // If we land on an enemy statue, we should increase
-  // the `captured` prop of the corresponding player object.
-  // If the player captures the 3rd enemy statue, the game overs.
-  if (this.boardMap[cellY][cellX] === enemyType) {
-    this.players[playerType].captured += 1;
-
-    if (this.players[playerType].captured === 3) {
-      this.isGameOver = true;
-    }
-  }
-
-  this.boardMap[itemY][itemX] = 0;
-  this.boardMap[cellY][cellX] = itemType;
-
+  this.isMoving = true;
   this.cursor = [];
-
-  // Redraw previously locked statue, removing the shield icon from it
-  if (this.lockedCell.length > 0) {
-    renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
-  }
-
-  this.lockedCell = [cellY, cellX];
-
-  renderMapItem.call(this, itemX, itemY);
-  renderMapItem.call(this, cellX, cellY);
-
-  // Since we move a statue, it should be locked without any doubt
-  renderShield.call(this);
-
-  checkBeadsPlacing.call(this, cellX, cellY);
 
   clearCanvas.call(this, this.cursorCanvas);
 
-  // End of turn
-  // TODO: check possible moves for the next player
-  if (!this.isGameOver) {
-    this.players = {
-      red: {
-        ...this.players.red,
-        active: itemType === 3,
-      },
-      blue: {
-        ...this.players.blue,
-        active: itemType === 1,
-      },
-    };
+  animateItemFadeOut.call(this, itemX, itemY).then(() => {
+    const enemyType: number = itemType === 1 ? 3 : 1;
+    const playerType: string = itemType === 1 ? 'red' : 'blue';
 
-    renderPanel.call(this);
+    // If we land on an enemy statue, we should increase
+    // the `captured` prop of the corresponding player object.
+    // If the player captures the 3rd enemy statue, the game overs.
+    if (this.boardMap[cellY][cellX] === enemyType) {
+      this.players[playerType].captured += 1;
 
-    // Computer plays if it's on
-    if (itemType === 3 && this.isComputerOn === true) {
-      aiMove.call(this);
+      if (this.players[playerType].captured === 3) {
+        this.isGameOver = true;
+      }
     }
-  } else {
-    processGameOver.call(this, itemType);
-  }
+
+    this.boardMap[itemY][itemX] = 0;
+    this.boardMap[cellY][cellX] = itemType;
+
+    animateItemFadeIn.call(this, cellX, cellY).then(() => {
+      // Redraw previously locked statue, removing the shield icon from it
+      if (this.lockedCell.length > 0) {
+        renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
+      }
+
+      this.lockedCell = [cellY, cellX];
+
+      // Since we move a statue, it should be locked without any doubt
+      renderShield.call(this);
+
+      checkBeadsPlacing.call(this, cellX, cellY);
+
+      // End of turn
+      // TODO: check possible moves for the next player
+      if (!this.isGameOver) {
+        this.players = {
+          red: {
+            ...this.players.red,
+            active: itemType === 3,
+          },
+          blue: {
+            ...this.players.blue,
+            active: itemType === 1,
+          },
+        };
+
+        renderPanel.call(this);
+
+        // Computer plays if it's on
+        if (itemType === 3 && this.isComputerOn === true) {
+          aiMove.call(this);
+        }
+      } else {
+        processGameOver.call(this, itemType);
+      }
+
+      this.isMoving = false;
+    });
+  });
 }
 
 /**
