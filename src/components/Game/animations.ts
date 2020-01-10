@@ -57,17 +57,23 @@ function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): 
       return resolve();
     }
 
-    const animate = (): void => {
-      if ((fadeType === 'out' && alpha < 0) || (fadeType === 'in' && alpha > 1)) {
-        return resolve();
-      }
-
+    const clearCell = (): void => {
       ctx.clearRect(
         this.cellSize * x,
         this.cellSize * y,
         this.cellSize,
         this.cellSize,
       );
+    };
+
+    const animate = (): void => {
+      if ((fadeType === 'out' && alpha < 0) || (fadeType === 'in' && alpha > 1)) {
+        fadeType === 'out' && clearCell();
+
+        return resolve();
+      }
+
+      clearCell();
 
       ctx.globalAlpha = alpha;
 
