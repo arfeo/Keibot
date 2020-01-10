@@ -1,4 +1,4 @@
-import { ELEMENT_PROPS } from '../../constants/game';
+import { ELEMENT_PROPS, FADE_OUT_ANIMATION_SPEED } from '../../constants/game';
 
 import { drawRectangle } from '../../utils/drawing';
 
@@ -41,4 +41,102 @@ function animateCursor(): void {
   this.animateCursor = requestAnimationFrame(animate);
 }
 
-export { animateCursor };
+/**
+ * Function animates a statue fading out on the specified coordinates
+ *
+ * @param x
+ * @param y
+ */
+function animateItemFadeOut(x: number, y: number): Promise<void> {
+  return new Promise((resolve) => {
+    const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+    const item: number | undefined = this.boardMap[y][x];
+    let alpha = 1;
+
+    if (item !== 1 && item !== 3) {
+      return resolve();
+    }
+
+    const animate = (): void => {
+      if (alpha < 0) {
+        return resolve();
+      }
+
+      ctx.clearRect(
+        this.cellSize * x,
+        this.cellSize * y,
+        this.cellSize,
+        this.cellSize,
+      );
+
+      ctx.globalAlpha = alpha;
+
+      ctx.drawImage(
+        (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+        this.cellSize * x + 5,
+        this.cellSize * y + 5,
+        this.cellSize - 10,
+        this.cellSize - 10,
+      );
+
+      alpha -= FADE_OUT_ANIMATION_SPEED / 4;
+
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  });
+}
+
+/**
+ * Function animates a statue fading in on the specified coordinates
+ *
+ * @param x
+ * @param y
+ */
+function animateItemFadeIn(x: number, y: number): Promise<void> {
+  return new Promise((resolve) => {
+    const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+    const item: number | undefined = this.boardMap[y][x];
+    let alpha = 0;
+
+    if (item !== 1 && item !== 3) {
+      return resolve();
+    }
+
+    const animate = (): void => {
+      if (alpha > 1) {
+        return resolve();
+      }
+
+      ctx.clearRect(
+        this.cellSize * x,
+        this.cellSize * y,
+        this.cellSize,
+        this.cellSize,
+      );
+
+      ctx.globalAlpha = alpha;
+
+      ctx.drawImage(
+        (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+        this.cellSize * x + 5,
+        this.cellSize * y + 5,
+        this.cellSize - 10,
+        this.cellSize - 10,
+      );
+
+      alpha += FADE_OUT_ANIMATION_SPEED / 4;
+
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  });
+}
+
+export {
+  animateCursor,
+  animateItemFadeOut,
+  animateItemFadeIn,
+};
