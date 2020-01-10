@@ -1,7 +1,7 @@
 import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, processGameOver } from './actions';
+import { checkBeadsPlacing, processGameOver, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
 import { aiMove } from './ai';
 
@@ -321,8 +321,12 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 
   this.isMoving = false;
 
+  // If enemy hasn't got possible moves, current user wins
+  if (!checkEnemyHasMoves.call(this, itemType)) {
+    this.isGameOver = true;
+  }
+
   // End of turn
-  // TODO: check possible moves for the next player
   if (!this.isGameOver) {
     this.players = {
       red: {
