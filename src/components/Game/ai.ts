@@ -35,11 +35,15 @@ function aiChooseBestMove(): number[][] {
   const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
   const moves: Move[] = [];
 
+  if (ownStatues.length === 0) {
+    return [];
+  }
+
   for (const statue of ownStatues) {
     const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
-      break;
+      continue;
     }
 
     for (const possibleMove of possibleMoves) {
