@@ -42,7 +42,7 @@ function animateCursor(): void {
 }
 
 /**
- * Function animates a statue fading out on the specified coordinates
+ * Function animates an item fading in or out on the specified coordinates
  *
  * @param x
  * @param y
