@@ -2,7 +2,7 @@ import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, processGameOver } from './actions';
-import { animateItemFadeOut, animateItemFadeIn } from './animations';
+import { animateItemFade } from './animations';
 import { aiMove } from './ai';
 
 /**
@@ -285,7 +285,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   clearCanvas.call(this, this.cursorCanvas);
 
-  animateItemFadeOut.call(this, itemX, itemY).then(() => {
+  animateItemFade.call(this, itemX, itemY, 'out').then(() => {
     const enemyType: number = itemType === 1 ? 3 : 1;
     const playerType: string = itemType === 1 ? 'red' : 'blue';
 
@@ -303,7 +303,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
     this.boardMap[itemY][itemX] = 0;
     this.boardMap[cellY][cellX] = itemType;
 
-    animateItemFadeIn.call(this, cellX, cellY).then(() => {
+    animateItemFade.call(this, cellX, cellY, 'in').then(() => {
       // Redraw previously locked statue, removing the shield icon from it
       if (this.lockedCell.length > 0) {
         renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
