@@ -30,7 +30,7 @@ function onBoardClick(event: MouseEvent): void {
       ? []
       : [y, x];
 
-    if (this.cursor.length > 0) {
+    if (this.cursor.length > 0 && this.isShowMovesOn) {
       renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
     }
   } else {

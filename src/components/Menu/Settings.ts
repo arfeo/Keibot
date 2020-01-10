@@ -9,12 +9,14 @@ class Settings extends MenuComponent {
   protected firstMove: number | undefined;
   protected boardSize: number | undefined;
   protected isComputerOn: boolean | undefined;
+  protected isShowMovesOn: boolean | undefined;
 
   public init(): void {
     this.appRoot = document.getElementById('root');
     this.firstMove = getStorageData('firstMove');
     this.boardSize = getStorageData('boardSize');
     this.isComputerOn = getStorageData('isComputerOn');
+    this.isShowMovesOn = getStorageData('isShowMovesOn');
 
     this.items = [
       {
@@ -86,6 +88,19 @@ class Settings extends MenuComponent {
           type: 'change',
           handler: (event: Event & { target: { value: string; checked: boolean }}) => {
             saveStorageData('isComputerOn', event.target.checked);
+          },
+        },
+      },
+      {
+        id: 'isShowMovesOn',
+        type: 'checkbox',
+        label: 'Show possible moves',
+        checked: this.isShowMovesOn || this.isShowMovesOn === undefined,
+        style: 'display: flex; align-items: center',
+        action: {
+          type: 'change',
+          handler: (event: Event & { target: { value: string; checked: boolean }}) => {
+            saveStorageData('isShowMovesOn', event.target.checked);
           },
         },
       },

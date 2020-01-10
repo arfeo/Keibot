@@ -27,6 +27,7 @@ class Game extends PageComponent {
   protected players: { [key: string]: Player };
   protected lockedCell: number[];
   protected isComputerOn: boolean;
+  protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
   protected isMoving: boolean;
 
@@ -34,6 +35,7 @@ class Game extends PageComponent {
     const storageBoardSize: number | undefined = getStorageData('boardSize');
     const storageFirstMove: number | undefined = getStorageData('firstMove');
     const storageIsComputerOn: boolean | undefined = getStorageData('isComputerOn');
+    const storageIsShowMovesOn: boolean | undefined = getStorageData('isShowMovesOn');
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
@@ -125,9 +127,8 @@ class Game extends PageComponent {
     this.lockedCell = [];
 
     this.isComputerOn = storageIsComputerOn ?? true;
-
+    this.isShowMovesOn = storageIsShowMovesOn ?? true;
     this.isGameOver = false;
-
     this.isMoving = false;
   }
 
