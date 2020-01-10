@@ -1,5 +1,5 @@
 import { renderMapItem, renderPanel } from './render';
-import { isThreeInARow } from './helpers';
+import { getMapItemsByType, isThreeInARow } from './helpers';
 
 /**
  * Function checks the ability of a statue with the given coordinates to move;
@@ -237,6 +237,40 @@ function checkUnderAttack(x: number, y: number): boolean {
 }
 
 /**
+ * Function checks possible moves for each enemy's statue, and returns true
+ * if there's at least one statue and one possible move; it also returns true
+ * if the `itemType` attribute is not a statue type (to avoid blocking the game);
+ * otherwise it returns false
+ *
+ * @param itemType
+ */
+function checkEnemyHasMoves(itemType: number): boolean {
+  if (itemType !== 1 && itemType !== 3) {
+    return true;
+  }
+
+  const enemyType: number = itemType === 1 ? 3 : 1;
+  const enemyStatues: number[][] = getMapItemsByType(this.boardMap, enemyType);
+  const moves: number[][] = [];
+
+  if (enemyStatues.length === 0) {
+    return false;
+  }
+
+  for (const statue of enemyStatues) {
+    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
+
+    if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
+      continue;
+    }
+
+    moves.push(...possibleMoves);
+  }
+
+  return moves.length > 0;
+}
+
+/**
  * Function deactivates both users and re-renders the game panel
  * on game over
  */
@@ -260,5 +294,6 @@ export {
   checkMoveToCell,
   checkBeadsPlacing,
   checkUnderAttack,
+  checkEnemyHasMoves,
   processGameOver,
 };
