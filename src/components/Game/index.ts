@@ -37,10 +37,22 @@ class Game extends PageComponent {
   protected isMoving: boolean;
 
   public init(): void {
-    const storageBoardSize: number | undefined = getStorageData('boardSize');
-    const storageFirstMove: number | undefined = getStorageData('firstMove');
-    const storageIsComputerOn: boolean | undefined = getStorageData('isComputerOn');
-    const storageIsShowMovesOn: boolean | undefined = getStorageData('isShowMovesOn');
+    const [
+      storageBoardSize,
+      storageFirstMove,
+      storageIsComputerOn,
+      storageIsShowMovesOn,
+    ]: [
+      number | undefined,
+      number | undefined,
+      boolean | undefined,
+      boolean | undefined,
+    ] = getStorageData([
+      'boardSize',
+      'firstMove',
+      'isComputerOn',
+      'isShowMovesOn',
+    ]);
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
