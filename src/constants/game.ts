@@ -14,7 +14,7 @@ export const BEADS_COUNT = 10;
 
 export const FADE_OUT_ANIMATION_SPEED = 0.2;
 
-export const COMPUTER_TURN_TIMEOUT = 1;
+export const COMPUTER_MOVE_TIMEOUT = 1;
 
 export const MAP_ITEM_TYPES: HashMap = {
   red: {
