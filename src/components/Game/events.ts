@@ -1,7 +1,7 @@
 import { Game } from './';
 import { Menu } from '../Menu';
 
-import { APP } from '../../constants/game';
+import { APP, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
@@ -22,7 +22,10 @@ function onBoardClick(event: MouseEvent): void {
     return;
   }
 
-  if ((isRedTurn && this.boardMap[y][x] === 1 && !this.isComputerOn) || (isBlueTurn && this.boardMap[y][x] === 3)) {
+  if (
+    (isRedTurn && this.boardMap[y][x] === MAP_ITEM_TYPES.red.statue && !this.isComputerOn)
+    || (isBlueTurn && this.boardMap[y][x] === MAP_ITEM_TYPES.blue.statue)
+  ) {
     clearCanvas.call(this, this.cursorCanvas);
 
     // Remove cursor if we click on an item which was already selected before

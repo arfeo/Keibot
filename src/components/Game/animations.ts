@@ -1,4 +1,4 @@
-import { ELEMENT_PROPS, FADE_OUT_ANIMATION_SPEED } from '../../constants/game';
+import { ELEMENT_PROPS, FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawRectangle } from '../../utils/drawing';
 
@@ -35,10 +35,10 @@ function animateCursor(): void {
       );
     }
 
-    this.animateCursor = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   };
 
-  this.animateCursor = requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 }
 
 /**
@@ -46,6 +46,7 @@ function animateCursor(): void {
  *
  * @param x
  * @param y
+ * @param fadeType
  */
 function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): Promise<void> {
   return new Promise((resolve) => {
@@ -53,7 +54,7 @@ function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): 
     const item: number | undefined = this.boardMap[y][x];
     let alpha = fadeType === 'out' ? 1 : 0;
 
-    if (item !== 1 && item !== 3) {
+    if (item !== MAP_ITEM_TYPES.red.statue && item !== MAP_ITEM_TYPES.blue.statue) {
       return resolve();
     }
 

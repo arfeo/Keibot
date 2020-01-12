@@ -1,4 +1,4 @@
-import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
+import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, processGameOver, checkEnemyHasMoves } from './actions';
@@ -191,10 +191,9 @@ function renderMapItem(x: number, y: number): void {
     return;
   }
 
-  // Statues
-  if (item === 1 || item === 3) {
+  if (item === MAP_ITEM_TYPES.red.statue || item === MAP_ITEM_TYPES.blue.statue) {
     ctx.drawImage(
-      (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+      (item === MAP_ITEM_TYPES.red.statue ? this.images.statueRed.element : this.images.statueBlue.element),
       this.cellSize * x + 5,
       this.cellSize * y + 5,
       this.cellSize - 10,
@@ -202,8 +201,7 @@ function renderMapItem(x: number, y: number): void {
     );
   }
 
-  // Beads
-  if (item === 2 || item === 4) {
+  if (item === MAP_ITEM_TYPES.red.bead || item === MAP_ITEM_TYPES.blue.bead) {
     const posX: number = this.cellSize * x + this.cellSize / 2;
     const posY: number = this.cellSize * y + this.cellSize / 2;
 
@@ -213,7 +211,7 @@ function renderMapItem(x: number, y: number): void {
       posY,
       20,
       {
-        fillColor: item === 2 ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
+        fillColor: item === MAP_ITEM_TYPES.red.bead ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
       },
     );
   }
@@ -276,7 +274,7 @@ function renderPossibleMoves(moves: number[][]): void {
 async function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): Promise<void> {
   const itemType: number = this.boardMap[itemY] ? this.boardMap[itemY][itemX] : 0;
 
-  if (itemType !== 1 && itemType !== 3) {
+  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return;
   }
 
@@ -288,8 +286,11 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  const enemyType: number = itemType === 1 ? 3 : 1;
-  const playerType: string = itemType === 1 ? 'red' : 'blue';
+  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
+    ? MAP_ITEM_TYPES.blue.statue
+    : MAP_ITEM_TYPES.red.statue;
+
+  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
 
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
@@ -331,18 +332,18 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     this.players = {
       red: {
         ...this.players.red,
-        active: itemType === 3,
+        active: itemType === MAP_ITEM_TYPES.blue.statue,
       },
       blue: {
         ...this.players.blue,
-        active: itemType === 1,
+        active: itemType === MAP_ITEM_TYPES.red.statue,
       },
     };
 
     renderPanel.call(this);
 
     // Computer plays if it's on
-    if (itemType === 3 && this.isComputerOn === true) {
+    if (itemType === MAP_ITEM_TYPES.blue.statue && this.isComputerOn === true) {
       aiMove.call(this);
     }
   } else {
@@ -366,8 +367,8 @@ function renderPanel(lastItemType?: number): void {
     ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
 
     const message = this.isComputerOn
-      ? (lastItemType === 1 ? 'You lose!' : 'You win!')
-      : (lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!');
+      ? (lastItemType === MAP_ITEM_TYPES.red.statue ? 'You lose!' : 'You win!')
+      : (lastItemType === MAP_ITEM_TYPES.red.statue ? 'Red player wins!' : 'Blue player wins!');
 
     ctx.fillText(
       message,

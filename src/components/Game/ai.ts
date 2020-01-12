@@ -1,3 +1,5 @@
+import { MAP_ITEM_TYPES } from '../../constants/game';
+
 import { getMapItemsByType, getRandomNum } from './helpers';
 import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack, processGameOver } from './actions';
 import { renderMove } from './render';
@@ -17,7 +19,7 @@ function aiMove(): void {
   if (move.length === 0) {
     this.isGameOver = true;
 
-    processGameOver.call(this, 3);
+    processGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
   }
 
   // Computer is too quick, so we set a timeout
@@ -32,7 +34,7 @@ function aiMove(): void {
  * and returns one random move from the result array
  */
 function aiChooseBestMove(): number[][] {
-  const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
+  const ownStatues: number[][] = getMapItemsByType(this.boardMap, MAP_ITEM_TYPES.red.statue);
   const moves: Move[] = [];
 
   if (ownStatues.length === 0) {
@@ -72,15 +74,15 @@ function aiChooseBestMove(): number[][] {
  * @param item
  */
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
-  const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
+  const ownStatues: number[][] = getMapItemsByType(this.boardMap, MAP_ITEM_TYPES.red.statue);
   const otherStatues: number[][] = ownStatues.filter((s: number[]) => JSON.stringify(s) !== JSON.stringify(item));
   let result = 0;
 
   // Count of beads to be placed (positive)
-  result += checkBeadsPlacing.call(this, x, y, true, 1);
+  result += checkBeadsPlacing.call(this, x, y, true, MAP_ITEM_TYPES.red.statue);
 
   // Is there an enemy statue on the target cell (positive)
-  if (this.boardMap[y][x] === 3) {
+  if (this.boardMap[y][x] === MAP_ITEM_TYPES.blue.statue) {
     result += 2;
   }
 

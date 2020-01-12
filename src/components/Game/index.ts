@@ -1,6 +1,11 @@
 import { PageComponent } from '../core/Page';
 
-import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
+import {
+  CELL_SIZE_VMIN,
+  DEFAULT_BOARD_SIZE,
+  BEADS_COUNT,
+  MAP_ITEM_TYPES,
+} from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { setCellSize } from './helpers';
@@ -80,12 +85,12 @@ class Game extends PageComponent {
 
       // Always place initially four red statues in the top left corner of the game board
       if (index === 0 || index === 1) {
-        itemX[0] = itemX[1] = 1;
+        itemX[0] = itemX[1] = MAP_ITEM_TYPES.red.statue;
       }
 
       // Always place initially four blue statues in the bottom right corner of the game board
       if (index === this.boardSize - 2 || index === this.boardSize - 1) {
-        itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = 3;
+        itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = MAP_ITEM_TYPES.blue.statue;
       }
 
       return itemX;

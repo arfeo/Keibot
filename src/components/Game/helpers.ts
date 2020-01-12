@@ -1,3 +1,5 @@
+import { MAP_ITEM_TYPES } from '../../constants/game';
+
 /**
  * Local helper function.
  * Calculates the analogue of CSS vmin in pixels
@@ -76,7 +78,7 @@ function isThreeInARow(map: number[][]): boolean {
     for (let x = 0; x < map[y].length; x += 1) {
       const item = map[y][x];
 
-      if (item === 2 || item === 4) {
+      if (item === MAP_ITEM_TYPES.red.bead || item === MAP_ITEM_TYPES.blue.bead) {
         if (map[y][x + 1] === item && map[y][x + 2] === item) {
           return true;
         }

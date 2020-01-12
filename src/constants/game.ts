@@ -14,6 +14,17 @@ export const BEADS_COUNT = 10;
 
 export const FADE_OUT_ANIMATION_SPEED = 0.2;
 
+export const MAP_ITEM_TYPES: HashMap = {
+  red: {
+    statue: 1,
+    bead: 2,
+  },
+  blue: {
+    statue: 3,
+    bead: 4,
+  },
+};
+
 export const ELEMENT_PROPS: HashMap = {
   cell: {
     background: 'rgb(192, 192, 192)',
