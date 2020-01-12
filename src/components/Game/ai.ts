@@ -1,4 +1,4 @@
-import { MAP_ITEM_TYPES } from '../../constants/game';
+import { COMPUTER_TURN_TIMEOUT, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getRandomNum } from './helpers';
 import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack, processGameOver } from './actions';
@@ -25,7 +25,7 @@ function aiMove(): void {
   // Computer is too quick, so we set a timeout
   window.setTimeout(() => {
     renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]);
-  }, 1000);
+  }, COMPUTER_TURN_TIMEOUT * 1000);
 }
 
 /**
