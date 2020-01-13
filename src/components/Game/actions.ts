@@ -37,25 +37,28 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
     return this.boardMap[targetY][targetX] === 0;
   };
 
-  if (this.boardMap[y - 2] !== undefined) {
-    checkCell(x - 1, y - 2) && moves.push([y - 2, x - 1]);
-    checkCell(x + 1, y - 2) && moves.push([y - 2, x + 1]);
-  }
+  const processCells = (cells: { x: number; y: number }[]): void => {
+    if (!cells || !Array.isArray(cells) || cells.length === 0) {
+      return;
+    }
 
-  if (this.boardMap[y + 1] !== undefined) {
-    checkCell(x - 2, y + 1) && moves.push([y + 1, x - 2]);
-    checkCell(x + 2, y + 1) && moves.push([y + 1, x + 2]);
-  }
+    cells.forEach((cell: { x: number; y: number }) => {
+      if (this.boardMap[cell.y] !== undefined && checkCell(cell.x, cell.y)) {
+        moves.push([cell.y, cell.x]);
+      }
+    });
+  };
 
-  if (this.boardMap[y + 2] !== undefined) {
-    checkCell(x - 1, y + 2) && moves.push([y + 2, x - 1]);
-    checkCell(x + 1, y + 2) && moves.push([y + 2, x + 1]);
-  }
-
-  if (this.boardMap[y - 1] !== undefined) {
-    checkCell(x - 2, y - 1) && moves.push([y - 1, x - 2]);
-    checkCell(x + 2, y - 1) && moves.push([y - 1, x + 2]);
-  }
+  processCells([
+    { x: x - 1, y: y - 2 },
+    { x: x + 1, y: y - 2 },
+    { x: x - 2, y: y + 1 },
+    { x: x + 2, y: y + 1 },
+    { x: x - 1, y: y + 2 },
+    { x: x + 1, y: y + 2 },
+    { x: x - 2, y: y - 1 },
+    { x: x + 2, y: y - 1 },
+  ]);
 
   return moves;
 }
