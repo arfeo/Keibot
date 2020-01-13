@@ -39,9 +39,7 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   // if it's not locked, return true, otherwise return false
   const checkCell = (targetX: number, targetY: number): boolean => {
     if (this.boardMap[targetY][targetX] === enemyType) {
-      return this.lockedCell.length > 0
-        ? this.lockedCell[1] !== targetX || this.lockedCell[0] !== targetY
-        : true;
+      return this.lockedCell.length > 0 ? this.lockedCell[1] !== targetX || this.lockedCell[0] !== targetY : true;
     }
 
     return this.boardMap[targetY][targetX] === 0;
