@@ -3,6 +3,16 @@ import { MAP_ITEM_TYPES } from '../../constants/game';
 import { renderMapItem, renderPanel } from './render';
 import { getMapItemsByType, isThreeInARow } from './helpers';
 
+interface Cell {
+  cellX: number;
+  cellY: number;
+}
+
+type CellWithBead = Cell & {
+  targetX: number;
+  targetY: number;
+}
+
 /**
  * Function checks the ability of a statue with the given coordinates to move;
  * it returns an array of possible coordinates or undefined if no statue found
@@ -37,27 +47,27 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
     return this.boardMap[targetY][targetX] === 0;
   };
 
-  const processCells = (cells: { x: number; y: number }[]): void => {
+  const processCells = (cells: Cell[]): void => {
     if (!cells || !Array.isArray(cells) || cells.length === 0) {
       return;
     }
 
-    cells.forEach((cell: { x: number; y: number }) => {
-      if (this.boardMap[cell.y] !== undefined && checkCell(cell.x, cell.y)) {
-        moves.push([cell.y, cell.x]);
+    cells.forEach((cell: Cell) => {
+      if (this.boardMap[cell.cellY] !== undefined && checkCell(cell.cellX, cell.cellY)) {
+        moves.push([cell.cellY, cell.cellX]);
       }
     });
   };
 
   processCells([
-    { x: x - 1, y: y - 2 },
-    { x: x + 1, y: y - 2 },
-    { x: x - 2, y: y + 1 },
-    { x: x + 2, y: y + 1 },
-    { x: x - 1, y: y + 2 },
-    { x: x + 1, y: y + 2 },
-    { x: x - 2, y: y - 1 },
-    { x: x + 2, y: y - 1 },
+    { cellX: x - 1, cellY: y - 2 },
+    { cellX: x + 1, cellY: y - 2 },
+    { cellX: x - 2, cellY: y + 1 },
+    { cellX: x + 2, cellY: y + 1 },
+    { cellX: x - 1, cellY: y + 2 },
+    { cellX: x + 1, cellY: y + 2 },
+    { cellX: x - 2, cellY: y - 1 },
+    { cellX: x + 2, cellY: y - 1 },
   ]);
 
   return moves;
@@ -135,41 +145,32 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
     }
   };
 
-  if (this.boardMap[y - 2] !== undefined) {
-    if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0) {
-      placeBead(x - 1, y - 1);
+  const processCells = (cells: CellWithBead[]): void => {
+    if (!cells || !Array.isArray(cells) || cells.length === 0) {
+      return;
     }
 
-    if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0) {
-      placeBead(x, y - 1);
-    }
+    cells.forEach((cell: CellWithBead): void => {
+      if (this.boardMap[cell.cellY] === undefined) {
+        return;
+      }
 
-    if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0) {
-      placeBead(x + 1, y - 1);
-    }
-  }
+      if (this.boardMap[cell.cellY][cell.cellX] === enemyType && this.boardMap[cell.targetY][cell.targetX] === 0) {
+        placeBead(cell.targetX, cell.targetY);
+      }
+    });
+  };
 
-  if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0) {
-    placeBead(x - 1, y);
-  }
-
-  if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0) {
-    placeBead(x + 1, y);
-  }
-
-  if (this.boardMap[y + 2] !== undefined) {
-    if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0) {
-      placeBead(x - 1, y + 1);
-    }
-
-    if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0) {
-      placeBead(x, y + 1);
-    }
-
-    if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0) {
-      placeBead(x + 1, y + 1);
-    }
-  }
+  processCells([
+    { cellX: x - 2,   cellY: y - 2,   targetX: x - 1,   targetY: y - 1},
+    { cellX: x,       cellY: y - 2,   targetX: x,       targetY: y - 1},
+    { cellX: x + 2,   cellY: y - 2,   targetX: x + 1,   targetY: y - 1},
+    { cellX: x - 2,   cellY: y,       targetX: x - 1,   targetY: y},
+    { cellX: x + 2,   cellY: y,       targetX: x + 1,   targetY: y},
+    { cellX: x - 2,   cellY: y + 2,   targetX: x - 1,   targetY: y + 1},
+    { cellX: x,       cellY: y + 2,   targetX: x,       targetY: y + 1},
+    { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1},
+  ]);
 
   if (countOnly === true) {
     return count;
