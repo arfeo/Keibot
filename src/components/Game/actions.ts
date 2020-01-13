@@ -38,43 +38,23 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   };
 
   if (this.boardMap[y - 2] !== undefined) {
-    if (checkCell(x - 1, y - 2)) {
-      moves.push([y - 2, x - 1]);
-    }
-
-    if (checkCell(x + 1, y - 2)) {
-      moves.push([y - 2, x + 1]);
-    }
+    checkCell(x - 1, y - 2) && moves.push([y - 2, x - 1]);
+    checkCell(x + 1, y - 2) && moves.push([y - 2, x + 1]);
   }
 
   if (this.boardMap[y + 1] !== undefined) {
-    if (checkCell(x - 2, y + 1)) {
-      moves.push([y + 1, x - 2]);
-    }
-
-    if (checkCell(x + 2, y + 1)) {
-      moves.push([y + 1, x + 2]);
-    }
+    checkCell(x - 2, y + 1) && moves.push([y + 1, x - 2]);
+    checkCell(x + 2, y + 1) && moves.push([y + 1, x + 2]);
   }
 
   if (this.boardMap[y + 2] !== undefined) {
-    if (checkCell(x - 1, y + 2)) {
-      moves.push([y + 2, x - 1]);
-    }
-
-    if (checkCell(x + 1, y + 2)) {
-      moves.push([y + 2, x + 1]);
-    }
+    checkCell(x - 1, y + 2) && moves.push([y + 2, x - 1]);
+    checkCell(x + 1, y + 2) && moves.push([y + 2, x + 1]);
   }
 
   if (this.boardMap[y - 1] !== undefined) {
-    if (checkCell(x - 2, y - 1)) {
-      moves.push([y - 1, x - 2]);
-    }
-
-    if (checkCell(x + 2, y - 1)) {
-      moves.push([y - 1, x + 2]);
-    }
+    checkCell(x - 2, y - 1) && moves.push([y - 1, x - 2]);
+    checkCell(x + 2, y - 1) && moves.push([y - 1, x + 2]);
   }
 
   return moves;
@@ -115,12 +95,8 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
   const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
   let count = 0;
 
-  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
-    if (countOnly === true) {
-      return count;
-    }
-
-    return;
+  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || this.isGameOver) {
+    return countOnly === true ? count : null;
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
@@ -147,12 +123,8 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
       this.players[playerType].beads -= 1;
 
       // No beads left -- game over
-      if (this.players[playerType].beads === 0) {
-        this.isGameOver = true;
-      }
-
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (isThreeInARow(this.boardMap) === true) {
+      if (this.players[playerType].beads === 0 || isThreeInARow(this.boardMap) === true) {
         this.isGameOver = true;
       }
     } else {
@@ -161,37 +133,37 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
   };
 
   if (this.boardMap[y - 2] !== undefined) {
-    if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0 && !this.isGameOver) {
+    if (this.boardMap[y - 2][x - 2] === enemyType && this.boardMap[y - 1][x - 1] === 0) {
       placeBead(x - 1, y - 1);
     }
 
-    if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0 && !this.isGameOver) {
+    if (this.boardMap[y - 2][x] === enemyType && this.boardMap[y - 1][x] === 0) {
       placeBead(x, y - 1);
     }
 
-    if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0 && !this.isGameOver) {
+    if (this.boardMap[y - 2][x + 2] === enemyType && this.boardMap[y - 1][x + 1] === 0) {
       placeBead(x + 1, y - 1);
     }
   }
 
-  if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0 && !this.isGameOver) {
+  if (this.boardMap[y][x - 2] === enemyType && this.boardMap[y][x - 1] === 0) {
     placeBead(x - 1, y);
   }
 
-  if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0 && !this.isGameOver) {
+  if (this.boardMap[y][x + 2] === enemyType && this.boardMap[y][x + 1] === 0) {
     placeBead(x + 1, y);
   }
 
   if (this.boardMap[y + 2] !== undefined) {
-    if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0 && !this.isGameOver) {
+    if (this.boardMap[y + 2][x - 2] === enemyType && this.boardMap[y + 1][x - 1] === 0) {
       placeBead(x - 1, y + 1);
     }
 
-    if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0 && !this.isGameOver) {
+    if (this.boardMap[y + 2][x] === enemyType && this.boardMap[y + 1][x] === 0) {
       placeBead(x, y + 1);
     }
 
-    if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0 && !this.isGameOver) {
+    if (this.boardMap[y + 2][x + 2] === enemyType && this.boardMap[y + 1][x + 1] === 0) {
       placeBead(x + 1, y + 1);
     }
   }
@@ -220,27 +192,19 @@ function checkUnderAttack(x: number, y: number): boolean {
     : MAP_ITEM_TYPES.red.statue;
 
   if (this.boardMap[y - 2] !== undefined) {
-    if (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType) {
-      return true;
-    }
+    return this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType;
   }
 
   if (this.boardMap[y + 1] !== undefined) {
-    if (this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType) {
-      return true;
-    }
+    return this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType;
   }
 
   if (this.boardMap[y + 2] !== undefined) {
-    if (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType) {
-      return true;
-    }
+    return this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType;
   }
 
   if (this.boardMap[y - 1] !== undefined) {
-    if (this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType) {
-      return true;
-    }
+    return this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType;
   }
 
   return false;
