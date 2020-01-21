@@ -81,7 +81,7 @@ function renderGridCell(x: number, y: number): void {
     {
       fillColor: ELEMENT_PROPS.cell.background,
       edgingColor: ELEMENT_PROPS.cell.border,
-      edgingWidth: 2,
+      edgingWidth: this.cellSize / 40,
     },
   );
 
@@ -209,7 +209,7 @@ function renderMapItem(x: number, y: number): void {
       ctx,
       posX,
       posY,
-      20,
+      this.cellSize / 4,
       {
         fillColor: item === MAP_ITEM_TYPES.red.bead ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
       },
@@ -252,11 +252,11 @@ function renderPossibleMoves(moves: number[][]): void {
       ctx,
       posX,
       posY,
-      10,
+      this.cellSize / 8,
       {
         fillColor: ELEMENT_PROPS.move.background,
         edgingColor: ELEMENT_PROPS.move.border,
-        edgingWidth: 4,
+        edgingWidth: this.cellSize / 20,
       },
     );
   });
@@ -385,7 +385,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENT_PROPS.panel.red,
-      edgingWidth: this.players.red.active ? 15 : 2,
+      edgingWidth: this.players.red.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
 
@@ -397,7 +397,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENT_PROPS.panel.blue,
-      edgingWidth: this.players.blue.active ? 15 : 2,
+      edgingWidth: this.players.blue.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
 
