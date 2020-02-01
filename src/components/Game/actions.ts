@@ -179,6 +179,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
  * Function checks is there any enemies within one turn reach about
  * the cell with the given coordinates
  *
+ * @param map
  * @param x
  * @param y
  */
