@@ -1,7 +1,8 @@
 import { STORAGE_PREFIX } from '../constants/game';
 
 /**
- * Function returns data saved in the local storage under the specified key name
+ * Function returns data saved in the local storage under the specified key name;
+ * if the `keys` is an array of key names, it returns the corresponding array
  *
  * @param keys
  */
