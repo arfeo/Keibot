@@ -86,14 +86,12 @@ function isThreeInARow(map: number[][]): boolean {
         return true;
       }
 
-      if (map[y + 1] !== undefined && map[y + 2] !== undefined) {
-        if (
-          map[y + 1][x] === item && map[y + 2][x] === item
-          || map[y + 1][x + 1] === item && map[y + 2][x + 2] === item
-          || map[y + 1][x - 1] === item && map[y + 2][x - 2] === item
-        ) {
-          return true;
-        }
+      if (map[y + 1] !== undefined && map[y + 2] !== undefined && (
+        map[y + 1][x] === item && map[y + 2][x] === item
+        || map[y + 1][x + 1] === item && map[y + 2][x + 2] === item
+        || map[y + 1][x - 1] === item && map[y + 2][x - 2] === item
+      )) {
+        return true;
       }
     }
   }
