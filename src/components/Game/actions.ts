@@ -182,8 +182,8 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
  * @param x
  * @param y
  */
-function checkUnderAttack(x: number, y: number): boolean {
-  const itemType = this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkUnderAttack(map: number[][], x: number, y: number): boolean {
+  const itemType = map[y] ? map[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return false;
@@ -193,23 +193,12 @@ function checkUnderAttack(x: number, y: number): boolean {
     ? MAP_ITEM_TYPES.blue.statue
     : MAP_ITEM_TYPES.red.statue;
 
-  if (this.boardMap[y - 2] !== undefined) {
-    return this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType;
-  }
-
-  if (this.boardMap[y + 1] !== undefined) {
-    return this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType;
-  }
-
-  if (this.boardMap[y + 2] !== undefined) {
-    return this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType;
-  }
-
-  if (this.boardMap[y - 1] !== undefined) {
-    return this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType;
-  }
-
-  return false;
+  return (
+    (map[y - 2] !== undefined && (map[y - 2][x - 1] === enemyType || map[y - 2][x + 1] === enemyType))
+    || (map[y + 1] !== undefined && (map[y + 1][x - 1] === enemyType || map[y + 1][x + 2] === enemyType))
+    || (map[y + 2] !== undefined && (map[y + 2][x - 1] === enemyType || map[y + 2][x + 1] === enemyType))
+    || (map[y - 1] !== undefined && (map[y - 1][x - 2] === enemyType || map[y - 1][x + 2] === enemyType))
+  );
 }
 
 /**
