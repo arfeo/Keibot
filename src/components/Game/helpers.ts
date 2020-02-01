@@ -78,28 +78,19 @@ function isThreeInARow(map: number[][]): boolean {
     for (let x = 0; x < map[y].length; x += 1) {
       const item = map[y][x];
 
-      if (item === MAP_ITEM_TYPES.red.bead || item === MAP_ITEM_TYPES.blue.bead) {
-        if (map[y][x + 1] === item && map[y][x + 2] === item) {
-          return true;
-        }
+      if (item !== MAP_ITEM_TYPES.red.bead && item !== MAP_ITEM_TYPES.blue.bead) {
+        continue;
+      }
 
-        if (
-          (map[y + 1] !== undefined && map[y + 1][x] === item)
-          && (map[y + 2] !== undefined && map[y + 2][x] === item)
-        ) {
-          return true;
-        }
+      if (map[y][x + 1] === item && map[y][x + 2] === item) {
+        return true;
+      }
 
+      if (map[y + 1] !== undefined && map[y + 2] !== undefined) {
         if (
-          (map[y + 1] !== undefined && map[y + 1][x + 1] === item)
-          && (map[y + 2] !== undefined && map[y + 2][x + 2] === item)
-        ) {
-          return true;
-        }
-
-        if (
-          (map[y + 1] !== undefined && map[y + 1][x - 1] === item)
-          && (map[y + 2] !== undefined && map[y + 2][x - 2] === item)
+          map[y + 1][x] === item && map[y + 2][x] === item
+          || map[y + 1][x + 1] === item && map[y + 2][x + 2] === item
+          || map[y + 1][x - 1] === item && map[y + 2][x - 2] === item
         ) {
           return true;
         }
