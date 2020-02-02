@@ -35,7 +35,6 @@ class Game extends PageComponent {
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
   protected isMoving: boolean;
-  protected isRenderOff: boolean;
 
   public init(): void {
     const [
@@ -140,14 +139,9 @@ class Game extends PageComponent {
     this.isShowMovesOn = storageIsShowMovesOn ?? true;
     this.isGameOver = false;
     this.isMoving = false;
-    this.isRenderOff = false;
   }
 
   public render(): void {
-    if (this.isRenderOff) {
-      return;
-    }
-
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);

@@ -4,6 +4,7 @@ import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
 import { aiMove } from './ai';
+import { getEnemyType } from './helpers';
 
 /**
  * Function creates all needed game window elements
@@ -286,10 +287,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
+  const enemyType: number = getEnemyType(itemType);
   const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
 
   // If we land on an enemy statue, we should increase

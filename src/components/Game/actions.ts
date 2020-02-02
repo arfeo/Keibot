@@ -1,7 +1,7 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
 import { renderMapItem } from './render';
-import { getMapItemsByType } from './helpers';
+import { getMapItemsByType, getEnemyType } from './helpers';
 
 interface Cell {
   cellX: number;
@@ -28,10 +28,7 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
     return;
   }
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
+  const enemyType: number = getEnemyType(itemType);
   const moves: number[][] = [];
 
   // If the target cell is empty, return true;
@@ -93,30 +90,26 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
 
 /**
  * Function checks whether new beads are needed to be placed on the board or not
- * after placing a statue to a cell with the given coordinates;
- * if `countOnly` param is set to true, function doesn't actually place any beads
- * on the map, but returns the total beads count instead
+ * after placing a statue to a cell with the given coordinates, and returns the total beads count;
+ * if `countOnly` param is set to true, function doesn't actually place (render) any beads
+ * on the map, but still returns the total beads count
  *
  * @param x
  * @param y
  * @param countOnly
  * @param countFor
  */
-function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): void | number {
+function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): number {
   const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
   let count = 0;
 
   if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || this.isGameOver) {
-    return countOnly === true ? count : null;
+    return count;
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
-
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
   const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const enemyType: number = getEnemyType(itemType);
 
   // If we place a bead on the game board, we should reduce `beads` count of the
   // corresponding player object. If there's no beads left, the player wins;
@@ -130,7 +123,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
       this.boardMap[beadY][beadX] = ownBead;
       this.players[playerType].beads -= 1;
 
-      !this.isRenderOff && renderMapItem.call(this, beadX, beadY);
+      renderMapItem.call(this, beadX, beadY);
 
       // No beads left -- game over
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
@@ -169,9 +162,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
     { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1},
   ]);
 
-  if (countOnly === true) {
-    return count;
-  }
+  return count;
 }
 
 /**
@@ -188,9 +179,7 @@ function checkUnderAttack(x: number, y: number): boolean {
     return false;
   }
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
+  const enemyType: number = getEnemyType(itemType);
 
   const isUnderAttack1 = this.boardMap[y - 2] !== undefined
     && (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType);
@@ -253,10 +242,7 @@ function checkEnemyHasMoves(itemType: number): boolean {
     return true;
   }
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
+  const enemyType: number = getEnemyType(itemType);
   const enemyStatues: number[][] = getMapItemsByType(this.boardMap, enemyType);
   const moves: number[][] = [];
 
