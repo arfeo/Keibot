@@ -1,3 +1,5 @@
+import { MAP_ITEM_TYPES } from '../../constants/game';
+
 /**
  * Function returns the cell size (atomic canvas measure)
  * depending on the screen size and the given vmin value
@@ -54,8 +56,18 @@ function getRandomNum(min = 1, max = 1000, discard: number[] = []): number {
   return num;
 }
 
+/**
+ * Returns the item type which is opponent to the given `itemType`
+ *
+ * @param itemType
+ */
+function getEnemyType(itemType: number): number {
+  return itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.blue.statue : MAP_ITEM_TYPES.red.statue;
+}
+
 export {
   getCellSize,
   getMapItemsByType,
   getRandomNum,
+  getEnemyType,
 };
