@@ -128,10 +128,9 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
 
     if (countOnly !== true) {
       this.boardMap[beadY][beadX] = ownBead;
-
-      renderMapItem.call(this, beadX, beadY);
-
       this.players[playerType].beads -= 1;
+
+      !this.isRenderOff && renderMapItem.call(this, beadX, beadY);
 
       // No beads left -- game over
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
