@@ -3,3 +3,8 @@ export interface Player {
   beads: number;
   active: boolean;
 }
+
+export interface MapItemProps {
+  statue: number;
+  bead: number;
+}

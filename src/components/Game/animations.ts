@@ -1,4 +1,4 @@
-import { ELEMENT_PROPS } from '../../constants/game';
+import { ELEMENT_PROPS, FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawRectangle } from '../../utils/drawing';
 
@@ -35,10 +35,67 @@ function animateCursor(): void {
       );
     }
 
-    this.animateCursor = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   };
 
-  this.animateCursor = requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 }
 
-export { animateCursor };
+/**
+ * Function animates an item fading in or out on the specified coordinates
+ *
+ * @param x
+ * @param y
+ * @param fadeType
+ */
+function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): Promise<void> {
+  return new Promise((resolve) => {
+    const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
+    const item: number | undefined = this.boardMap[y][x];
+    let alpha = fadeType === 'out' ? 1 : 0;
+
+    if (item !== MAP_ITEM_TYPES.red.statue && item !== MAP_ITEM_TYPES.blue.statue) {
+      return resolve();
+    }
+
+    const clearCell = (): void => {
+      ctx.clearRect(
+        this.cellSize * x,
+        this.cellSize * y,
+        this.cellSize,
+        this.cellSize,
+      );
+    };
+
+    const animate = (): void => {
+      if ((fadeType === 'out' && alpha < 0) || (fadeType === 'in' && alpha > 1)) {
+        fadeType === 'out' && clearCell();
+
+        return resolve();
+      }
+
+      clearCell();
+
+      ctx.globalAlpha = alpha;
+
+      ctx.drawImage(
+        (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+        this.cellSize * x + 5,
+        this.cellSize * y + 5,
+        this.cellSize - 10,
+        this.cellSize - 10,
+      );
+
+      alpha += (fadeType === 'out' ? -1 : 1) * FADE_OUT_ANIMATION_SPEED / 4;
+
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  });
+}
+
+export {
+  animateCursor,
+  animateItemFade,
+};

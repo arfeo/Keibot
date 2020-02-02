@@ -1,9 +1,14 @@
 import { PageComponent } from '../core/Page';
 
-import { CELL_SIZE_VMIN, DEFAULT_BOARD_SIZE, BEADS_COUNT } from '../../constants/game';
+import {
+  CELL_SIZE_VMIN,
+  DEFAULT_BOARD_SIZE,
+  BEADS_COUNT,
+  MAP_ITEM_TYPES,
+} from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
-import { setCellSize } from './helpers';
+import { getCellSize } from './helpers';
 import { animateCursor } from './animations';
 import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
 import { aiMove } from './ai';
@@ -24,20 +29,35 @@ class Game extends PageComponent {
   protected backToMenuButton: HTMLButtonElement;
   protected boardMap: number[][];
   protected cursor: number[];
-  protected players: { [key: string]: Player };
+  protected players: { red: Player; blue: Player };
   protected lockedCell: number[];
   protected isComputerOn: boolean;
+  protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
+  protected isMoving: boolean;
 
   public init(): void {
-    const storageBoardSize: number | undefined = getStorageData('boardSize');
-    const storageFirstMove: number | undefined = getStorageData('firstMove');
-    const storageIsComputerOn: boolean | undefined = getStorageData('isComputerOn');
+    const [
+      storageBoardSize,
+      storageFirstMove,
+      storageIsComputerOn,
+      storageIsShowMovesOn,
+    ]: [
+      number | undefined,
+      number | undefined,
+      boolean | undefined,
+      boolean | undefined,
+    ] = getStorageData([
+      'boardSize',
+      'firstMove',
+      'isComputerOn',
+      'isShowMovesOn',
+    ]);
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
 
-    this.cellSize = setCellSize(CELL_SIZE_VMIN);
+    this.cellSize = getCellSize(CELL_SIZE_VMIN);
 
     this.boardSize = storageBoardSize ?? DEFAULT_BOARD_SIZE;
 
@@ -64,25 +84,17 @@ class Game extends PageComponent {
       },
     };
 
-    /**
-     * Map legend:
-     *  0 - Empty space
-     *  1 - Red statue
-     *  2 - Red bead
-     *  3 - Blue statue
-     *  4 - Blue bead
-     */
     this.boardMap = [...new Array(this.boardSize)].map((itemY: number[], index: number): number[] => {
       const itemX: number[] = new Array(this.boardSize).fill(0);
 
       // Always place initially four red statues in the top left corner of the game board
       if (index === 0 || index === 1) {
-        itemX[0] = itemX[1] = 1;
+        itemX[0] = itemX[1] = MAP_ITEM_TYPES.red.statue;
       }
 
       // Always place initially four blue statues in the bottom right corner of the game board
       if (index === this.boardSize - 2 || index === this.boardSize - 1) {
-        itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = 3;
+        itemX[this.boardSize - 2] = itemX[this.boardSize - 1] = MAP_ITEM_TYPES.blue.statue;
       }
 
       return itemX;
@@ -124,8 +136,9 @@ class Game extends PageComponent {
     this.lockedCell = [];
 
     this.isComputerOn = storageIsComputerOn ?? true;
-
+    this.isShowMovesOn = storageIsShowMovesOn ?? true;
     this.isGameOver = false;
+    this.isMoving = false;
   }
 
   public render(): void {

@@ -1,7 +1,7 @@
 import { Game } from './';
 import { Menu } from '../Menu';
 
-import { APP } from '../../constants/game';
+import { APP, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
@@ -18,7 +18,14 @@ function onBoardClick(event: MouseEvent): void {
   const isRedTurn: boolean = this.players.red.active;
   const isBlueTurn: boolean = this.players.blue.active;
 
-  if ((isRedTurn && this.boardMap[y][x] === 1 && !this.isComputerOn) || (isBlueTurn && this.boardMap[y][x] === 3)) {
+  if (this.isMoving === true) {
+    return;
+  }
+
+  if (
+    (isRedTurn && this.boardMap[y][x] === MAP_ITEM_TYPES.red.statue && !this.isComputerOn)
+    || (isBlueTurn && this.boardMap[y][x] === MAP_ITEM_TYPES.blue.statue)
+  ) {
     clearCanvas.call(this, this.cursorCanvas);
 
     // Remove cursor if we click on an item which was already selected before
@@ -26,7 +33,7 @@ function onBoardClick(event: MouseEvent): void {
       ? []
       : [y, x];
 
-    if (this.cursor.length > 0) {
+    if (this.cursor.length > 0 && this.isShowMovesOn) {
       renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
     }
   } else {
@@ -42,6 +49,10 @@ function onBoardClick(event: MouseEvent): void {
  * Function destroys current game and creates a new instance of the `Game` class
  */
 function onNewGameButtonClick(): void {
+  if (this.isMoving === true) {
+    return;
+  }
+
   this.destroy();
 
   APP.pageInstance = new Game();
@@ -51,6 +62,10 @@ function onNewGameButtonClick(): void {
  * Function destroys current game and creates a new instance of the `Menu` class
  */
 function onBackToMenuButtonClick(): void {
+  if (this.isMoving === true) {
+    return;
+  }
+
   this.destroy();
 
   APP.pageInstance = new Menu();

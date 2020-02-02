@@ -1,6 +1,6 @@
-export const APP: {
-  pageInstance: any;
-} = {
+import { MapItemProps } from '../typings/game';
+
+export const APP: App = {
   pageInstance: null,
 };
 
@@ -11,6 +11,21 @@ export const CELL_SIZE_VMIN = 10;
 export const DEFAULT_BOARD_SIZE = 8;
 
 export const BEADS_COUNT = 10;
+
+export const FADE_OUT_ANIMATION_SPEED = 0.2;
+
+export const COMPUTER_MOVE_TIMEOUT = 1;
+
+export const MAP_ITEM_TYPES: { red: MapItemProps; blue: MapItemProps } = {
+  red: {
+    statue: 1,
+    bead: 2,
+  },
+  blue: {
+    statue: 3,
+    bead: 4,
+  },
+};
 
 export const ELEMENT_PROPS: HashMap = {
   cell: {

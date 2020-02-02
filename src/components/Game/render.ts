@@ -1,7 +1,8 @@
-import { BEADS_COUNT, ELEMENT_PROPS } from '../../constants/game';
+import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, processGameOver } from './actions';
+import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
+import { animateItemFade } from './animations';
 import { aiMove } from './ai';
 
 /**
@@ -80,7 +81,7 @@ function renderGridCell(x: number, y: number): void {
     {
       fillColor: ELEMENT_PROPS.cell.background,
       edgingColor: ELEMENT_PROPS.cell.border,
-      edgingWidth: 2,
+      edgingWidth: this.cellSize / 40,
     },
   );
 
@@ -190,10 +191,9 @@ function renderMapItem(x: number, y: number): void {
     return;
   }
 
-  // Statues
-  if (item === 1 || item === 3) {
+  if (item === MAP_ITEM_TYPES.red.statue || item === MAP_ITEM_TYPES.blue.statue) {
     ctx.drawImage(
-      (item === 1 ? this.images.statueRed.element : this.images.statueBlue.element),
+      (item === MAP_ITEM_TYPES.red.statue ? this.images.statueRed.element : this.images.statueBlue.element),
       this.cellSize * x + 5,
       this.cellSize * y + 5,
       this.cellSize - 10,
@@ -201,8 +201,7 @@ function renderMapItem(x: number, y: number): void {
     );
   }
 
-  // Beads
-  if (item === 2 || item === 4) {
+  if (item === MAP_ITEM_TYPES.red.bead || item === MAP_ITEM_TYPES.blue.bead) {
     const posX: number = this.cellSize * x + this.cellSize / 2;
     const posY: number = this.cellSize * y + this.cellSize / 2;
 
@@ -210,9 +209,9 @@ function renderMapItem(x: number, y: number): void {
       ctx,
       posX,
       posY,
-      20,
+      this.cellSize / 4,
       {
-        fillColor: item === 2 ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
+        fillColor: item === MAP_ITEM_TYPES.red.bead ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
       },
     );
   }
@@ -253,11 +252,11 @@ function renderPossibleMoves(moves: number[][]): void {
       ctx,
       posX,
       posY,
-      10,
+      this.cellSize / 8,
       {
         fillColor: ELEMENT_PROPS.move.background,
         edgingColor: ELEMENT_PROPS.move.border,
-        edgingWidth: 4,
+        edgingWidth: this.cellSize / 20,
       },
     );
   });
@@ -272,15 +271,26 @@ function renderPossibleMoves(moves: number[][]): void {
  * @param cellX
  * @param cellY
  */
-function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): void {
+async function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): Promise<void> {
   const itemType: number = this.boardMap[itemY] ? this.boardMap[itemY][itemX] : 0;
 
-  if (itemType !== 1 && itemType !== 3) {
+  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return;
   }
 
-  const enemyType: number = itemType === 1 ? 3 : 1;
-  const playerType: string = itemType === 1 ? 'red' : 'blue';
+  this.isMoving = true;
+
+  this.cursor = [];
+
+  clearCanvas.call(this, this.cursorCanvas);
+
+  await animateItemFade.call(this, itemX, itemY, 'out');
+
+  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
+    ? MAP_ITEM_TYPES.blue.statue
+    : MAP_ITEM_TYPES.red.statue;
+
+  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
 
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
@@ -296,7 +306,7 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
   this.boardMap[itemY][itemX] = 0;
   this.boardMap[cellY][cellX] = itemType;
 
-  this.cursor = [];
+  await animateItemFade.call(this, cellX, cellY, 'in');
 
   // Redraw previously locked statue, removing the shield icon from it
   if (this.lockedCell.length > 0) {
@@ -305,38 +315,39 @@ function renderMove(itemX: number, itemY: number, cellX: number, cellY: number):
 
   this.lockedCell = [cellY, cellX];
 
-  renderMapItem.call(this, itemX, itemY);
-  renderMapItem.call(this, cellX, cellY);
-
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
   checkBeadsPlacing.call(this, cellX, cellY);
 
-  clearCanvas.call(this, this.cursorCanvas);
+  this.isMoving = false;
+
+  // If enemy hasn't got possible moves, current user wins
+  if (!checkEnemyHasMoves.call(this, itemType)) {
+    this.isGameOver = true;
+  }
 
   // End of turn
-  // TODO: check possible moves for the next player
   if (!this.isGameOver) {
     this.players = {
       red: {
         ...this.players.red,
-        active: itemType === 3,
+        active: itemType === MAP_ITEM_TYPES.blue.statue,
       },
       blue: {
         ...this.players.blue,
-        active: itemType === 1,
+        active: itemType === MAP_ITEM_TYPES.red.statue,
       },
     };
 
     renderPanel.call(this);
 
     // Computer plays if it's on
-    if (itemType === 3 && this.isComputerOn === true) {
+    if (itemType === MAP_ITEM_TYPES.blue.statue && this.isComputerOn === true) {
       aiMove.call(this);
     }
   } else {
-    processGameOver.call(this, itemType);
+    renderGameOver.call(this, itemType);
   }
 }
 
@@ -355,8 +366,12 @@ function renderPanel(lastItemType?: number): void {
     ctx.textAlign = ELEMENT_PROPS.gameOver.align;
     ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
 
+    const message = this.isComputerOn
+      ? (lastItemType === MAP_ITEM_TYPES.red.statue ? 'You lose!' : 'You win!')
+      : (lastItemType === MAP_ITEM_TYPES.red.statue ? 'Red player wins!' : 'Blue player wins!');
+
     ctx.fillText(
-      lastItemType === 1 ? 'Red player wins!' : 'Blue player wins!',
+      message,
       this.cellSize * 2,
       this.cellSize,
     );
@@ -370,7 +385,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENT_PROPS.panel.red,
-      edgingWidth: this.players.red.active ? 15 : 2,
+      edgingWidth: this.players.red.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
 
@@ -382,7 +397,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 2,
     {
       edgingColor: ELEMENT_PROPS.panel.blue,
-      edgingWidth: this.players.blue.active ? 15 : 2,
+      edgingWidth: this.players.blue.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
 
@@ -464,6 +479,25 @@ function renderPanel(lastItemType?: number): void {
 }
 
 /**
+ * Function deactivates both users and re-renders the game panel
+ * on game over
+ */
+function renderGameOver(lastItemType: number): void {
+  this.players = {
+    red: {
+      ...this.players.red,
+      active: false,
+    },
+    blue: {
+      ...this.players.blue,
+      active: false,
+    },
+  };
+
+  renderPanel.call(this, lastItemType);
+}
+
+/**
  * Function clears the canvas given by the corresponding HTML element
  *
  * @param canvas
@@ -487,5 +521,6 @@ export {
   renderPossibleMoves,
   renderMove,
   renderPanel,
+  renderGameOver,
   clearCanvas,
 };

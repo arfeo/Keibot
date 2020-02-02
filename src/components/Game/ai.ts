@@ -1,6 +1,8 @@
+import { COMPUTER_MOVE_TIMEOUT, MAP_ITEM_TYPES } from '../../constants/game';
+
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack, processGameOver } from './actions';
-import { renderMove } from './render';
+import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack } from './actions';
+import { renderMove, renderGameOver } from './render';
 
 interface Move {
   evaluation: number;
@@ -17,13 +19,13 @@ function aiMove(): void {
   if (move.length === 0) {
     this.isGameOver = true;
 
-    processGameOver.call(this, 3);
+    renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
   }
 
   // Computer is too quick, so we set a timeout
   window.setTimeout(() => {
     renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]);
-  }, 1000);
+  }, COMPUTER_MOVE_TIMEOUT * 1000);
 }
 
 /**
@@ -32,14 +34,18 @@ function aiMove(): void {
  * and returns one random move from the result array
  */
 function aiChooseBestMove(): number[][] {
-  const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
+  const ownStatues: number[][] = getMapItemsByType(this.boardMap, MAP_ITEM_TYPES.red.statue);
   const moves: Move[] = [];
+
+  if (ownStatues.length === 0) {
+    return [];
+  }
 
   for (const statue of ownStatues) {
     const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
-      break;
+      continue;
     }
 
     for (const possibleMove of possibleMoves) {
@@ -53,8 +59,8 @@ function aiChooseBestMove(): number[][] {
     }
   }
 
-  const maxEvauation: number = Math.max.apply(Math, moves.map((i: Move): number => i.evaluation));
-  const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === maxEvauation);
+  const maxEvaluation: number = Math.max.apply(Math, moves.map((i: Move): number => i.evaluation));
+  const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === maxEvaluation);
 
   return processedMoves[getRandomNum(0, processedMoves.length - 1)].move;
 }
@@ -68,18 +74,15 @@ function aiChooseBestMove(): number[][] {
  * @param item
  */
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
-  const ownStatues: number[][] = getMapItemsByType(this.boardMap, 1);
-  const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
-    return statue[1] !== item[1] && statue[0] !== item[0];
-  });
-
+  const ownStatues: number[][] = getMapItemsByType(this.boardMap, MAP_ITEM_TYPES.red.statue);
+  const otherStatues: number[][] = ownStatues.filter((s: number[]) => JSON.stringify(s) !== JSON.stringify(item));
   let result = 0;
 
   // Count of beads to be placed (positive)
-  result += checkBeadsPlacing.call(this, x, y, true, 1);
+  result += checkBeadsPlacing.call(this, x, y, true, MAP_ITEM_TYPES.red.statue);
 
   // Is there an enemy statue on the target cell (positive)
-  if (this.boardMap[y][x] === 3) {
+  if (this.boardMap[y][x] === MAP_ITEM_TYPES.blue.statue) {
     result += 2;
   }
 
