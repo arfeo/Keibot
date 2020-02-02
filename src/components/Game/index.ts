@@ -52,7 +52,7 @@ class Game extends PageComponent {
       'firstMove',
       'isComputerOn',
       'isShowMovesOn',
-    ]) || [];
+    ]);
 
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';

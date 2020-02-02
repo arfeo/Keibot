@@ -8,7 +8,7 @@ import { STORAGE_PREFIX } from '../constants/game';
  */
 function getStorageData(keys?: string[] | string): any[] | any | undefined {
   try {
-    const data = JSON.parse(window.localStorage.getItem(`${STORAGE_PREFIX}`));
+    const data: any = JSON.parse(window.localStorage.getItem(`${STORAGE_PREFIX}`));
 
     if (keys === undefined) {
       return data || {};
@@ -22,7 +22,7 @@ function getStorageData(keys?: string[] | string): any[] | any | undefined {
       return data[keys];
     }
 
-    return undefined;
+    return Array.isArray(keys) ? [] : undefined;
   } catch (error) {
     console.error(error);
   }
