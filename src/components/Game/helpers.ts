@@ -1,22 +1,13 @@
-import { MAP_ITEM_TYPES } from '../../constants/game';
-
-/**
- * Local helper function.
- * Calculates the analogue of CSS vmin in pixels
- */
-function calculateVMin(): number {
-  const vpWidth: number = window.innerWidth;
-  const vpHeight: number = window.innerHeight;
-
-  return vpWidth >= vpHeight ? (vpHeight / 100) : (vpWidth / 100);
-}
-
 /**
  * Function returns the cell size (atomic canvas measure)
  * depending on the screen size and the given vmin value
  */
-function setCellSize(vmin: number): number {
-  return Math.round(calculateVMin() * vmin  / 10) * 10;
+function getCellSize(vmin: number): number {
+  const vpWidth: number = window.innerWidth;
+  const vpHeight: number = window.innerHeight;
+  const vMin: number = vpWidth >= vpHeight ? (vpHeight / 100) : (vpWidth / 100);
+
+  return Math.round(vMin * vmin  / 10) * 10;
 }
 
 /**
@@ -63,45 +54,8 @@ function getRandomNum(min = 1, max = 1000, discard: number[] = []): number {
   return num;
 }
 
-/**
- * Function checks whether there're three beads in a row on the game board
- * (vertically, horizontally, or diagonally)
- *
- * @param map
- */
-function isThreeInARow(map: number[][]): boolean {
-  if (!map || !Array.isArray(map)) {
-    return false;
-  }
-
-  for (let y = 0; y < map.length; y += 1) {
-    for (let x = 0; x < map[y].length; x += 1) {
-      const item = map[y][x];
-
-      if (item !== MAP_ITEM_TYPES.red.bead && item !== MAP_ITEM_TYPES.blue.bead) {
-        continue;
-      }
-
-      if (map[y][x + 1] === item && map[y][x + 2] === item) {
-        return true;
-      }
-
-      if (map[y + 1] !== undefined && map[y + 2] !== undefined && (
-        map[y + 1][x] === item && map[y + 2][x] === item
-        || map[y + 1][x + 1] === item && map[y + 2][x + 2] === item
-        || map[y + 1][x - 1] === item && map[y + 2][x - 2] === item
-      )) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
 export {
+  getCellSize,
   getMapItemsByType,
   getRandomNum,
-  setCellSize,
-  isThreeInARow,
 };

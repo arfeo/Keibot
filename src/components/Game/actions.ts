@@ -1,7 +1,7 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { renderMapItem, renderPanel } from './render';
-import { getMapItemsByType, isThreeInARow } from './helpers';
+import { renderMapItem } from './render';
+import { getMapItemsByType } from './helpers';
 
 interface Cell {
   cellX: number;
@@ -135,7 +135,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
 
       // No beads left -- game over
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (this.players[playerType].beads === 0 || isThreeInARow(this.boardMap) === true) {
+      if (this.players[playerType].beads === 0 || checkThreeInARow.call(this) === true) {
         this.isGameOver = true;
       }
     } else {
@@ -179,12 +179,11 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
  * Function checks is there any enemies within one turn reach about
  * the cell with the given coordinates
  *
- * @param map
  * @param x
  * @param y
  */
-function checkUnderAttack(map: number[][], x: number, y: number): boolean {
-  const itemType = map[y] ? map[y][x] : 0;
+function checkUnderAttack(x: number, y: number): boolean {
+  const itemType = this.boardMap[y] ? this.boardMap[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return false;
@@ -194,12 +193,52 @@ function checkUnderAttack(map: number[][], x: number, y: number): boolean {
     ? MAP_ITEM_TYPES.blue.statue
     : MAP_ITEM_TYPES.red.statue;
 
-  return (
-    (map[y - 2] !== undefined && (map[y - 2][x - 1] === enemyType || map[y - 2][x + 1] === enemyType))
-    || (map[y + 1] !== undefined && (map[y + 1][x - 1] === enemyType || map[y + 1][x + 2] === enemyType))
-    || (map[y + 2] !== undefined && (map[y + 2][x - 1] === enemyType || map[y + 2][x + 1] === enemyType))
-    || (map[y - 1] !== undefined && (map[y - 1][x - 2] === enemyType || map[y - 1][x + 2] === enemyType))
-  );
+  const isUnderAttack1 = this.boardMap[y - 2] !== undefined
+    && (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType);
+  const isUnderAttack2 = this.boardMap[y + 1] !== undefined
+    && (this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType);
+  const isUnderAttack3 = this.boardMap[y + 2] !== undefined
+    && (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType);
+  const isUnderAttack4 = this.boardMap[y - 1] !== undefined
+    && (this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType);
+
+  return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
+}
+
+/**
+ * Function checks whether there're three beads in a row on the game board
+ * (vertically, horizontally, or diagonally)
+ *
+ * @param map
+ */
+function checkThreeInARow(): boolean {
+  if (!this.boardMap || !Array.isArray(this.boardMap)) {
+    return false;
+  }
+
+  for (let y = 0; y < this.boardMap.length; y += 1) {
+    for (let x = 0; x < this.boardMap[y].length; x += 1) {
+      const item = this.boardMap[y][x];
+
+      if (item !== MAP_ITEM_TYPES.red.bead && item !== MAP_ITEM_TYPES.blue.bead) {
+        continue;
+      }
+
+      if (this.boardMap[y][x + 1] === item && this.boardMap[y][x + 2] === item) {
+        return true;
+      }
+
+      if (this.boardMap[y + 1] !== undefined && this.boardMap[y + 2] !== undefined && (
+        this.boardMap[y + 1][x] === item && this.boardMap[y + 2][x] === item
+        || this.boardMap[y + 1][x + 1] === item && this.boardMap[y + 2][x + 2] === item
+        || this.boardMap[y + 1][x - 1] === item && this.boardMap[y + 2][x - 2] === item
+      )) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -239,30 +278,11 @@ function checkEnemyHasMoves(itemType: number): boolean {
   return moves.length > 0;
 }
 
-/**
- * Function deactivates both users and re-renders the game panel
- * on game over
- */
-function processGameOver(lastItemType: number): void {
-  this.players = {
-    red: {
-      ...this.players.red,
-      active: false,
-    },
-    blue: {
-      ...this.players.blue,
-      active: false,
-    },
-  };
-
-  renderPanel.call(this, lastItemType);
-}
-
 export {
   checkPossibleMoves,
   checkMoveToCell,
   checkBeadsPlacing,
   checkUnderAttack,
+  checkThreeInARow,
   checkEnemyHasMoves,
-  processGameOver,
 };

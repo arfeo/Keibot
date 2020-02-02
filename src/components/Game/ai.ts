@@ -1,8 +1,8 @@
 import { COMPUTER_MOVE_TIMEOUT, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack, processGameOver } from './actions';
-import { renderMove } from './render';
+import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack } from './actions';
+import { renderMove, renderGameOver } from './render';
 
 interface Move {
   evaluation: number;
@@ -19,7 +19,7 @@ function aiMove(): void {
   if (move.length === 0) {
     this.isGameOver = true;
 
-    processGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
+    renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
   }
 
   // Computer is too quick, so we set a timeout
@@ -87,7 +87,7 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
   }
 
   // Is there any other statue under attack (negative)
-  if (otherStatues.map((s: number[]) => checkUnderAttack(this.boardMap, s[1], s[0])).some((r: boolean) => r === true)) {
+  if (otherStatues.map((s: number[]) => checkUnderAttack.call(this, s[1], s[0])).some((r: boolean) => r === true)) {
     result -= 2;
   }
 

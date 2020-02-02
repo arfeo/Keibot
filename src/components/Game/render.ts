@@ -1,7 +1,7 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, processGameOver, checkEnemyHasMoves } from './actions';
+import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
 import { aiMove } from './ai';
 
@@ -347,7 +347,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
       aiMove.call(this);
     }
   } else {
-    processGameOver.call(this, itemType);
+    renderGameOver.call(this, itemType);
   }
 }
 
@@ -479,6 +479,25 @@ function renderPanel(lastItemType?: number): void {
 }
 
 /**
+ * Function deactivates both users and re-renders the game panel
+ * on game over
+ */
+function renderGameOver(lastItemType: number): void {
+  this.players = {
+    red: {
+      ...this.players.red,
+      active: false,
+    },
+    blue: {
+      ...this.players.blue,
+      active: false,
+    },
+  };
+
+  renderPanel.call(this, lastItemType);
+}
+
+/**
  * Function clears the canvas given by the corresponding HTML element
  *
  * @param canvas
@@ -502,5 +521,6 @@ export {
   renderPossibleMoves,
   renderMove,
   renderPanel,
+  renderGameOver,
   clearCanvas,
 };

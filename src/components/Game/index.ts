@@ -8,7 +8,7 @@ import {
 } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
-import { setCellSize } from './helpers';
+import { getCellSize } from './helpers';
 import { animateCursor } from './animations';
 import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
 import { aiMove } from './ai';
@@ -57,7 +57,7 @@ class Game extends PageComponent {
     this.appRoot = document.getElementById('root');
     this.appRoot.innerText = 'Loading...';
 
-    this.cellSize = setCellSize(CELL_SIZE_VMIN);
+    this.cellSize = getCellSize(CELL_SIZE_VMIN);
 
     this.boardSize = storageBoardSize ?? DEFAULT_BOARD_SIZE;
 
