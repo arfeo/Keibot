@@ -29,7 +29,7 @@ class Game extends PageComponent {
   protected backToMenuButton: HTMLButtonElement;
   protected boardMap: number[][];
   protected cursor: number[];
-  protected players: { [key: string]: Player };
+  protected players: { red: Player; blue: Player };
   protected lockedCell: number[];
   protected isComputerOn: boolean;
   protected isShowMovesOn: boolean;
@@ -84,14 +84,6 @@ class Game extends PageComponent {
       },
     };
 
-    /**
-     * Map legend:
-     *  0 - Empty space
-     *  1 - Red statue
-     *  2 - Red bead
-     *  3 - Blue statue
-     *  4 - Blue bead
-     */
     this.boardMap = [...new Array(this.boardSize)].map((itemY: number[], index: number): number[] => {
       const itemX: number[] = new Array(this.boardSize).fill(0);
 
