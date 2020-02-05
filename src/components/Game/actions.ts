@@ -184,7 +184,7 @@ function checkUnderAttack(x: number, y: number): boolean {
   const isUnderAttack1 = this.boardMap[y - 2] !== undefined
     && (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType);
   const isUnderAttack2 = this.boardMap[y + 1] !== undefined
-    && (this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType);
+    && (this.boardMap[y + 1][x - 2] === enemyType || this.boardMap[y + 1][x + 2] === enemyType);
   const isUnderAttack3 = this.boardMap[y + 2] !== undefined
     && (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType);
   const isUnderAttack4 = this.boardMap[y - 1] !== undefined
