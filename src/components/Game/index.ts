@@ -1,4 +1,5 @@
 import { PageComponent } from '../core/Page';
+import { Menu } from '../Menu';
 
 import {
   CELL_SIZE_VMIN,
@@ -10,7 +11,7 @@ import {
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { getCellSize } from './helpers';
 import { animateCursor } from './animations';
-import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
+import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
 
 import { getStorageData } from '../../utils/storage';
@@ -111,12 +112,12 @@ class Game extends PageComponent {
       {
         target: this.newGameButton,
         type: 'click',
-        listener: onNewGameButtonClick.bind(this),
+        listener: onButtonClick.bind(this, Game.bind(null)),
       },
       {
         target: this.backToMenuButton,
         type: 'click',
-        listener: onBackToMenuButtonClick.bind(this),
+        listener: onButtonClick.bind(this, Menu.bind(null)),
       },
     ];
 
@@ -141,7 +142,7 @@ class Game extends PageComponent {
     this.isMoving = false;
   }
 
-  public render(): void {
+  public async render(): Promise<void> {
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);
@@ -151,7 +152,7 @@ class Game extends PageComponent {
 
     // Computer plays if it's on, and the red player is the first to move
     if (this.isComputerOn === true && this.players.red.active === true) {
-      aiMove.call(this);
+      await aiMove.call(this);
     }
   }
 }

@@ -1,10 +1,8 @@
-import { Game } from './';
-import { Menu } from '../Menu';
-
 import { APP, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
+import { aiMove } from './ai';
 
 /**
  * Function fires on the cursor canvas click event
@@ -39,7 +37,12 @@ function onBoardClick(event: MouseEvent): void {
   } else {
     if (this.cursor.length > 0) {
       if (checkMoveToCell.call(this, this.cursor[1], this.cursor[0], x, y)) {
-        renderMove.call(this, this.cursor[1], this.cursor[0], x, y);
+        renderMove.call(this, this.cursor[1], this.cursor[0], x, y).then(async () => {
+          // Computer plays if it's on
+          if (this.isComputerOn === true) {
+            await aiMove.call(this);
+          }
+        });
       }
     }
   }
@@ -48,31 +51,17 @@ function onBoardClick(event: MouseEvent): void {
 /**
  * Function destroys current game and creates a new instance of the `Game` class
  */
-function onNewGameButtonClick(): void {
+function onButtonClick(instance: any): void {
   if (this.isMoving === true) {
     return;
   }
 
   this.destroy();
 
-  APP.pageInstance = new Game();
-}
-
-/**
- * Function destroys current game and creates a new instance of the `Menu` class
- */
-function onBackToMenuButtonClick(): void {
-  if (this.isMoving === true) {
-    return;
-  }
-
-  this.destroy();
-
-  APP.pageInstance = new Menu();
+  APP.pageInstance = new instance();
 }
 
 export {
   onBoardClick,
-  onNewGameButtonClick,
-  onBackToMenuButtonClick,
+  onButtonClick,
 };

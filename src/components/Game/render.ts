@@ -3,7 +3,6 @@ import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
-import { aiMove } from './ai';
 import { getEnemyType } from './helpers';
 
 /**
@@ -339,14 +338,11 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     };
 
     renderPanel.call(this);
-
-    // Computer plays if it's on
-    if (itemType === MAP_ITEM_TYPES.blue.statue && this.isComputerOn === true) {
-      aiMove.call(this);
-    }
   } else {
     renderGameOver.call(this, itemType);
   }
+
+  return Promise.resolve();
 }
 
 /**

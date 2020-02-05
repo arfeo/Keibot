@@ -12,25 +12,27 @@ interface Move {
 /**
  * Function renders the chosen best move
  */
-function aiMove(): void {
-  const move: number[][] = aiMiniMax.call(this, this.boardMap, 0, true);
+function aiMove(): Promise<void> {
+  return new Promise((resolve) => {
+    const move: number[][] = aiMiniMax.call(this, this.boardMap, 0, true);
 
-  // No moves for computer -- the blue player wins
-  if (move.length === 0) {
-    this.isGameOver = true;
+    // No moves for computer -- the blue player wins
+    if (move.length === 0) {
+      this.isGameOver = true;
 
-    renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
-  }
+      renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
+    }
 
-  // Computer is too quick, so we set a timeout
-  window.setTimeout(() => {
-    renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]);
-  }, COMPUTER_MOVE_TIMEOUT * 1000);
+    // Computer is too quick, so we set a timeout
+    window.setTimeout(() => {
+      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(resolve);
+    }, COMPUTER_MOVE_TIMEOUT * 1000);
+  });
 }
 
 function aiMiniMax(node: number[][], depth = 0, maximizingPlayer = true): number[][] {
   if (depth === 0 || this.isGameOver === true) {
-    const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
+    const itemType: number = maximizingPlayer === true ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
     const moves: Move[] = aiGetEvaluatedMoves.call(this, itemType);
     const evaluations: number[] = moves.map((i: Move): number => i.evaluation);
     const evaluation: number = maximizingPlayer ? Math.max.apply(Math, evaluations) : Math.min.apply(Math, evaluations);
@@ -96,7 +98,7 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
   const itemType: number = Array.isArray(item) && item.length === 2 ? this.boardMap[item[1]][item[0]] : 0;
   const ownStatues: number[][] = getMapItemsByType(this.boardMap, itemType);
-  const otherStatues: number[][] = ownStatues.filter((s: number[]) => JSON.stringify(s) !== JSON.stringify(item));
+  const otherStatues: number[][] = ownStatues.filter((s: number[]) => !(s[0] === item[0] && s[1] === item[1]));
   let result = 0;
 
   // Count of beads to be placed (positive)
@@ -111,7 +113,7 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
 
   // Is there any other statue under attack (negative)
   if (otherStatues.map((s: number[]) => checkUnderAttack.call(this, s[1], s[0])).some((r: boolean) => r === true)) {
-    result -= 2;
+    result -= 10;
   }
 
   return result;
