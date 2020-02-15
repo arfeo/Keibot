@@ -11,3 +11,8 @@ interface EventHandler {
   type: string;
   listener: EventListener;
 }
+
+interface MapItemProps {
+  statue: number;
+  bead: number;
+}

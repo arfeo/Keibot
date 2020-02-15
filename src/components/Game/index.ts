@@ -16,7 +16,7 @@ import { aiMove } from './ai';
 
 import { getStorageData } from '../../utils/storage';
 
-import { Player } from '../../typings/game';
+import { Player } from './types';
 
 class Game extends PageComponent {
   protected appRoot: HTMLElement;

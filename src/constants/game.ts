@@ -1,5 +1,3 @@
-import { MapItemProps } from '../typings/game';
-
 export const APP: App = {
   pageInstance: null,
 };
