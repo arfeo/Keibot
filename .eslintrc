@@ -90,6 +90,22 @@
     "no-extra-bind": "error",
     "no-extra-boolean-cast": "warn",
     "no-implied-eval": "error",
+    "no-irregular-whitespace": [
+      "error",
+      {
+        "skipComments": true,
+        "skipStrings": true,
+        "skipTemplates": true
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxBOF": 0,
+        "maxEOF": 0
+      }
+    ],
     "no-param-reassign": ["warn", { "props": false }],
     "no-plusplus": [
       "error",
