@@ -25,7 +25,9 @@ function aiMove(): Promise<void> {
 
     // Computer is too quick, so we set a timeout
     window.setTimeout(() => {
-      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(resolve);
+      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(() => {
+        resolve();
+      });
     }, COMPUTER_MOVE_TIMEOUT * 1000);
   });
 }
@@ -35,13 +37,13 @@ function aiMiniMax(node: number[][], depth = 0, maximizingPlayer = true): number
     const itemType: number = maximizingPlayer === true ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
     const moves: Move[] = aiGetEvaluatedMoves.call(this, itemType);
     const evaluations: number[] = moves.map((i: Move): number => i.evaluation);
-    const evaluation: number = maximizingPlayer ? Math.max.apply(Math, evaluations) : Math.min.apply(Math, evaluations);
+    const evaluation: number = maximizingPlayer ? Math.max(...evaluations) : Math.min(...evaluations);
     const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === evaluation);
 
     return processedMoves[getRandomNum(0, processedMoves.length - 1)].move;
   }
 
-  /*let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+  /* let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 
   if (maximizingPlayer) {
     // ...
@@ -98,7 +100,10 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
   const itemType: number = Array.isArray(item) && item.length === 2 ? this.boardMap[item[1]][item[0]] : 0;
   const ownStatues: number[][] = getMapItemsByType(this.boardMap, itemType);
-  const otherStatues: number[][] = ownStatues.filter((s: number[]) => !(s[0] === item[0] && s[1] === item[1]));
+  const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
+    return !(statue[0] === item[0] && statue[1] === item[1]);
+  });
+
   let result = 0;
 
   // Count of beads to be placed (positive)
@@ -112,7 +117,11 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
   }
 
   // Is there any other statue under attack (negative)
-  if (otherStatues.map((s: number[]) => checkUnderAttack.call(this, s[1], s[0])).some((r: boolean) => r === true)) {
+  const isUnderAttack: boolean = otherStatues.map((statue: number[]) => {
+    return checkUnderAttack.call(this, statue[1], statue[0]);
+  }).some((value: boolean) => value === true);
+
+  if (isUnderAttack) {
     result -= 10;
   }
 

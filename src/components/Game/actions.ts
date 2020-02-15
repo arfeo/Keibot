@@ -152,14 +152,14 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
   };
 
   processCells([
-    { cellX: x - 2,   cellY: y - 2,   targetX: x - 1,   targetY: y - 1},
-    { cellX: x,       cellY: y - 2,   targetX: x,       targetY: y - 1},
-    { cellX: x + 2,   cellY: y - 2,   targetX: x + 1,   targetY: y - 1},
-    { cellX: x - 2,   cellY: y,       targetX: x - 1,   targetY: y},
-    { cellX: x + 2,   cellY: y,       targetX: x + 1,   targetY: y},
-    { cellX: x - 2,   cellY: y + 2,   targetX: x - 1,   targetY: y + 1},
-    { cellX: x,       cellY: y + 2,   targetX: x,       targetY: y + 1},
-    { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1},
+    { cellX: x - 2,   cellY: y - 2,   targetX: x - 1,   targetY: y - 1 },
+    { cellX: x,       cellY: y - 2,   targetX: x,       targetY: y - 1 },
+    { cellX: x + 2,   cellY: y - 2,   targetX: x + 1,   targetY: y - 1 },
+    { cellX: x - 2,   cellY: y,       targetX: x - 1,   targetY: y },
+    { cellX: x + 2,   cellY: y,       targetX: x + 1,   targetY: y },
+    { cellX: x - 2,   cellY: y + 2,   targetX: x - 1,   targetY: y + 1 },
+    { cellX: x,       cellY: y + 2,   targetX: x,       targetY: y + 1 },
+    { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1 },
   ]);
 
   return count;

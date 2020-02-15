@@ -1,3 +1,6 @@
+import { Game } from '.';
+import { Menu } from '../Menu';
+
 import { APP, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
@@ -51,14 +54,14 @@ function onBoardClick(event: MouseEvent): void {
 /**
  * Function destroys current game and creates a new instance of the `Game` class
  */
-function onButtonClick(instance: any): void {
+function onButtonClick(Instance: typeof Game | typeof Menu): void {
   if (this.isMoving === true) {
     return;
   }
 
   this.destroy();
 
-  APP.pageInstance = new instance();
+  APP.pageInstance = new Instance();
 }
 
 export {
