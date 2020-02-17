@@ -111,17 +111,15 @@ function checkMoveToCell(
  * @param boardDescription
  * @param x
  * @param y
- * @param itemType
  */
 function checkBeadsPlacing(
   boardDescription: BoardDescription,
   x: number,
   y: number,
-  item?: number,
 ): BeadsPlacing {
   const { boardMap, players } = boardDescription;
   let { isGameOver } = boardDescription;
-  const itemType: number = item ?? (boardMap[y] ? boardMap[y][x] : 0);
+  const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
   const beadsCoordinates: number[][] = [];
 
   if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || isGameOver) {

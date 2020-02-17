@@ -327,10 +327,6 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     renderMapItem.call(this, bead[1], bead[0]);
   }
 
-  this.boardMap = beadsPlacing.boardDescription.boardMap;
-  this.players = beadsPlacing.boardDescription.players;
-  this.isGameOver = beadsPlacing.boardDescription.isGameOver;
-
   this.isMoving = false;
 
   // If enemy hasn't got possible moves, current user wins

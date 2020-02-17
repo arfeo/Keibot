@@ -100,7 +100,6 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
  * @param x
  * @param y
  * @param item
- * @param itemType
  */
 function aiEvaluateMove(x: number, y: number, item: number[]): number {
   const itemType: number = Array.isArray(item) && item.length === 2 ? this.boardMap[item[1]][item[0]] : 0;
@@ -116,7 +115,7 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
     boardMap: this.boardMap,
     players: this.players,
     isGameOver: this.isGameOver,
-  }, x, y, itemType);
+  }, x, y);
 
   result += beadsPlacing.beadsCoordinates.length;
 
