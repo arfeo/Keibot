@@ -30,7 +30,7 @@ function aiMove(): Promise<void> {
       renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(() => {
         resolve();
       });
-    }, COMPUTER_MOVE_TIMEOUT * 1000);
+    }, COMPUTER_MOVE_TIMEOUT);
   });
 }
 

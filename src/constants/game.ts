@@ -12,7 +12,7 @@ export const BEADS_COUNT = 10;
 
 export const FADE_OUT_ANIMATION_SPEED = 0.2;
 
-export const COMPUTER_MOVE_TIMEOUT = 1;
+export const COMPUTER_MOVE_TIMEOUT = 1000;
 
 export const MAP_ITEM_TYPES: { red: MapItemProps; blue: MapItemProps } = {
   red: {
