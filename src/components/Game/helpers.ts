@@ -39,21 +39,14 @@ function getMapItemsByType(map: number[][], type: number): number[][] {
 }
 
 /**
- * Returns a random number in a given interval; as an option it discards one or more numbers given
- * in the `discard` array
+ * Returns a random number in a given interval
  *
  * @param min
  * @param max
  * @param discard
  */
-function getRandomNum(min = 1, max = 1000, discard: number[] = []): number {
-  const num: number = Math.floor(min + Math.random() * (max + 1 - min));
-
-  if (discard.indexOf(num) > -1) {
-    return getRandomNum(min, max, discard);
-  }
-
-  return num;
+function getRandomNum(min = 1, max = 1000): number {
+  return Math.floor(min + Math.random() * (max + 1 - min));
 }
 
 /**
