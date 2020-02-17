@@ -68,7 +68,10 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
   }
 
   for (const statue of ownStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves({
+      boardMap: this.boardMap,
+      lockedCell: this.lockedCell,
+    }, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;

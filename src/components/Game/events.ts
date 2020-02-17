@@ -35,7 +35,10 @@ function onBoardClick(event: MouseEvent): void {
       : [y, x];
 
     if (this.cursor.length > 0 && this.isShowMovesOn) {
-      renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
+      renderPossibleMoves.call(this, checkPossibleMoves({
+        boardMap: this.boardMap,
+        lockedCell: this.lockedCell,
+      }, x, y));
     }
   } else {
     if (this.cursor.length > 0) {

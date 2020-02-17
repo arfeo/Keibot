@@ -3,6 +3,8 @@ import { MAP_ITEM_TYPES } from '../../constants/game';
 import { renderMapItem } from './render';
 import { getMapItemsByType, getEnemyType } from './helpers';
 
+import { BoardDescription } from './types';
+
 interface Cell {
   cellX: number;
   cellY: number;
@@ -18,11 +20,13 @@ type CellWithBead = Cell & {
  * it returns an array of possible coordinates or undefined if no statue found
  * on the board by the given coordinates
  *
+ * @param boardDescription
  * @param x
  * @param y
  */
-function checkPossibleMoves(x: number, y: number): number[][] | undefined {
-  const itemType: number = this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkPossibleMoves(boardDescription: BoardDescription, x: number, y: number): number[][] | undefined {
+  const { boardMap, lockedCell } = boardDescription;
+  const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return;
@@ -35,11 +39,11 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
   // if there's an enemy statue on the target cell -- check whether it is locked or not;
   // if it's not locked, return true, otherwise return false
   const checkCell = (targetX: number, targetY: number): boolean => {
-    if (this.boardMap[targetY][targetX] === enemyType) {
-      return this.lockedCell.length > 0 ? this.lockedCell[1] !== targetX || this.lockedCell[0] !== targetY : true;
+    if (boardMap[targetY][targetX] === enemyType) {
+      return lockedCell.length > 0 ? lockedCell[1] !== targetX || lockedCell[0] !== targetY : true;
     }
 
-    return this.boardMap[targetY][targetX] === 0;
+    return boardMap[targetY][targetX] === 0;
   };
 
   const processCells = (cells: Cell[]): void => {
@@ -48,7 +52,7 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
     }
 
     cells.forEach((cell: Cell) => {
-      if (this.boardMap[cell.cellY] !== undefined && checkCell(cell.cellX, cell.cellY)) {
+      if (boardMap[cell.cellY] !== undefined && checkCell(cell.cellX, cell.cellY)) {
         moves.push([cell.cellY, cell.cellX]);
       }
     });
@@ -82,7 +86,10 @@ function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: num
     return false;
   }
 
-  const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, itemX, itemY);
+  const possibleMoves: number[][] | undefined = checkPossibleMoves({
+    boardMap: this.boardMap,
+    lockedCell: this.lockedCell,
+  }, itemX, itemY);
 
   return Array.isArray(possibleMoves)
     && possibleMoves.map((move: number[]) => JSON.stringify(move)).indexOf(JSON.stringify([cellY, cellX])) > -1;
@@ -251,7 +258,10 @@ function checkEnemyHasMoves(itemType: number): boolean {
   }
 
   for (const statue of enemyStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves({
+      boardMap: this.boardMap,
+      lockedCell: this.lockedCell,
+    }, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;
