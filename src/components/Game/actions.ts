@@ -103,7 +103,10 @@ function checkMoveToCell(
 
 /**
  * Function checks whether new beads are needed to be placed on the board or not
- * after placing a statue to a cell with the given coordinates, and returns the total beads count
+ * after placing a statue to a cell with the given coordinates;
+ * it returns an object with the following keys:
+ *  * beadsCoordinates -- an array of beads coordinates (if any)
+ *  * boardDescription -- modified board description
  *
  * @param boardDescription
  * @param x
