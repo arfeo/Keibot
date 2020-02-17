@@ -1,9 +1,8 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { renderMapItem } from './render';
 import { getMapItemsByType, getEnemyType } from './helpers';
 
-import { BoardDescription } from './types';
+import { BoardDescription, BeadsPlacing } from './types';
 
 interface Cell {
   cellX: number;
@@ -104,21 +103,29 @@ function checkMoveToCell(
 
 /**
  * Function checks whether new beads are needed to be placed on the board or not
- * after placing a statue to a cell with the given coordinates, and returns the total beads count;
- * if `countOnly` param is set to true, function doesn't actually place (render) any beads
- * on the map, but still returns the total beads count
+ * after placing a statue to a cell with the given coordinates, and returns the total beads count
  *
+ * @param boardDescription
  * @param x
  * @param y
- * @param countOnly
- * @param countFor
+ * @param itemType
  */
-function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): number {
-  const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
-  let count = 0;
+function checkBeadsPlacing(
+  boardDescription: BoardDescription,
+  x: number,
+  y: number,
+  item?: number,
+): BeadsPlacing {
+  const { boardMap, players } = boardDescription;
+  let { isGameOver } = boardDescription;
+  const itemType: number = item ?? (boardMap[y] ? boardMap[y][x] : 0);
+  const beadsCoordinates: number[][] = [];
 
-  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || this.isGameOver) {
-    return count;
+  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || isGameOver) {
+    return {
+      beadsCoordinates,
+      boardDescription,
+    };
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
@@ -129,23 +136,19 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
   // corresponding player object. If there's no beads left, the player wins;
   // if the player got three beads in a row, he also wins.
   const placeBead = (beadX: number, beadY: number): void => {
-    if (this.players[playerType].beads === 0) {
+    if (players[playerType].beads === 0) {
       return;
     }
 
-    if (countOnly !== true) {
-      this.boardMap[beadY][beadX] = ownBead;
-      this.players[playerType].beads -= 1;
+    boardMap[beadY][beadX] = ownBead;
+    players[playerType].beads -= 1;
 
-      renderMapItem.call(this, beadX, beadY);
+    beadsCoordinates.push([beadY, beadX]);
 
-      // No beads left -- game over
-      // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (this.players[playerType].beads === 0 || checkThreeInARow(this.boardMap) === true) {
-        this.isGameOver = true;
-      }
-    } else {
-      count += 1;
+    // No beads left -- game over
+    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
+    if (players[playerType].beads === 0 || checkThreeInARow(boardMap) === true) {
+      isGameOver = true;
     }
   };
 
@@ -155,11 +158,11 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
     }
 
     cells.forEach((cell: CellWithBead): void => {
-      if (this.boardMap[cell.cellY] === undefined) {
+      if (boardMap[cell.cellY] === undefined) {
         return;
       }
 
-      if (this.boardMap[cell.cellY][cell.cellX] === enemyType && this.boardMap[cell.targetY][cell.targetX] === 0) {
+      if (boardMap[cell.cellY][cell.cellX] === enemyType && boardMap[cell.targetY][cell.targetX] === 0) {
         placeBead(cell.targetX, cell.targetY);
       }
     });
@@ -176,7 +179,10 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
     { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1 },
   ]);
 
-  return count;
+  return {
+    beadsCoordinates,
+    boardDescription,
+  };
 }
 
 /**

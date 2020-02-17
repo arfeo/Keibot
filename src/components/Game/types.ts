@@ -7,6 +7,7 @@ export interface Player {
 export interface Players {
   red: Player;
   blue: Player;
+  [key: string]: Player;
 }
 
 export interface BoardDescription {
@@ -17,6 +18,6 @@ export interface BoardDescription {
 }
 
 export interface BeadsPlacing {
-  count: number;
-  description: BoardDescription;
+  beadsCoordinates: number[][];
+  boardDescription: BoardDescription;
 }

@@ -5,6 +5,8 @@ import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
 import { getEnemyType } from './helpers';
 
+import { BeadsPlacing } from './types';
+
 /**
  * Function creates all needed game window elements
  */
@@ -315,7 +317,19 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
-  checkBeadsPlacing.call(this, cellX, cellY);
+  const beadsPlacing: BeadsPlacing = checkBeadsPlacing({
+    boardMap: this.boardMap,
+    players: this.players,
+    isGameOver: this.isGameOver,
+  }, cellX, cellY);
+
+  for (const bead of beadsPlacing.beadsCoordinates) {
+    renderMapItem.call(this, bead[1], bead[0]);
+  }
+
+  this.boardMap = beadsPlacing.boardDescription.boardMap;
+  this.players = beadsPlacing.boardDescription.players;
+  this.isGameOver = beadsPlacing.boardDescription.isGameOver;
 
   this.isMoving = false;
 
