@@ -255,15 +255,18 @@ function checkThreeInARow(boardMap: number[][]): boolean {
  * if the `itemType` attribute is not a statue type (to avoid blocking the game);
  * otherwise it returns false
  *
+ * @param boardDescription
  * @param itemType
  */
-function checkEnemyHasMoves(itemType: number): boolean {
+function checkEnemyHasMoves(boardDescription: BoardDescription, itemType: number): boolean {
+  const { boardMap, lockedCell } = boardDescription;
+
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return true;
   }
 
   const enemyType: number = getEnemyType(itemType);
-  const enemyStatues: number[][] = getMapItemsByType(this.boardMap, enemyType);
+  const enemyStatues: number[][] = getMapItemsByType(boardMap, enemyType);
   const moves: number[][] = [];
 
   if (enemyStatues.length === 0) {
@@ -271,10 +274,7 @@ function checkEnemyHasMoves(itemType: number): boolean {
   }
 
   for (const statue of enemyStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves({
-      boardMap: this.boardMap,
-      lockedCell: this.lockedCell,
-    }, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;

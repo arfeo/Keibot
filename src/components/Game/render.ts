@@ -334,7 +334,12 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   this.isMoving = false;
 
   // If enemy hasn't got possible moves, current user wins
-  if (!checkEnemyHasMoves.call(this, itemType)) {
+  const enemyHasMoves: boolean = checkEnemyHasMoves({
+    boardMap: this.boardMap,
+    lockedCell: this.lockedCell,
+  }, itemType);
+
+  if (!enemyHasMoves) {
     this.isGameOver = true;
   }
 
