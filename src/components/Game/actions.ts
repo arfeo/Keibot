@@ -134,7 +134,7 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
 
       // No beads left -- game over
       // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (this.players[playerType].beads === 0 || checkThreeInARow.call(this) === true) {
+      if (this.players[playerType].beads === 0 || checkThreeInARow(this.boardMap) === true) {
         this.isGameOver = true;
       }
     } else {
@@ -204,29 +204,29 @@ function checkUnderAttack(x: number, y: number): boolean {
  * Function checks whether there're three beads in a row on the game board
  * (vertically, horizontally, or diagonally)
  *
- * @param map
+ * @param boardMap
  */
-function checkThreeInARow(): boolean {
-  if (!this.boardMap || !Array.isArray(this.boardMap)) {
+function checkThreeInARow(boardMap: number[][]): boolean {
+  if (!boardMap || !Array.isArray(boardMap)) {
     return false;
   }
 
-  for (let y = 0; y < this.boardMap.length; y += 1) {
-    for (let x = 0; x < this.boardMap[y].length; x += 1) {
-      const item = this.boardMap[y][x];
+  for (let y = 0; y < boardMap.length; y += 1) {
+    for (let x = 0; x < boardMap[y].length; x += 1) {
+      const item = boardMap[y][x];
 
       if (item !== MAP_ITEM_TYPES.red.bead && item !== MAP_ITEM_TYPES.blue.bead) {
         continue;
       }
 
-      if (this.boardMap[y][x + 1] === item && this.boardMap[y][x + 2] === item) {
+      if (boardMap[y][x + 1] === item && boardMap[y][x + 2] === item) {
         return true;
       }
 
-      if (this.boardMap[y + 1] !== undefined && this.boardMap[y + 2] !== undefined && (
-        this.boardMap[y + 1][x] === item && this.boardMap[y + 2][x] === item
-        || this.boardMap[y + 1][x + 1] === item && this.boardMap[y + 2][x + 2] === item
-        || this.boardMap[y + 1][x - 1] === item && this.boardMap[y + 2][x - 2] === item
+      if (boardMap[y + 1] !== undefined && boardMap[y + 2] !== undefined && (
+        boardMap[y + 1][x] === item && boardMap[y + 2][x] === item
+        || boardMap[y + 1][x + 1] === item && boardMap[y + 2][x + 2] === item
+        || boardMap[y + 1][x - 1] === item && boardMap[y + 2][x - 2] === item
       )) {
         return true;
       }

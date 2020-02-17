@@ -16,7 +16,7 @@ import { aiMove } from './ai';
 
 import { getStorageData } from '../../utils/storage';
 
-import { Player } from './types';
+import { Players } from './types';
 
 class Game extends PageComponent {
   protected appRoot: HTMLElement;
@@ -30,7 +30,7 @@ class Game extends PageComponent {
   protected backToMenuButton: HTMLButtonElement;
   protected boardMap: number[][];
   protected cursor: number[];
-  protected players: { red: Player; blue: Player };
+  protected players: Players;
   protected lockedCell: number[];
   protected isComputerOn: boolean;
   protected isShowMovesOn: boolean;
