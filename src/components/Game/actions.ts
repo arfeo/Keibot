@@ -76,23 +76,30 @@ function checkPossibleMoves(boardDescription: BoardDescription, x: number, y: nu
  * Function checks the ability to move a statue with the given coordinates to move to a cell
  * with the given coordinates; returns true if the move is possible, otherwise returns false
  *
+ * @param boardDescription
  * @param itemX
  * @param itemY
  * @param cellX
  * @param cellY
  */
-function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: number): boolean {
-  if (!this.boardMap[itemY] || this.boardMap[itemY][itemX] === undefined) {
+function checkMoveToCell(
+  boardDescription: BoardDescription,
+  itemX: number,
+  itemY: number,
+  cellX: number,
+  cellY: number,
+): boolean {
+  const { boardMap, lockedCell } = boardDescription;
+
+  if (!boardMap[itemY] || boardMap[itemY][itemX] === undefined) {
     return false;
   }
 
-  const possibleMoves: number[][] | undefined = checkPossibleMoves({
-    boardMap: this.boardMap,
-    lockedCell: this.lockedCell,
-  }, itemX, itemY);
+  const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, itemX, itemY);
 
-  return Array.isArray(possibleMoves)
-    && possibleMoves.map((move: number[]) => JSON.stringify(move)).indexOf(JSON.stringify([cellY, cellX])) > -1;
+  return Array.isArray(possibleMoves) && possibleMoves.map((move: number[]) => {
+    return JSON.stringify(move);
+  }).indexOf(JSON.stringify([cellY, cellX])) > -1;
 }
 
 /**
@@ -190,11 +197,11 @@ function checkUnderAttack(boardMap: number[][], x: number, y: number): boolean {
 
   const isUnderAttack1 = boardMap[y - 2] !== undefined
     && (boardMap[y - 2][x - 1] === enemyType || boardMap[y - 2][x + 1] === enemyType);
-  const isUnderAttack2 = this.boardMap[y + 1] !== undefined
+  const isUnderAttack2 = boardMap[y + 1] !== undefined
     && (boardMap[y + 1][x - 2] === enemyType || boardMap[y + 1][x + 2] === enemyType);
-  const isUnderAttack3 = this.boardMap[y + 2] !== undefined
+  const isUnderAttack3 = boardMap[y + 2] !== undefined
     && (boardMap[y + 2][x - 1] === enemyType || boardMap[y + 2][x + 1] === enemyType);
-  const isUnderAttack4 = this.boardMap[y - 1] !== undefined
+  const isUnderAttack4 = boardMap[y - 1] !== undefined
     && (boardMap[y - 1][x - 2] === enemyType || boardMap[y - 1][x + 2] === enemyType);
 
   return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;

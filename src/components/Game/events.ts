@@ -42,7 +42,12 @@ function onBoardClick(event: MouseEvent): void {
     }
   } else {
     if (this.cursor.length > 0) {
-      if (checkMoveToCell.call(this, this.cursor[1], this.cursor[0], x, y)) {
+      const checkMove: boolean = checkMoveToCell({
+        boardMap: this.boardMap,
+        lockedCell: this.lockedCell,
+      }, this.cursor[1], this.cursor[0], x, y);
+
+      if (checkMove) {
         renderMove.call(this, this.cursor[1], this.cursor[0], x, y).then(async () => {
           // Computer plays if it's on
           if (this.isComputerOn === true) {
