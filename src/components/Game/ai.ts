@@ -121,7 +121,7 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
 
   // Is there any other statue under attack (negative)
   const isUnderAttack: boolean = otherStatues.map((statue: number[]) => {
-    return checkUnderAttack.call(this, statue[1], statue[0]);
+    return checkUnderAttack(this.boardMap, statue[1], statue[0]);
   }).some((value: boolean) => value === true);
 
   if (isUnderAttack) {
