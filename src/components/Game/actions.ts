@@ -179,8 +179,8 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
  * @param x
  * @param y
  */
-function checkUnderAttack(x: number, y: number): boolean {
-  const itemType = this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkUnderAttack(boardMap: number[][], x: number, y: number): boolean {
+  const itemType = boardMap[y] ? boardMap[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return false;
@@ -188,14 +188,14 @@ function checkUnderAttack(x: number, y: number): boolean {
 
   const enemyType: number = getEnemyType(itemType);
 
-  const isUnderAttack1 = this.boardMap[y - 2] !== undefined
-    && (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType);
+  const isUnderAttack1 = boardMap[y - 2] !== undefined
+    && (boardMap[y - 2][x - 1] === enemyType || boardMap[y - 2][x + 1] === enemyType);
   const isUnderAttack2 = this.boardMap[y + 1] !== undefined
-    && (this.boardMap[y + 1][x - 2] === enemyType || this.boardMap[y + 1][x + 2] === enemyType);
+    && (boardMap[y + 1][x - 2] === enemyType || boardMap[y + 1][x + 2] === enemyType);
   const isUnderAttack3 = this.boardMap[y + 2] !== undefined
-    && (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType);
+    && (boardMap[y + 2][x - 1] === enemyType || boardMap[y + 2][x + 1] === enemyType);
   const isUnderAttack4 = this.boardMap[y - 1] !== undefined
-    && (this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType);
+    && (boardMap[y - 1][x - 2] === enemyType || boardMap[y - 1][x + 2] === enemyType);
 
   return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
 }
