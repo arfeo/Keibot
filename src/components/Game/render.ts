@@ -1,7 +1,7 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
+import { checkBeadsPlacing, checkEnemyHasMoves, checkThreeInARow } from './actions';
 import { animateItemFade } from './animations';
 import { getEnemyType } from './helpers';
 
@@ -280,24 +280,24 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     return;
   }
 
-  this.isMoving = true;
+  const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
+  const enemyType: number = getEnemyType(itemType);
+  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
 
+  this.isMoving = true;
   this.cursor = [];
 
   clearCanvas.call(this, this.cursorCanvas);
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  const enemyType: number = getEnemyType(itemType);
-  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
-
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
   // If the player captures the 3rd enemy statue, the game overs.
   if (this.boardMap[cellY][cellX] === enemyType) {
-    this.players[playerType].captured += 1;
+    this.players[playerTypeName].captured += 1;
 
-    if (this.players[playerType].captured === 3) {
+    if (this.players[playerTypeName].captured === 3) {
       this.isGameOver = true;
     }
   }
@@ -320,11 +320,26 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   const beadsPlacing: BeadsPlacing = checkBeadsPlacing({
     boardMap: this.boardMap,
     players: this.players,
-    isGameOver: this.isGameOver,
-  }, cellX, cellY);
+  }, cellX, cellY, itemType);
 
   for (const bead of beadsPlacing.beadsCoordinates) {
-    renderMapItem.call(this, bead[1], bead[0]);
+    if (!Array.isArray(bead) || bead.length === 0) {
+      continue;
+    }
+
+    const beadX: number = bead[1];
+    const beadY: number = bead[0];
+
+    this.boardMap[beadY][beadX] = ownBead;
+    this.players[playerTypeName].beads -= 1;
+
+    // No beads left -- game over, current player wins
+    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
+    if (this.players[playerTypeName].beads === 0 || checkThreeInARow(this.boardMap) === true) {
+      this.isGameOver = true;
+    }
+
+    renderMapItem.call(this, beadX, beadY);
   }
 
   this.isMoving = false;

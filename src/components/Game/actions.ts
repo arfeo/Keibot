@@ -105,52 +105,41 @@ function checkMoveToCell(
  * Function checks whether new beads are needed to be placed on the board or not
  * after placing a statue to a cell with the given coordinates;
  * it returns an object with the following keys:
- *  * beadsCoordinates -- an array of beads coordinates (if any)
- *  * boardDescription -- modified board description
+ *  ~ beadsCoordinates -- an array of beads coordinates (if any)
+ *  ~ boardDescription -- modified board description
  *
  * @param boardDescription
  * @param x
  * @param y
+ * @param itemType
  */
-function checkBeadsPlacing(
-  boardDescription: BoardDescription,
-  x: number,
-  y: number,
-): BeadsPlacing {
-  const { boardMap, players } = boardDescription;
-  let { isGameOver } = boardDescription;
-  const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
-  const beadsCoordinates: number[][] = [];
-
-  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || isGameOver) {
+function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: number, itemType: number): BeadsPlacing {
+  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue)) {
     return {
-      beadsCoordinates,
+      beadsCoordinates: [],
       boardDescription,
     };
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
-  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
   const enemyType: number = getEnemyType(itemType);
+  let boardMap: number[][] = [...boardDescription.boardMap];
+  let playerBeads: number = boardDescription.players[playerTypeName].beads;
+  const beadsCoordinates: number[][] = [];
 
-  // If we place a bead on the game board, we should reduce `beads` count of the
-  // corresponding player object. If there's no beads left, the player wins;
-  // if the player got three beads in a row, he also wins.
   const placeBead = (beadX: number, beadY: number): void => {
-    if (players[playerType].beads === 0) {
+    if (playerBeads === 0) {
       return;
     }
 
-    boardMap[beadY][beadX] = ownBead;
-    players[playerType].beads -= 1;
+    boardMap = boardMap.map((row: number[], rowIndex: number) => row.map((column: number, columnIndex: number) => {
+      return rowIndex === y && columnIndex === x ? ownBead : boardMap[rowIndex][columnIndex];
+    }));
+
+    playerBeads -= 1;
 
     beadsCoordinates.push([beadY, beadX]);
-
-    // No beads left -- game over
-    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-    if (players[playerType].beads === 0 || checkThreeInARow(boardMap) === true) {
-      isGameOver = true;
-    }
   };
 
   const processCells = (cells: CellWithBead[]): void => {
@@ -182,7 +171,10 @@ function checkBeadsPlacing(
 
   return {
     beadsCoordinates,
-    boardDescription,
+    boardDescription: {
+      ...boardDescription,
+      boardMap,
+    },
   };
 }
 
