@@ -1,9 +1,9 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, checkEnemyHasMoves, checkThreeInARow } from './actions';
+import { applyMove, checkEnemyHasMoves } from './actions';
 import { animateItemFade } from './animations';
-import { getEnemyType } from './helpers';
+import { BoardDescription } from './types';
 
 /**
  * Function creates all needed game window elements
@@ -278,10 +278,6 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     return;
   }
 
-  const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
-  const enemyType: number = getEnemyType(itemType);
-  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
-
   this.isMoving = true;
   this.cursor = [];
 
@@ -289,19 +285,23 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  // If we land on an enemy statue, we should increase
-  // the `captured` prop of the corresponding player object.
-  // If the player captures the 3rd enemy statue, the game overs.
-  if (this.boardMap[cellY][cellX] === enemyType) {
-    this.players[playerTypeName].captured += 1;
+  const moveResult: [number[][], BoardDescription] = applyMove({
+    boardMap: this.boardMap,
+    lockedCell: this.lockedCell,
+    players: this.players,
+    isGameOver: this.isGameOver,
+  }, itemX, itemY, cellX, cellY);
 
-    if (this.players[playerTypeName].captured === 3) {
-      this.isGameOver = true;
-    }
+  if (!Array.isArray(moveResult)) {
+    return;
   }
 
-  this.boardMap[itemY][itemX] = 0;
-  this.boardMap[cellY][cellX] = itemType;
+  const beadsCoordinates: number[][] = moveResult[0];
+  const boardDescription: BoardDescription = moveResult[1];
+
+  this.boardMap = boardDescription.boardMap;
+  this.players = boardDescription.players;
+  this.isGameOver = boardDescription.isGameOver;
 
   await animateItemFade.call(this, cellX, cellY, 'in');
 
@@ -310,34 +310,14 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
   }
 
-  this.lockedCell = [cellY, cellX];
+  this.lockedCell = boardDescription.lockedCell;
 
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
-  const beadsCoordinates: number[][] = checkBeadsPlacing({
-    boardMap: this.boardMap,
-    players: this.players,
-  }, cellX, cellY, itemType);
-
+  // Render new beads on the game board (if any)
   for (const bead of beadsCoordinates) {
-    if (!Array.isArray(bead) || bead.length === 0) {
-      continue;
-    }
-
-    const beadX: number = bead[1];
-    const beadY: number = bead[0];
-
-    this.boardMap[beadY][beadX] = ownBead;
-    this.players[playerTypeName].beads -= 1;
-
-    // No beads left -- game over, current player wins
-    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-    if (this.players[playerTypeName].beads === 0 || checkThreeInARow(this.boardMap) === true) {
-      this.isGameOver = true;
-    }
-
-    renderMapItem.call(this, beadX, beadY);
+    renderMapItem.call(this, bead[1], bead[0]);
   }
 
   this.isMoving = false;
@@ -352,19 +332,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     this.isGameOver = true;
   }
 
-  // End of turn
   if (!this.isGameOver) {
-    this.players = {
-      red: {
-        ...this.players.red,
-        active: itemType === MAP_ITEM_TYPES.blue.statue,
-      },
-      blue: {
-        ...this.players.blue,
-        active: itemType === MAP_ITEM_TYPES.red.statue,
-      },
-    };
-
     renderPanel.call(this);
   } else {
     renderGameOver.call(this, itemType);

@@ -30,7 +30,7 @@ function aiMove(): Promise<void> {
   return new Promise((resolve) => {
     // Computer is too quick, so we set a timeout, just for aesthetic purposes
     window.setTimeout(() => {
-      const move: number[][] = aiMiniMax(0, true);
+      const move: number[][] = aiMiniMax({ ...propClones }, 0, true);
 
       // No moves for computer -- the blue player wins
       if (move.length === 0) {
@@ -53,6 +53,7 @@ function aiMove(): Promise<void> {
  * @param maximizingPlayer
  */
 function aiMiniMax(
+  node: BoardDescription,
   depth = 0,
   maximizingPlayer = true,
 ): number[][] {
@@ -69,10 +70,10 @@ function aiMiniMax(
   /* let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 
   if (maximizingPlayer) {
-    // ...
+    bestMoveValue = Math.max(bestMoveValue, aiMiniMax(depth - 1))
   } else  {
     // ...
-  }*/
+  } */
 }
 
 /**

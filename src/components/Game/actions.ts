@@ -2,7 +2,7 @@ import { MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType } from './helpers';
 
-import { BoardDescription } from './types';
+import { BoardDescription, Players } from './types';
 
 interface Cell {
   cellX: number;
@@ -271,6 +271,96 @@ function checkEnemyHasMoves(boardDescription: BoardDescription, itemType: number
   return moves.length > 0;
 }
 
+/**
+ * ...
+ *
+ * @param boardDescription
+ * @param itemX
+ * @param itemY
+ * @param cellX
+ * @param cellY
+ */
+function applyMove(
+  boardDescription: BoardDescription,
+  itemX: number,
+  itemY: number,
+  cellX: number,
+  cellY: number,
+): [number[][], BoardDescription] | null {
+  const boardMap: number[][] = [...boardDescription.boardMap];
+  let lockedCell: number[] = [...boardDescription.lockedCell];
+  let { isGameOver } = boardDescription;
+  const itemType: number = boardMap[itemY] ? boardMap[itemY][itemX] : 0;
+
+  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
+    return;
+  }
+
+  const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
+  const enemyType: number = getEnemyType(itemType);
+  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const players: Players = {
+    ...boardDescription.players,
+    [playerTypeName]: {
+      ...boardDescription.players[playerTypeName],
+    },
+  };
+
+  // If we land on an enemy statue, we should increase
+  // the `captured` prop of the corresponding player object.
+  // If the player captures the 3rd enemy statue, the game overs.
+  if (boardMap[cellY][cellX] === enemyType) {
+    players[playerTypeName].captured += 1;
+
+    if (players[playerTypeName].captured === 3) {
+      isGameOver = true;
+    }
+  }
+
+  boardMap[itemY][itemX] = 0;
+  boardMap[cellY][cellX] = itemType;
+  lockedCell = [cellY, cellX];
+
+  const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
+
+  for (const bead of beadsCoordinates) {
+    if (!Array.isArray(bead) || bead.length === 0) {
+      continue;
+    }
+
+    const beadX: number = bead[1];
+    const beadY: number = bead[0];
+
+    boardMap[beadY][beadX] = ownBead;
+    players[playerTypeName].beads -= 1;
+
+    // No beads left -- game over, current player wins
+    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
+    if (players[playerTypeName].beads === 0 || checkThreeInARow(boardMap) === true) {
+      isGameOver = true;
+    }
+  }
+
+  return [
+    beadsCoordinates,
+    {
+      boardMap,
+      lockedCell,
+      players: !isGameOver ? {
+        red: {
+          ...players.red,
+          active: itemType === MAP_ITEM_TYPES.blue.statue,
+        },
+        blue: {
+          ...players.blue,
+          active: itemType === MAP_ITEM_TYPES.red.statue,
+        },
+      } : players,
+      isGameOver,
+    },
+  ];
+}
+
 export {
   checkPossibleMoves,
   checkMoveToCell,
@@ -278,4 +368,5 @@ export {
   checkUnderAttack,
   checkThreeInARow,
   checkEnemyHasMoves,
+  applyMove,
 };
