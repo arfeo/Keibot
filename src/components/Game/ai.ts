@@ -11,28 +11,22 @@ interface Move {
   move: number[][];
 }
 
-const propClones: BoardDescription = {
-  boardMap: [],
-  lockedCell: [],
-  players: undefined,
-  isGameOver: false,
-};
-
 /**
  * Function renders the chosen best move
  */
 function aiMove(): Promise<void> {
-  propClones.boardMap = [...this.boardMap];
-  propClones.players = { ...this.players };
-  propClones.lockedCell = [...this.lockedCell];
-  propClones.isGameOver = this.isGameOver;
+  const propClones = {
+    boardMap: [...this.boardMap],
+    lockedCell: [...this.lockedCell],
+    players: { ...this.players },
+    isGameOver: this.isGameOver,
+  };
 
   return new Promise((resolve) => {
     // Computer is too quick, so we set a timeout, just for aesthetic purposes
     window.setTimeout(() => {
       const move: number[][] = aiMiniMax({ ...propClones }, 0, true);
 
-      // No moves for computer -- the blue player wins
       if (move.length === 0) {
         this.isGameOver = true;
 
@@ -57,9 +51,9 @@ function aiMiniMax(
   depth = 0,
   maximizingPlayer = true,
 ): number[][] {
-  if (depth === 0 || propClones.isGameOver === true) {
+  if (depth === 0 || node.isGameOver === true) {
     const itemType: number = maximizingPlayer === true ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
-    const moves: Move[] = aiGetEvaluatedMoves(itemType);
+    const moves: Move[] = aiGetEvaluatedMoves(node, itemType);
     const evaluations: number[] = moves.map((i: Move): number => i.evaluation);
     const evaluation: number = maximizingPlayer ? Math.max(...evaluations) : Math.min(...evaluations);
     const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === evaluation);
@@ -83,8 +77,8 @@ function aiMiniMax(
  *
  * @param itemType
  */
-function aiGetEvaluatedMoves(itemType: number): Move[] {
-  const ownStatues: number[][] = getMapItemsByType(propClones.boardMap, itemType);
+function aiGetEvaluatedMoves(node: BoardDescription, itemType: number): Move[] {
+  const ownStatues: number[][] = getMapItemsByType(node.boardMap, itemType);
   const moves: Move[] = [];
 
   if (ownStatues.length === 0) {
@@ -92,7 +86,7 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
   }
 
   for (const statue of ownStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves(propClones, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves(node, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;
@@ -100,7 +94,7 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
 
     for (const possibleMove of possibleMoves) {
       moves.push({
-        evaluation: aiEvaluateMove(possibleMove[1], possibleMove[0], statue),
+        evaluation: aiEvaluateMove(node, possibleMove[1], possibleMove[0], statue),
         move: [
           statue,
           possibleMove,
@@ -120,34 +114,30 @@ function aiGetEvaluatedMoves(itemType: number): Move[] {
  * @param y
  * @param item
  */
-function aiEvaluateMove(x: number, y: number, item: number[]): number {
-  const boardMap: number[][] = [...propClones.boardMap];
-  const itemType: number = Array.isArray(item) && item.length === 2 ? boardMap[item[1]][item[0]] : 0;
-  const ownStatues: number[][] = getMapItemsByType(propClones.boardMap, itemType);
+function aiEvaluateMove(node: BoardDescription, x: number, y: number, item: number[]): number {
+  const itemType: number = Array.isArray(item) && item.length === 2 ? node.boardMap[item[1]][item[0]] : 0;
+  const ownStatues: number[][] = getMapItemsByType(node.boardMap, itemType);
   const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
     return !(statue[0] === item[0] && statue[1] === item[1]);
   });
 
   let result = 0;
 
-  const beadsCoordinates: number[][] = checkBeadsPlacing({
-    boardMap,
-    players: { ...propClones.players },
-  }, x, y, itemType);
-
   // Count of beads to be placed (positive)
+  const beadsCoordinates: number[][] = checkBeadsPlacing({ ...node }, x, y, itemType);
+
   result += beadsCoordinates.length;
 
   // Is there an enemy statue on the target cell (positive)
   const enemyType: number = getEnemyType(itemType);
 
-  if (boardMap[y][x] === enemyType) {
+  if (node.boardMap[y][x] === enemyType) {
     result += 2;
   }
 
   // Is there any other statue under attack (negative)
   const isUnderAttack: boolean = otherStatues.map((statue: number[]) => {
-    return checkUnderAttack(boardMap, statue[1], statue[0]);
+    return checkUnderAttack(node.boardMap, statue[1], statue[0]);
   }).some((value: boolean) => value === true);
 
   if (isUnderAttack) {

@@ -324,8 +324,7 @@ function applyMove(
   const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
 
   for (const bead of beadsCoordinates) {
-    const beadX: number = bead[1];
-    const beadY: number = bead[0];
+    const [beadY, beadX]: number[] = bead;
 
     boardMap[beadY][beadX] = ownBead;
     players[playerTypeName].beads -= 1;

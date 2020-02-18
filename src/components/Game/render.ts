@@ -293,8 +293,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     isGameOver: this.isGameOver,
   }, itemX, itemY, cellX, cellY);
 
-  const beadsCoordinates: number[][] = moveResult[0];
-  const boardDescription: BoardDescription = moveResult[1];
+  const [beadsCoordinates, boardDescription]: [number[][], BoardDescription] = moveResult;
 
   this.boardMap = boardDescription.boardMap;
   this.players = boardDescription.players;
