@@ -43,6 +43,7 @@ function aiMove(): Promise<void> {
 /**
  * ...
  *
+ * @param node
  * @param depth
  * @param maximizingPlayer
  */
@@ -75,6 +76,7 @@ function aiMiniMax(
  * evaluates each of them, picks ones with the max evaluation,
  * and returns one random move from the result array
  *
+ * @param node
  * @param itemType
  */
 function aiGetEvaluatedMoves(node: BoardDescription, itemType: number): Move[] {
@@ -110,6 +112,7 @@ function aiGetEvaluatedMoves(node: BoardDescription, itemType: number): Move[] {
  * Function evaluates a computer's statue move by several parameters,
  * and returns the total evaluation
  *
+ * @param node
  * @param x
  * @param y
  * @param item
