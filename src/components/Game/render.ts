@@ -378,6 +378,8 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 /**
  * Function renders the game panel which contains visual representation
  * of captured statues count and beads count for each player
+ *
+ * @param lastItemType
  */
 function renderPanel(lastItemType?: number): void {
   const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
@@ -505,6 +507,8 @@ function renderPanel(lastItemType?: number): void {
 /**
  * Function deactivates both users and re-renders the game panel
  * on game over
+ *
+ * @param lastItemType
  */
 function renderGameOver(lastItemType: number): void {
   this.players = {

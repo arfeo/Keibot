@@ -182,6 +182,7 @@ function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: num
  * Function checks is there any enemies within one turn reach about
  * the cell with the given coordinates
  *
+ * @param boardMap
  * @param x
  * @param y
  */
