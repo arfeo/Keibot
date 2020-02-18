@@ -49,8 +49,7 @@ function onBoardClick(event: MouseEvent): void {
 
       if (checkMove) {
         renderMove.call(this, this.cursor[1], this.cursor[0], x, y).then(async () => {
-          // Computer plays if it's on
-          if (this.isComputerOn === true) {
+          if (this.isComputerOn === true && !this.isGameOver) {
             await aiMove.call(this);
           }
         });
