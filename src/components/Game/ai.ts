@@ -15,17 +15,17 @@ interface Move {
  * Function renders the chosen best move
  */
 function aiMove(): Promise<void> {
-  const propClones = {
-    boardMap: [...this.boardMap],
-    lockedCell: [...this.lockedCell],
-    players: { ...this.players },
+  const initBoardDescription: BoardDescription = {
+    boardMap: this.boardMap,
+    lockedCell: this.lockedCell,
+    players: this.players,
     isGameOver: this.isGameOver,
   };
 
   return new Promise((resolve) => {
     // Computer is too quick, so we set a timeout, just for aesthetic purposes
     window.setTimeout(() => {
-      const move: number[][] = aiMiniMax({ ...propClones }, 0, true);
+      const { move } = aiMiniMax({ ...initBoardDescription }, 0, true);
 
       if (move.length === 0) {
         this.isGameOver = true;
@@ -33,9 +33,7 @@ function aiMove(): Promise<void> {
         renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
       }
 
-      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(() => {
-        resolve();
-      });
+      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(resolve);
     }, COMPUTER_MOVE_TIMEOUT);
   });
 }
@@ -51,21 +49,24 @@ function aiMiniMax(
   node: BoardDescription,
   depth = 0,
   maximizingPlayer = true,
-): number[][] {
+): Move {
+  const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
+  const moves: Move[] = aiGetEvaluatedMoves({ ...node }, itemType);
+
   if (depth === 0 || node.isGameOver === true) {
-    const itemType: number = maximizingPlayer === true ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
-    const moves: Move[] = aiGetEvaluatedMoves(node, itemType);
     const evaluations: number[] = moves.map((i: Move): number => i.evaluation);
     const evaluation: number = maximizingPlayer ? Math.max(...evaluations) : Math.min(...evaluations);
     const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === evaluation);
 
-    return processedMoves[getRandomNum(0, processedMoves.length - 1)].move;
+    return processedMoves[getRandomNum(0, processedMoves.length - 1)];
   }
 
   /* let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 
   if (maximizingPlayer) {
-    bestMoveValue = Math.max(bestMoveValue, aiMiniMax(depth - 1))
+    moves.forEach((move: Move) => {
+      bestMoveValue = Math.max(bestMoveValue, aiMiniMax(depth - 1));
+    });
   } else  {
     // ...
   } */
