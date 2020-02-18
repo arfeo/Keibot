@@ -16,3 +16,5 @@ export interface BoardDescription {
   players?: Players;
   isGameOver?: boolean;
 }
+
+export type ApplyMoveResult = [number[][], BoardDescription];

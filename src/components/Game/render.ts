@@ -4,7 +4,7 @@ import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { applyMove } from './actions';
 import { animateItemFade } from './animations';
 
-import { BoardDescription } from './types';
+import { ApplyMoveResult } from './types';
 
 /**
  * Function creates all needed game window elements
@@ -286,14 +286,14 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  const moveResult: [number[][], BoardDescription] = applyMove({
+  const moveResult: ApplyMoveResult = applyMove({
     boardMap: this.boardMap,
     lockedCell: this.lockedCell,
     players: this.players,
     isGameOver: this.isGameOver,
   }, itemX, itemY, cellX, cellY);
 
-  const [beadsCoordinates, boardDescription]: [number[][], BoardDescription] = moveResult;
+  const [beadsCoordinates, boardDescription]: ApplyMoveResult = moveResult;
 
   this.boardMap = boardDescription.boardMap;
   this.players = boardDescription.players;

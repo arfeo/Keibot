@@ -2,7 +2,7 @@ import { MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType } from './helpers';
 
-import { BoardDescription, Players } from './types';
+import { BoardDescription, Players, ApplyMoveResult } from './types';
 
 interface Cell {
   cellX: number;
@@ -286,7 +286,7 @@ function applyMove(
   itemY: number,
   cellX: number,
   cellY: number,
-): [number[][], BoardDescription] | null {
+): ApplyMoveResult | null {
   const boardMap: number[][] = [...boardDescription.boardMap];
   let lockedCell: number[] = [...boardDescription.lockedCell];
   let { isGameOver } = boardDescription;
