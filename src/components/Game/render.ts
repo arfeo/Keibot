@@ -1,8 +1,9 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { applyMove, checkEnemyHasMoves } from './actions';
+import { applyMove } from './actions';
 import { animateItemFade } from './animations';
+
 import { BoardDescription } from './types';
 
 /**
@@ -321,16 +322,6 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   }
 
   this.isMoving = false;
-
-  // If enemy hasn't got possible moves, current user wins
-  const enemyHasMoves: boolean = checkEnemyHasMoves({
-    boardMap: this.boardMap,
-    lockedCell: this.lockedCell,
-  }, itemType);
-
-  if (!enemyHasMoves) {
-    this.isGameOver = true;
-  }
 
   if (!this.isGameOver) {
     renderPanel.call(this);

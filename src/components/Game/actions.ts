@@ -341,6 +341,11 @@ function applyMove(
     }
   }
 
+  // If enemy hasn't got possible moves, current user wins
+  if (!checkEnemyHasMoves({ boardMap, lockedCell }, itemType)) {
+    isGameOver = true;
+  }
+
   return [
     beadsCoordinates,
     {
