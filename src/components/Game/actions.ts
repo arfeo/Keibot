@@ -324,10 +324,6 @@ function applyMove(
   const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
 
   for (const bead of beadsCoordinates) {
-    if (!Array.isArray(bead) || bead.length === 0) {
-      continue;
-    }
-
     const beadX: number = bead[1];
     const beadY: number = bead[0];
 

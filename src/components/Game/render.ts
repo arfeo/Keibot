@@ -293,10 +293,6 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     isGameOver: this.isGameOver,
   }, itemX, itemY, cellX, cellY);
 
-  if (!Array.isArray(moveResult)) {
-    return;
-  }
-
   const beadsCoordinates: number[][] = moveResult[0];
   const boardDescription: BoardDescription = moveResult[1];
 
