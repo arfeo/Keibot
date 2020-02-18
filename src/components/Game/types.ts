@@ -16,8 +16,3 @@ export interface BoardDescription {
   players?: Players;
   isGameOver?: boolean;
 }
-
-export interface BeadsPlacing {
-  beadsCoordinates: number[][];
-  boardDescription: BoardDescription;
-}

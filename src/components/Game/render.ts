@@ -5,8 +5,6 @@ import { checkBeadsPlacing, checkEnemyHasMoves, checkThreeInARow } from './actio
 import { animateItemFade } from './animations';
 import { getEnemyType } from './helpers';
 
-import { BeadsPlacing } from './types';
-
 /**
  * Function creates all needed game window elements
  */
@@ -317,12 +315,12 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
-  const beadsPlacing: BeadsPlacing = checkBeadsPlacing({
+  const beadsCoordinates: number[][] = checkBeadsPlacing({
     boardMap: this.boardMap,
     players: this.players,
   }, cellX, cellY, itemType);
 
-  for (const bead of beadsPlacing.beadsCoordinates) {
+  for (const bead of beadsCoordinates) {
     if (!Array.isArray(bead) || bead.length === 0) {
       continue;
     }

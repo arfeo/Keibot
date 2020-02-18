@@ -2,7 +2,7 @@ import { MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType } from './helpers';
 
-import { BoardDescription, BeadsPlacing } from './types';
+import { BoardDescription } from './types';
 
 interface Cell {
   cellX: number;
@@ -113,12 +113,9 @@ function checkMoveToCell(
  * @param y
  * @param itemType
  */
-function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: number, itemType: number): BeadsPlacing {
+function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: number, itemType: number): number[][] {
   if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue)) {
-    return {
-      beadsCoordinates: [],
-      boardDescription,
-    };
+    return [];
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
@@ -169,13 +166,7 @@ function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: num
     { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1 },
   ]);
 
-  return {
-    beadsCoordinates,
-    boardDescription: {
-      ...boardDescription,
-      boardMap,
-    },
-  };
+  return beadsCoordinates;
 }
 
 /**

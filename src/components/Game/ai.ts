@@ -4,7 +4,7 @@ import { getEnemyType, getMapItemsByType, getRandomNum } from './helpers';
 import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack } from './actions';
 import { renderMove, renderGameOver } from './render';
 
-import { BeadsPlacing, BoardDescription } from './types';
+import { BoardDescription } from './types';
 
 interface Move {
   evaluation: number;
@@ -129,13 +129,13 @@ function aiEvaluateMove(x: number, y: number, item: number[]): number {
 
   let result = 0;
 
-  const beadsPlacing: BeadsPlacing = checkBeadsPlacing({
+  const beadsCoordinates: number[][] = checkBeadsPlacing({
     boardMap,
     players: { ...propClones.players },
   }, x, y, itemType);
 
   // Count of beads to be placed (positive)
-  result += beadsPlacing.beadsCoordinates.length;
+  result += beadsCoordinates.length;
 
   // Is there an enemy statue on the target cell (positive)
   const enemyType: number = getEnemyType(itemType);
