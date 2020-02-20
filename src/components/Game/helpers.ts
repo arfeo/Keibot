@@ -58,9 +58,24 @@ function getEnemyType(itemType: number): number {
   return itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.blue.statue : MAP_ITEM_TYPES.red.statue;
 }
 
+/**
+ * Immutably change the board map value
+ *
+ * @param boardMap
+ * @param x
+ * @param y
+ * @param value
+ */
+function changeBoardMapValue(boardMap: number[][], x: number, y: number, value: number): number[][] {
+  return boardMap.map((row: number[], rowIndex: number) => row.map((column: number, columnIndex: number) => {
+    return rowIndex === y && columnIndex === x ? value : boardMap[rowIndex][columnIndex];
+  }));
+}
+
 export {
   getCellSize,
   getMapItemsByType,
   getRandomNum,
   getEnemyType,
+  changeBoardMapValue,
 };

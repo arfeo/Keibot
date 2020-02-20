@@ -10,11 +10,11 @@ export interface Players {
   [key: string]: Player;
 }
 
-export interface BoardDescription {
+export interface GameState {
   boardMap?: number[][];
   lockedCell?: number[];
   players?: Players;
   isGameOver?: boolean;
 }
 
-export type ApplyMoveResult = [number[][], BoardDescription];
+export type ApplyMoveResult = [number[][], GameState];

@@ -1,8 +1,8 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { getMapItemsByType, getEnemyType } from './helpers';
+import { getMapItemsByType, getEnemyType, changeBoardMapValue } from './helpers';
 
-import { BoardDescription, Players, ApplyMoveResult } from './types';
+import { GameState, Players, ApplyMoveResult } from './types';
 
 interface Cell {
   cellX: number;
@@ -19,12 +19,12 @@ type CellWithBead = Cell & {
  * it returns an array of possible coordinates or undefined if no statue found
  * on the board by the given coordinates
  *
- * @param boardDescription
+ * @param gameState
  * @param x
  * @param y
  */
-function checkPossibleMoves(boardDescription: BoardDescription, x: number, y: number): number[][] | undefined {
-  const { boardMap, lockedCell } = boardDescription;
+function checkPossibleMoves(gameState: GameState, x: number, y: number): number[][] | undefined {
+  const { boardMap, lockedCell } = gameState;
   const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
@@ -75,20 +75,20 @@ function checkPossibleMoves(boardDescription: BoardDescription, x: number, y: nu
  * Function checks the ability to move a statue with the given coordinates to move to a cell
  * with the given coordinates; returns true if the move is possible, otherwise returns false
  *
- * @param boardDescription
+ * @param gameState
  * @param itemX
  * @param itemY
  * @param cellX
  * @param cellY
  */
 function checkMoveToCell(
-  boardDescription: BoardDescription,
+  gameState: GameState,
   itemX: number,
   itemY: number,
   cellX: number,
   cellY: number,
 ): boolean {
-  const { boardMap, lockedCell } = boardDescription;
+  const { boardMap, lockedCell } = gameState;
 
   if (!boardMap[itemY] || boardMap[itemY][itemX] === undefined) {
     return false;
@@ -104,16 +104,14 @@ function checkMoveToCell(
 /**
  * Function checks whether new beads are needed to be placed on the board or not
  * after placing a statue to a cell with the given coordinates;
- * it returns an object with the following keys:
- *  ~ beadsCoordinates -- an array of beads coordinates (if any)
- *  ~ boardDescription -- modified board description
+ * it returns an array of coordinates of beads to be places on the game board
  *
- * @param boardDescription
+ * @param gameState
  * @param x
  * @param y
  * @param itemType
  */
-function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: number, itemType: number): number[][] {
+function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType: number): number[][] {
   if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue)) {
     return [];
   }
@@ -121,8 +119,8 @@ function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: num
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
   const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
   const enemyType: number = getEnemyType(itemType);
-  let boardMap: number[][] = [...boardDescription.boardMap];
-  let playerBeads: number = boardDescription.players[playerTypeName].beads;
+  let boardMap: number[][] = [...gameState.boardMap];
+  let playerBeads: number = gameState.players[playerTypeName].beads;
   const beadsCoordinates: number[][] = [];
 
   const placeBead = (beadX: number, beadY: number): void => {
@@ -130,10 +128,7 @@ function checkBeadsPlacing(boardDescription: BoardDescription, x: number, y: num
       return;
     }
 
-    boardMap = boardMap.map((row: number[], rowIndex: number) => row.map((column: number, columnIndex: number) => {
-      return rowIndex === y && columnIndex === x ? ownBead : boardMap[rowIndex][columnIndex];
-    }));
-
+    boardMap = changeBoardMapValue(boardMap, x, y, ownBead);
     playerBeads -= 1;
 
     beadsCoordinates.push([beadY, beadX]);
@@ -240,11 +235,11 @@ function checkThreeInARow(boardMap: number[][]): boolean {
  * if the `itemType` attribute is not a statue type (to avoid blocking the game);
  * otherwise it returns false
  *
- * @param boardDescription
+ * @param gameState
  * @param itemType
  */
-function checkEnemyHasMoves(boardDescription: BoardDescription, itemType: number): boolean {
-  const { boardMap, lockedCell } = boardDescription;
+function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
+  const { boardMap, lockedCell } = gameState;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return true;
@@ -274,22 +269,22 @@ function checkEnemyHasMoves(boardDescription: BoardDescription, itemType: number
 /**
  * ...
  *
- * @param boardDescription
+ * @param gameState
  * @param itemX
  * @param itemY
  * @param cellX
  * @param cellY
  */
 function applyMove(
-  boardDescription: BoardDescription,
+  gameState: GameState,
   itemX: number,
   itemY: number,
   cellX: number,
   cellY: number,
 ): ApplyMoveResult | null {
-  const boardMap: number[][] = [...boardDescription.boardMap];
-  let lockedCell: number[] = [...boardDescription.lockedCell];
-  let { isGameOver } = boardDescription;
+  let boardMap: number[][] = [...gameState.boardMap];
+  let lockedCell: number[] = [...gameState.lockedCell];
+  let { isGameOver } = gameState;
   const itemType: number = boardMap[itemY] ? boardMap[itemY][itemX] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
@@ -299,16 +294,16 @@ function applyMove(
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
   const enemyType: number = getEnemyType(itemType);
   const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
-  const players: Players = {
-    ...boardDescription.players,
+  let players: Players = {
+    ...gameState.players,
     [playerTypeName]: {
-      ...boardDescription.players[playerTypeName],
+      ...gameState.players[playerTypeName],
     },
   };
 
   // If we land on an enemy statue, we should increase
   // the `captured` prop of the corresponding player object.
-  // If the player captures the 3rd enemy statue, the game overs.
+  // If the player captures the 3rd enemy statue, the game is over
   if (boardMap[cellY][cellX] === enemyType) {
     players[playerTypeName].captured += 1;
 
@@ -317,20 +312,26 @@ function applyMove(
     }
   }
 
-  boardMap[itemY][itemX] = 0;
-  boardMap[cellY][cellX] = itemType;
+  boardMap = changeBoardMapValue(boardMap, itemX, itemY, 0);
+  boardMap = changeBoardMapValue(boardMap, cellX, cellY, itemType);
+
   lockedCell = [cellY, cellX];
 
   const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
 
   for (const bead of beadsCoordinates) {
-    const [beadY, beadX]: number[] = bead;
+    boardMap = changeBoardMapValue(boardMap, bead[1], bead[0], ownBead);
 
-    boardMap[beadY][beadX] = ownBead;
-    players[playerTypeName].beads -= 1;
+    players = {
+      ...players,
+      [playerTypeName]: {
+        ...players[playerTypeName],
+        beads: players[playerTypeName].beads - 1,
+      },
+    };
 
     // No beads left -- game over, current player wins
-    // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
+    // Got three beads in a row (horizontally, vertically, or diagonally) -- the game is over
     if (players[playerTypeName].beads === 0 || checkThreeInARow(boardMap) === true) {
       isGameOver = true;
     }
@@ -342,6 +343,9 @@ function applyMove(
   }
 
   return [
+    // Yes, newly added beads are already written in the board map,
+    // but we return them separately to avoid full redraw of the item canvas,
+    // and to insert them surgically after the move animation completes
     beadsCoordinates,
     {
       boardMap,

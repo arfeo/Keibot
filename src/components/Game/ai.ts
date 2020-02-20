@@ -1,152 +1,148 @@
-import { COMPUTER_MOVE_TIMEOUT, MAP_ITEM_TYPES } from '../../constants/game';
+import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { getEnemyType, getMapItemsByType, getRandomNum } from './helpers';
-import { checkBeadsPlacing, checkPossibleMoves, checkUnderAttack } from './actions';
-import { renderMove, renderGameOver } from './render';
+import { getMapItemsByType, getRandomNum } from './helpers';
+import { checkPossibleMoves, applyMove } from './actions';
+import { renderMove } from './render';
 
-import { BoardDescription } from './types';
+import { GameState, Player } from './types';
 
-interface Move {
-  evaluation: number;
-  move: number[][];
+type PossibleMove = number[][];
+
+interface MiniMaxNode {
+  gameState: GameState;
+  score?: number;
+  move?: PossibleMove;
+  children?: MiniMaxNode[];
 }
 
 /**
  * Function renders the chosen best move
  */
 function aiMove(): Promise<void> {
-  const initBoardDescription: BoardDescription = {
-    boardMap: this.boardMap,
-    lockedCell: this.lockedCell,
-    players: this.players,
-    isGameOver: this.isGameOver,
-  };
-
   return new Promise((resolve) => {
-    // Computer is too quick, so we set a timeout, just for aesthetic purposes
-    window.setTimeout(() => {
-      const { move } = aiMiniMax({ ...initBoardDescription }, 0, true);
+    const decisionTree: MiniMaxNode = aiBuildDecisionTree({
+      gameState: {
+        boardMap: this.boardMap,
+        lockedCell: this.lockedCell,
+        players: this.players,
+        isGameOver: this.isGameOver,
+      },
+    }, 3, true);
 
-      if (move.length === 0) {
-        this.isGameOver = true;
+    aiMiniMax(decisionTree, true);
 
-        renderGameOver.call(this, MAP_ITEM_TYPES.blue.statue);
-      }
+    console.info(decisionTree);
 
-      renderMove.call(this, move[0][1], move[0][0], move[1][1], move[1][0]).then(resolve);
-    }, COMPUTER_MOVE_TIMEOUT);
+    const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
+      return node.score === decisionTree.score;
+    });
+
+    const bestMove: number[][] = bestNodes[getRandomNum(0, bestNodes.length - 1)].move;
+    const [[itemY, itemX], [cellY, cellX]] = bestMove;
+
+    renderMove.call(this, itemX, itemY, cellX, cellY).then(resolve);
   });
 }
 
 /**
- * ...
+ * Build a tree of players' possible moves starting from the current game state
+ * to the given depth
  *
  * @param node
  * @param depth
  * @param maximizingPlayer
  */
-function aiMiniMax(
-  node: BoardDescription,
-  depth = 0,
-  maximizingPlayer = true,
-): Move {
+function aiBuildDecisionTree(node: MiniMaxNode, depth: number, maximizingPlayer: boolean): MiniMaxNode {
   const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
-  const moves: Move[] = aiGetEvaluatedMoves({ ...node }, itemType);
-
-  if (depth === 0 || node.isGameOver === true) {
-    const evaluations: number[] = moves.map((i: Move): number => i.evaluation);
-    const evaluation: number = maximizingPlayer ? Math.max(...evaluations) : Math.min(...evaluations);
-    const processedMoves: Move[] = moves.filter((move: Move) => move.evaluation === evaluation);
-
-    return processedMoves[getRandomNum(0, processedMoves.length - 1)];
-  }
-
-  /* let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
-
-  if (maximizingPlayer) {
-    moves.forEach((move: Move) => {
-      bestMoveValue = Math.max(bestMoveValue, aiMiniMax(depth - 1));
-    });
-  } else  {
-    // ...
-  } */
-}
-
-/**
- * Function finds all possible moves for all computer's statues,
- * evaluates each of them, picks ones with the max evaluation,
- * and returns one random move from the result array
- *
- * @param node
- * @param itemType
- */
-function aiGetEvaluatedMoves(node: BoardDescription, itemType: number): Move[] {
-  const ownStatues: number[][] = getMapItemsByType(node.boardMap, itemType);
-  const moves: Move[] = [];
-
-  if (ownStatues.length === 0) {
-    return [];
-  }
+  const ownStatues: number[][] = getMapItemsByType(node.gameState.boardMap, itemType);
+  let result: MiniMaxNode = { ...node };
+  const children: MiniMaxNode[] = [];
 
   for (const statue of ownStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves(node, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves(node.gameState, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;
     }
 
     for (const possibleMove of possibleMoves) {
-      moves.push({
-        evaluation: aiEvaluateMove(node, possibleMove[1], possibleMove[0], statue),
-        move: [
-          statue,
-          possibleMove,
-        ],
-      });
+      const [itemY, itemX] = statue;
+      const [cellY, cellX] = possibleMove;
+      const [, newState] = applyMove({ ...node.gameState }, itemX, itemY, cellX, cellY);
+      const newNode: MiniMaxNode = {
+        gameState: { ...newState },
+        move: [statue, possibleMove],
+      };
+
+      if (depth === 1 || newState.isGameOver) {
+        children.push(newNode);
+      } else {
+        children.push(aiBuildDecisionTree(newNode, depth - 1, !maximizingPlayer));
+      }
     }
+
+    result = {
+      ...result,
+      children,
+    };
   }
 
-  return moves;
+  return result;
 }
 
 /**
- * Function evaluates a computer's statue move by several parameters,
- * and returns the total evaluation
+ * Use minimax algorithm to get the best move(s) for the computer player
  *
  * @param node
- * @param x
- * @param y
- * @param item
+ * @param maximizingPlayer
  */
-function aiEvaluateMove(node: BoardDescription, x: number, y: number, item: number[]): number {
-  const itemType: number = Array.isArray(item) && item.length === 2 ? node.boardMap[item[1]][item[0]] : 0;
-  const ownStatues: number[][] = getMapItemsByType(node.boardMap, itemType);
-  const otherStatues: number[][] = ownStatues.filter((statue: number[]) => {
-    return !(statue[0] === item[0] && statue[1] === item[1]);
-  });
+function aiMiniMax(node: MiniMaxNode, maximizingPlayer: boolean): number {
+  const itemType: number = !maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
 
+  if (!node.children) {
+    const evaluation = aiEvaluateGameState(node.gameState, itemType);
+
+    node.score = evaluation;
+
+    return evaluation;
+  }
+
+  let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+
+  if (maximizingPlayer) {
+    node.children.forEach((child: MiniMaxNode) => {
+      bestMoveValue = Math.max(bestMoveValue, aiMiniMax(child, false));
+    });
+  } else {
+    node.children.forEach((child: MiniMaxNode) => {
+      bestMoveValue = Math.min(bestMoveValue, aiMiniMax(child, true));
+    });
+  }
+
+  node.score = bestMoveValue;
+
+  return bestMoveValue;
+}
+
+/**
+ * Heuristically evaluate game state for the specified player
+ *
+ * @param gameState
+ * @param itemType
+ */
+function aiEvaluateGameState(gameState: GameState, itemType: number): number {
+  if (gameState.isGameOver) {
+    return 100;
+  }
+
+  const player: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue'];
+  const enemyPlayer: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'blue' : 'red'];
   let result = 0;
 
-  // Count of beads to be placed (positive)
-  const beadsCoordinates: number[][] = checkBeadsPlacing({ ...node }, x, y, itemType);
-
-  result += beadsCoordinates.length;
-
-  // Is there an enemy statue on the target cell (positive)
-  const enemyType: number = getEnemyType(itemType);
-
-  if (node.boardMap[y][x] === enemyType) {
-    result += 2;
-  }
-
-  // Is there any other statue under attack (negative)
-  const isUnderAttack: boolean = otherStatues.map((statue: number[]) => {
-    return checkUnderAttack(node.boardMap, statue[1], statue[0]);
-  }).some((value: boolean) => value === true);
-
-  if (isUnderAttack) {
-    result -= 10;
-  }
+  result += 10 - player.beads;
+  result += player.captured;
+  result -= 10 - enemyPlayer.beads;
+  result -= enemyPlayer.captured;
 
   return result;
 }

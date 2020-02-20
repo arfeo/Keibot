@@ -293,11 +293,11 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     isGameOver: this.isGameOver,
   }, itemX, itemY, cellX, cellY);
 
-  const [beadsCoordinates, boardDescription]: ApplyMoveResult = moveResult;
+  const [beadsCoordinates, gameState]: ApplyMoveResult = moveResult;
 
-  this.boardMap = boardDescription.boardMap;
-  this.players = boardDescription.players;
-  this.isGameOver = boardDescription.isGameOver;
+  this.boardMap = gameState.boardMap;
+  this.players = gameState.players;
+  this.isGameOver = gameState.isGameOver;
 
   await animateItemFade.call(this, cellX, cellY, 'in');
 
@@ -306,7 +306,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
   }
 
-  this.lockedCell = boardDescription.lockedCell;
+  this.lockedCell = gameState.lockedCell;
 
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
