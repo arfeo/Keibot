@@ -1,6 +1,6 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { getMapItemsByType, getRandomNum } from './helpers';
+import { getEnemyType, getMapItemsByType, getRandomNum } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
 import { renderMove } from './render';
 
@@ -28,11 +28,9 @@ function aiMove(): Promise<void> {
           players: this.players,
           isGameOver: this.isGameOver,
         },
-      }, 3, true);
+      }, this.difficultyLevel);
 
-      aiMiniMax(decisionTree, true);
-
-      console.info(decisionTree);
+      aiMiniMax(decisionTree);
 
       const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
         return node.score === decisionTree.score;
@@ -54,8 +52,7 @@ function aiMove(): Promise<void> {
  * @param depth
  * @param maximizingPlayer
  */
-function aiBuildDecisionTree(node: MiniMaxNode, depth: number, maximizingPlayer: boolean): MiniMaxNode {
-  const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
+function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_ITEM_TYPES.red.statue): MiniMaxNode {
   const ownStatues: number[][] = getMapItemsByType(node.gameState.boardMap, itemType);
   let result: MiniMaxNode = { ...node };
   const children: MiniMaxNode[] = [];
@@ -76,10 +73,10 @@ function aiBuildDecisionTree(node: MiniMaxNode, depth: number, maximizingPlayer:
         move: [statue, possibleMove],
       };
 
-      if (depth === 1 || newState.isGameOver) {
+      if (depth === 0 || newState.isGameOver) {
         children.push(newNode);
       } else {
-        children.push(aiBuildDecisionTree(newNode, depth - 1, !maximizingPlayer));
+        children.push(aiBuildDecisionTree(newNode, depth - 1, getEnemyType(itemType)));
       }
     }
 
@@ -98,8 +95,8 @@ function aiBuildDecisionTree(node: MiniMaxNode, depth: number, maximizingPlayer:
  * @param node
  * @param maximizingPlayer
  */
-function aiMiniMax(node: MiniMaxNode, maximizingPlayer: boolean): number {
-  const itemType: number = !maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
+function aiMiniMax(node: MiniMaxNode, maximizingPlayer = true): number {
+  const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
 
   if (!node.children) {
     const evaluation = aiEvaluateGameState(node.gameState, itemType);

@@ -32,6 +32,7 @@ class Game extends PageComponent {
   protected cursor: number[];
   protected players: Players;
   protected lockedCell: number[];
+  protected difficultyLevel: number;
   protected isComputerOn: boolean;
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
@@ -41,9 +42,11 @@ class Game extends PageComponent {
     const [
       storageBoardSize,
       storageFirstMove,
+      storageDifficultyLevel,
       storageIsComputerOn,
       storageIsShowMovesOn,
     ]: [
+      number | undefined,
       number | undefined,
       number | undefined,
       boolean | undefined,
@@ -51,6 +54,7 @@ class Game extends PageComponent {
     ] = getStorageData([
       'boardSize',
       'firstMove',
+      'difficultyLevel',
       'isComputerOn',
       'isShowMovesOn',
     ]);
@@ -135,6 +139,8 @@ class Game extends PageComponent {
     };
 
     this.lockedCell = [];
+
+    this.difficultyLevel = storageDifficultyLevel ?? 3;
 
     this.isComputerOn = storageIsComputerOn ?? true;
     this.isShowMovesOn = storageIsShowMovesOn ?? true;
