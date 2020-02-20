@@ -271,7 +271,9 @@ function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
 }
 
 /**
- * ...
+ * Write down to the board map all the corresponding changes after the given
+ * statue moves from one cell to another; update `lockedCell`, `players` and `isGameOver`
+ * props of the current game state
  *
  * @param gameState
  * @param itemX

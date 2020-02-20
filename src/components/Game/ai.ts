@@ -13,6 +13,7 @@ interface MiniMaxNode {
   score?: number;
   move?: PossibleMove;
   children?: MiniMaxNode[];
+  evaluation?: number;
 }
 
 /**
@@ -32,11 +33,7 @@ function aiMove(): Promise<void> {
 
       aiMiniMax(decisionTree);
 
-      const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
-        return node.score === decisionTree.score;
-      });
-
-      const bestMove: number[][] = bestNodes[getRandomNum(0, bestNodes.length - 1)].move;
+      const bestMove: number[][] = aiGetBestMove(decisionTree);
       const [[itemY, itemX], [cellY, cellX]] = bestMove;
 
       renderMove.call(this, itemX, itemY, cellX, cellY).then(resolve);
@@ -45,12 +42,41 @@ function aiMove(): Promise<void> {
 }
 
 /**
+ * After using minimax algorithm for scoring the decision tree leafs,
+ * we pick all nodes with the best score for the next move.
+ * Then we evaluate each node's state and get nodes with the best state evaluation.
+ * Then we pick a random node of the resulting array of nodes --
+ * this will be our best move.
+ *
+ * @param decisionTree
+ */
+function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
+  const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
+    return node.score === decisionTree.score;
+  });
+
+  const bestNodesEvaluations: number[] = bestNodes.map((node: MiniMaxNode) => {
+    const evaluation: number = aiEvaluateGameState(node.gameState, MAP_ITEM_TYPES.red.statue);
+
+    node.evaluation = evaluation;
+
+    return evaluation;
+  });
+
+  const bestEvaluatedNodes: MiniMaxNode[] = bestNodes.filter((node: MiniMaxNode) => {
+    return node.evaluation === Math.max(...bestNodesEvaluations);
+  });
+
+  return bestEvaluatedNodes[getRandomNum(0, bestEvaluatedNodes.length - 1)].move;
+}
+
+/**
  * Build a tree of players' possible moves starting from the current game state
  * to the given depth
  *
  * @param node
  * @param depth
- * @param maximizingPlayer
+ * @param itemType
  */
 function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_ITEM_TYPES.red.statue): MiniMaxNode {
   const ownStatues: number[][] = getMapItemsByType(node.gameState.boardMap, itemType);
