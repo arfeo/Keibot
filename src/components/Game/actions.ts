@@ -165,35 +165,6 @@ function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType:
 }
 
 /**
- * Function checks is there any enemies within one turn reach about
- * the cell with the given coordinates
- *
- * @param boardMap
- * @param x
- * @param y
- */
-function checkUnderAttack(boardMap: number[][], x: number, y: number): boolean {
-  const itemType = boardMap[y] ? boardMap[y][x] : 0;
-
-  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
-    return false;
-  }
-
-  const enemyType: number = getEnemyType(itemType);
-
-  const isUnderAttack1 = boardMap[y - 2] !== undefined
-    && (boardMap[y - 2][x - 1] === enemyType || boardMap[y - 2][x + 1] === enemyType);
-  const isUnderAttack2 = boardMap[y + 1] !== undefined
-    && (boardMap[y + 1][x - 2] === enemyType || boardMap[y + 1][x + 2] === enemyType);
-  const isUnderAttack3 = boardMap[y + 2] !== undefined
-    && (boardMap[y + 2][x - 1] === enemyType || boardMap[y + 2][x + 1] === enemyType);
-  const isUnderAttack4 = boardMap[y - 1] !== undefined
-    && (boardMap[y - 1][x - 2] === enemyType || boardMap[y - 1][x + 2] === enemyType);
-
-  return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
-}
-
-/**
  * Function checks whether there're three beads in a row on the game board
  * (vertically, horizontally, or diagonally)
  *
@@ -368,9 +339,5 @@ function applyMove(
 export {
   checkPossibleMoves,
   checkMoveToCell,
-  checkBeadsPlacing,
-  checkUnderAttack,
-  checkThreeInARow,
-  checkEnemyHasMoves,
   applyMove,
 };
