@@ -142,9 +142,9 @@ function aiEvaluateGameState(gameState: GameState, itemType: number): number {
   let result = 0;
 
   result += 10 - player.beads;
-  result += player.captured;
+  result += player.captured * 2;
   result -= 10 - enemyPlayer.beads;
-  result -= enemyPlayer.captured;
+  result -= enemyPlayer.captured * 2;
 
   return result;
 }
