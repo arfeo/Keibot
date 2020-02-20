@@ -146,9 +146,9 @@ function aiEvaluateGameState(gameState: GameState, itemType: number): number {
 
   const underAttack: boolean[] = ownStatues.map((statue: number[]) => {
     return checkUnderAttack(gameState, statue[1], statue[0]);
-  }).filter((value) => value);
+  }).filter((value: boolean) => value);
 
-  result -= underAttack.length;
+  result -= underAttack.length * 2;
 
   return result;
 }
