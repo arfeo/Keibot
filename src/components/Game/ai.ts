@@ -20,27 +20,29 @@ interface MiniMaxNode {
  */
 function aiMove(): Promise<void> {
   return new Promise((resolve) => {
-    const decisionTree: MiniMaxNode = aiBuildDecisionTree({
-      gameState: {
-        boardMap: this.boardMap,
-        lockedCell: this.lockedCell,
-        players: this.players,
-        isGameOver: this.isGameOver,
-      },
-    }, 3, true);
+    window.setTimeout(() => {
+      const decisionTree: MiniMaxNode = aiBuildDecisionTree({
+        gameState: {
+          boardMap: this.boardMap,
+          lockedCell: this.lockedCell,
+          players: this.players,
+          isGameOver: this.isGameOver,
+        },
+      }, 3, true);
 
-    aiMiniMax(decisionTree, true);
+      aiMiniMax(decisionTree, true);
 
-    console.info(decisionTree);
+      console.info(decisionTree);
 
-    const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
-      return node.score === decisionTree.score;
-    });
+      const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
+        return node.score === decisionTree.score;
+      });
 
-    const bestMove: number[][] = bestNodes[getRandomNum(0, bestNodes.length - 1)].move;
-    const [[itemY, itemX], [cellY, cellX]] = bestMove;
+      const bestMove: number[][] = bestNodes[getRandomNum(0, bestNodes.length - 1)].move;
+      const [[itemY, itemX], [cellY, cellX]] = bestMove;
 
-    renderMove.call(this, itemX, itemY, cellX, cellY).then(resolve);
+      renderMove.call(this, itemX, itemY, cellX, cellY).then(resolve);
+    }, 0);
   });
 }
 
