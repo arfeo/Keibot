@@ -497,10 +497,8 @@ export {
   renderGameWindow,
   renderGrid,
   renderMap,
-  renderMapItem,
   renderPossibleMoves,
   renderMove,
   renderPanel,
-  renderGameOver,
   clearCanvas,
 };

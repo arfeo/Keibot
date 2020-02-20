@@ -150,7 +150,6 @@ class Game extends PageComponent {
 
     animateCursor.call(this);
 
-    // Computer plays if it's on, and the red player is the first to move
     if (this.isComputerOn === true && this.players.red.active === true) {
       await aiMove.call(this);
     }
