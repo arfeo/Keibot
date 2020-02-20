@@ -1,7 +1,7 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
 import { getMapItemsByType, getRandomNum } from './helpers';
-import { checkPossibleMoves, applyMove } from './actions';
+import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
 import { renderMove } from './render';
 
 import { GameState, Player } from './types';
@@ -139,12 +139,19 @@ function aiEvaluateGameState(gameState: GameState, itemType: number): number {
 
   const player: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue'];
   const enemyPlayer: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'blue' : 'red'];
+  const ownStatues: number[][] = getMapItemsByType(gameState.boardMap, itemType);
   let result = 0;
 
   result += 10 - player.beads;
-  result += player.captured * 2;
+  result += player.captured;
   result -= 10 - enemyPlayer.beads;
-  result -= enemyPlayer.captured * 2;
+  result -= enemyPlayer.captured;
+
+  const underAttack: boolean[] = ownStatues.map((statue: number[]) => {
+    return checkUnderAttack(gameState, statue[1], statue[0]);
+  }).filter((value) => value);
+
+  result -= underAttack.length;
 
   return result;
 }

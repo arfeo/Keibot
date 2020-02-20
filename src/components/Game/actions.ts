@@ -238,6 +238,39 @@ function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
 }
 
 /**
+ * Function checks is there any enemies within one turn reach about
+ * the cell with the given coordinates
+ *
+ * @param gameState
+ * @param x
+ * @param y
+ */
+function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
+  const { boardMap, lockedCell } = gameState;
+  const itemType = boardMap[y] ? boardMap[y][x] : 0;
+  const [lockedY, lockedX] = lockedCell;
+  const isCellLocked: boolean = lockedX === x && lockedY === y;
+  const isStatue: boolean = itemType === MAP_ITEM_TYPES.red.statue || itemType === MAP_ITEM_TYPES.blue.statue;
+
+  if (isCellLocked || !isStatue) {
+    return false;
+  }
+
+  const enemyType: number = getEnemyType(itemType);
+
+  const isUnderAttack1 = boardMap[y - 2] !== undefined
+    && (boardMap[y - 2][x - 1] === enemyType || boardMap[y - 2][x + 1] === enemyType);
+  const isUnderAttack2 = boardMap[y + 1] !== undefined
+    && (boardMap[y + 1][x - 2] === enemyType || boardMap[y + 1][x + 2] === enemyType);
+  const isUnderAttack3 = boardMap[y + 2] !== undefined
+    && (boardMap[y + 2][x - 1] === enemyType || boardMap[y + 2][x + 1] === enemyType);
+  const isUnderAttack4 = boardMap[y - 1] !== undefined
+    && (boardMap[y - 1][x - 2] === enemyType || boardMap[y - 1][x + 2] === enemyType);
+
+  return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
+}
+
+/**
  * ...
  *
  * @param gameState
@@ -339,5 +372,6 @@ function applyMove(
 export {
   checkPossibleMoves,
   checkMoveToCell,
+  checkUnderAttack,
   applyMove,
 };
