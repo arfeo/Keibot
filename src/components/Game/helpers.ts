@@ -59,7 +59,16 @@ function getEnemyType(itemType: number): number {
 }
 
 /**
- * Immutably change the board map value
+ * Returns player type name (`red` or `blue`) by its numeric type
+ *
+ * @param itemType
+ */
+function getPlayerTypeName(itemType: number): string {
+  return itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+}
+
+/**
+ * Immutably changes the board map value
  *
  * @param boardMap
  * @param x
@@ -77,5 +86,6 @@ export {
   getMapItemsByType,
   getRandomNum,
   getEnemyType,
+  getPlayerTypeName,
   changeBoardMapValue,
 };

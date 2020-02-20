@@ -1,6 +1,6 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { getMapItemsByType, getEnemyType, changeBoardMapValue } from './helpers';
+import { getMapItemsByType, getEnemyType, changeBoardMapValue, getPlayerTypeName } from './helpers';
 
 import { GameState, Players, ApplyMoveResult } from './types';
 
@@ -117,7 +117,7 @@ function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType:
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
-  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const playerTypeName: string = getPlayerTypeName(itemType);
   const enemyType: number = getEnemyType(itemType);
   let boardMap: number[][] = [...gameState.boardMap];
   let playerBeads: number = gameState.players[playerTypeName].beads;
@@ -297,7 +297,7 @@ function applyMove(
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
   const enemyType: number = getEnemyType(itemType);
-  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const playerTypeName: string = getPlayerTypeName(itemType);
   let players: Players = {
     ...gameState.players,
     [playerTypeName]: {

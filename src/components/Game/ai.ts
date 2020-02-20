@@ -1,6 +1,6 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { getEnemyType, getMapItemsByType, getRandomNum } from './helpers';
+import { getEnemyType, getMapItemsByType, getRandomNum, getPlayerTypeName } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
 import { renderMove } from './render';
 
@@ -134,21 +134,20 @@ function aiEvaluateGameState(gameState: GameState, itemType: number): number {
     return 100;
   }
 
-  const player: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue'];
-  const enemyPlayer: Player = gameState.players[itemType === MAP_ITEM_TYPES.red.statue ? 'blue' : 'red'];
+  const enemyType: number = getEnemyType(itemType);
+  const player: Player = gameState.players[getPlayerTypeName(itemType)];
+  const enemyPlayer: Player = gameState.players[getPlayerTypeName(enemyType)];
   const ownStatues: number[][] = getMapItemsByType(gameState.boardMap, itemType);
+  const enemyStatues: number[][] = getMapItemsByType(gameState.boardMap, enemyType);
+  const getUnderAttack = (statue: number[]): boolean => checkUnderAttack(gameState, statue[1], statue[0]);
   let result = 0;
 
   result += 10 - player.beads;
   result += player.captured;
   result -= 10 - enemyPlayer.beads;
   result -= enemyPlayer.captured;
-
-  const underAttack: boolean[] = ownStatues.map((statue: number[]) => {
-    return checkUnderAttack(gameState, statue[1], statue[0]);
-  }).filter((value: boolean) => value);
-
-  result -= underAttack.length * 2;
+  result -= ownStatues.map(getUnderAttack).filter((value: boolean) => value).length;
+  result += enemyStatues.map(getUnderAttack).filter((value: boolean) => value).length;
 
   return result;
 }
