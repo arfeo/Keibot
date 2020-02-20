@@ -1,7 +1,8 @@
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { renderMapItem } from './render';
-import { getMapItemsByType } from './helpers';
+import { getMapItemsByType, getEnemyType, changeBoardMapValue } from './helpers';
+
+import { GameState, Players, ApplyMoveResult } from './types';
 
 interface Cell {
   cellX: number;
@@ -18,31 +19,30 @@ type CellWithBead = Cell & {
  * it returns an array of possible coordinates or undefined if no statue found
  * on the board by the given coordinates
  *
+ * @param gameState
  * @param x
  * @param y
  */
-function checkPossibleMoves(x: number, y: number): number[][] | undefined {
-  const itemType: number = this.boardMap[y] ? this.boardMap[y][x] : 0;
+function checkPossibleMoves(gameState: GameState, x: number, y: number): number[][] | undefined {
+  const { boardMap, lockedCell } = gameState;
+  const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return;
   }
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
+  const enemyType: number = getEnemyType(itemType);
   const moves: number[][] = [];
 
   // If the target cell is empty, return true;
   // if there's an enemy statue on the target cell -- check whether it is locked or not;
   // if it's not locked, return true, otherwise return false
   const checkCell = (targetX: number, targetY: number): boolean => {
-    if (this.boardMap[targetY][targetX] === enemyType) {
-      return this.lockedCell.length > 0 ? this.lockedCell[1] !== targetX || this.lockedCell[0] !== targetY : true;
+    if (boardMap[targetY][targetX] === enemyType) {
+      return lockedCell.length > 0 ? lockedCell[1] !== targetX || lockedCell[0] !== targetY : true;
     }
 
-    return this.boardMap[targetY][targetX] === 0;
+    return boardMap[targetY][targetX] === 0;
   };
 
   const processCells = (cells: Cell[]): void => {
@@ -51,7 +51,7 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
     }
 
     cells.forEach((cell: Cell) => {
-      if (this.boardMap[cell.cellY] !== undefined && checkCell(cell.cellX, cell.cellY)) {
+      if (boardMap[cell.cellY] !== undefined && checkCell(cell.cellX, cell.cellY)) {
         moves.push([cell.cellY, cell.cellX]);
       }
     });
@@ -75,72 +75,63 @@ function checkPossibleMoves(x: number, y: number): number[][] | undefined {
  * Function checks the ability to move a statue with the given coordinates to move to a cell
  * with the given coordinates; returns true if the move is possible, otherwise returns false
  *
+ * @param gameState
  * @param itemX
  * @param itemY
  * @param cellX
  * @param cellY
  */
-function checkMoveToCell(itemX: number, itemY: number, cellX: number, cellY: number): boolean {
-  if (!this.boardMap[itemY] || this.boardMap[itemY][itemX] === undefined) {
+function checkMoveToCell(
+  gameState: GameState,
+  itemX: number,
+  itemY: number,
+  cellX: number,
+  cellY: number,
+): boolean {
+  const { boardMap, lockedCell } = gameState;
+
+  if (!boardMap[itemY] || boardMap[itemY][itemX] === undefined) {
     return false;
   }
 
-  const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, itemX, itemY);
+  const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, itemX, itemY);
 
-  return Array.isArray(possibleMoves)
-    && possibleMoves.map((move: number[]) => JSON.stringify(move)).indexOf(JSON.stringify([cellY, cellX])) > -1;
+  return Array.isArray(possibleMoves) && possibleMoves.map((move: number[]) => {
+    return JSON.stringify(move);
+  }).indexOf(JSON.stringify([cellY, cellX])) > -1;
 }
 
 /**
  * Function checks whether new beads are needed to be placed on the board or not
  * after placing a statue to a cell with the given coordinates;
- * if `countOnly` param is set to true, function doesn't actually place any beads
- * on the map, but returns the total beads count instead
+ * it returns an array of coordinates of beads to be places on the game board
  *
+ * @param gameState
  * @param x
  * @param y
- * @param countOnly
- * @param countFor
+ * @param itemType
  */
-function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?: number): void | number {
-  const itemType: number = countFor ?? (this.boardMap[y] ? this.boardMap[y][x] : 0);
-  let count = 0;
-
-  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || this.isGameOver) {
-    return countOnly === true ? count : null;
+function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType: number): number[][] {
+  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue)) {
+    return [];
   }
 
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
+  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const enemyType: number = getEnemyType(itemType);
+  let boardMap: number[][] = [...gameState.boardMap];
+  let playerBeads: number = gameState.players[playerTypeName].beads;
+  const beadsCoordinates: number[][] = [];
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
-  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
-
-  // If we place a bead on the game board, we should reduce `beads` count of the
-  // corresponding player object. If there's no beads left, the player wins;
-  // if the player got three beads in a row, he also wins.
   const placeBead = (beadX: number, beadY: number): void => {
-    if (this.players[playerType].beads === 0) {
+    if (playerBeads === 0) {
       return;
     }
 
-    if (countOnly !== true) {
-      this.boardMap[beadY][beadX] = ownBead;
+    boardMap = changeBoardMapValue(boardMap, x, y, ownBead);
+    playerBeads -= 1;
 
-      renderMapItem.call(this, beadX, beadY);
-
-      this.players[playerType].beads -= 1;
-
-      // No beads left -- game over
-      // Got three beads in a row (horizontally, vertically, or diagonally) -- game over
-      if (this.players[playerType].beads === 0 || checkThreeInARow.call(this) === true) {
-        this.isGameOver = true;
-      }
-    } else {
-      count += 1;
-    }
+    beadsCoordinates.push([beadY, beadX]);
   };
 
   const processCells = (cells: CellWithBead[]): void => {
@@ -149,89 +140,57 @@ function checkBeadsPlacing(x: number, y: number, countOnly?: boolean, countFor?:
     }
 
     cells.forEach((cell: CellWithBead): void => {
-      if (this.boardMap[cell.cellY] === undefined) {
+      if (boardMap[cell.cellY] === undefined) {
         return;
       }
 
-      if (this.boardMap[cell.cellY][cell.cellX] === enemyType && this.boardMap[cell.targetY][cell.targetX] === 0) {
+      if (boardMap[cell.cellY][cell.cellX] === enemyType && boardMap[cell.targetY][cell.targetX] === 0) {
         placeBead(cell.targetX, cell.targetY);
       }
     });
   };
 
   processCells([
-    { cellX: x - 2,   cellY: y - 2,   targetX: x - 1,   targetY: y - 1},
-    { cellX: x,       cellY: y - 2,   targetX: x,       targetY: y - 1},
-    { cellX: x + 2,   cellY: y - 2,   targetX: x + 1,   targetY: y - 1},
-    { cellX: x - 2,   cellY: y,       targetX: x - 1,   targetY: y},
-    { cellX: x + 2,   cellY: y,       targetX: x + 1,   targetY: y},
-    { cellX: x - 2,   cellY: y + 2,   targetX: x - 1,   targetY: y + 1},
-    { cellX: x,       cellY: y + 2,   targetX: x,       targetY: y + 1},
-    { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1},
+    { cellX: x - 2,   cellY: y - 2,   targetX: x - 1,   targetY: y - 1 },
+    { cellX: x,       cellY: y - 2,   targetX: x,       targetY: y - 1 },
+    { cellX: x + 2,   cellY: y - 2,   targetX: x + 1,   targetY: y - 1 },
+    { cellX: x - 2,   cellY: y,       targetX: x - 1,   targetY: y },
+    { cellX: x + 2,   cellY: y,       targetX: x + 1,   targetY: y },
+    { cellX: x - 2,   cellY: y + 2,   targetX: x - 1,   targetY: y + 1 },
+    { cellX: x,       cellY: y + 2,   targetX: x,       targetY: y + 1 },
+    { cellX: x + 2,   cellY: y + 2,   targetX: x + 1,   targetY: y + 1 },
   ]);
 
-  if (countOnly === true) {
-    return count;
-  }
-}
-
-/**
- * Function checks is there any enemies within one turn reach about
- * the cell with the given coordinates
- *
- * @param x
- * @param y
- */
-function checkUnderAttack(x: number, y: number): boolean {
-  const itemType = this.boardMap[y] ? this.boardMap[y][x] : 0;
-
-  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
-    return false;
-  }
-
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
-  const isUnderAttack1 = this.boardMap[y - 2] !== undefined
-    && (this.boardMap[y - 2][x - 1] === enemyType || this.boardMap[y - 2][x + 1] === enemyType);
-  const isUnderAttack2 = this.boardMap[y + 1] !== undefined
-    && (this.boardMap[y + 1][x - 1] === enemyType || this.boardMap[y + 1][x + 2] === enemyType);
-  const isUnderAttack3 = this.boardMap[y + 2] !== undefined
-    && (this.boardMap[y + 2][x - 1] === enemyType || this.boardMap[y + 2][x + 1] === enemyType);
-  const isUnderAttack4 = this.boardMap[y - 1] !== undefined
-    && (this.boardMap[y - 1][x - 2] === enemyType || this.boardMap[y - 1][x + 2] === enemyType);
-
-  return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
+  return beadsCoordinates;
 }
 
 /**
  * Function checks whether there're three beads in a row on the game board
  * (vertically, horizontally, or diagonally)
  *
- * @param map
+ * @param boardMap
  */
-function checkThreeInARow(): boolean {
-  if (!this.boardMap || !Array.isArray(this.boardMap)) {
+function checkThreeInARow(boardMap: number[][]): boolean {
+  if (!boardMap || !Array.isArray(boardMap)) {
     return false;
   }
 
-  for (let y = 0; y < this.boardMap.length; y += 1) {
-    for (let x = 0; x < this.boardMap[y].length; x += 1) {
-      const item = this.boardMap[y][x];
+  for (let y = 0; y < boardMap.length; y += 1) {
+    for (let x = 0; x < boardMap[y].length; x += 1) {
+      const item = boardMap[y][x];
 
       if (item !== MAP_ITEM_TYPES.red.bead && item !== MAP_ITEM_TYPES.blue.bead) {
         continue;
       }
 
-      if (this.boardMap[y][x + 1] === item && this.boardMap[y][x + 2] === item) {
+      if (boardMap[y][x + 1] === item && boardMap[y][x + 2] === item) {
         return true;
       }
 
-      if (this.boardMap[y + 1] !== undefined && this.boardMap[y + 2] !== undefined && (
-        this.boardMap[y + 1][x] === item && this.boardMap[y + 2][x] === item
-        || this.boardMap[y + 1][x + 1] === item && this.boardMap[y + 2][x + 2] === item
-        || this.boardMap[y + 1][x - 1] === item && this.boardMap[y + 2][x - 2] === item
+      if (boardMap[y + 1] !== undefined && boardMap[y + 2] !== undefined && (
+        boardMap[y + 1][x] === item && boardMap[y + 2][x] === item
+        || boardMap[y + 1][x + 1] === item && boardMap[y + 2][x + 2] === item
+        || boardMap[y + 1][x - 1] === item && boardMap[y + 2][x - 2] === item
       )) {
         return true;
       }
@@ -247,18 +206,18 @@ function checkThreeInARow(): boolean {
  * if the `itemType` attribute is not a statue type (to avoid blocking the game);
  * otherwise it returns false
  *
+ * @param gameState
  * @param itemType
  */
-function checkEnemyHasMoves(itemType: number): boolean {
+function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
+  const { boardMap, lockedCell } = gameState;
+
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return true;
   }
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
-
-  const enemyStatues: number[][] = getMapItemsByType(this.boardMap, enemyType);
+  const enemyType: number = getEnemyType(itemType);
+  const enemyStatues: number[][] = getMapItemsByType(boardMap, enemyType);
   const moves: number[][] = [];
 
   if (enemyStatues.length === 0) {
@@ -266,7 +225,7 @@ function checkEnemyHasMoves(itemType: number): boolean {
   }
 
   for (const statue of enemyStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves.call(this, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;
@@ -278,11 +237,141 @@ function checkEnemyHasMoves(itemType: number): boolean {
   return moves.length > 0;
 }
 
+/**
+ * Function checks is there any enemies within one turn reach about
+ * the cell with the given coordinates
+ *
+ * @param gameState
+ * @param x
+ * @param y
+ */
+function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
+  const { boardMap, lockedCell } = gameState;
+  const itemType = boardMap[y] ? boardMap[y][x] : 0;
+  const [lockedY, lockedX] = lockedCell;
+  const isCellLocked: boolean = lockedX === x && lockedY === y;
+  const isStatue: boolean = itemType === MAP_ITEM_TYPES.red.statue || itemType === MAP_ITEM_TYPES.blue.statue;
+
+  if (isCellLocked || !isStatue) {
+    return false;
+  }
+
+  const enemyType: number = getEnemyType(itemType);
+
+  const isUnderAttack1 = boardMap[y - 2] !== undefined
+    && (boardMap[y - 2][x - 1] === enemyType || boardMap[y - 2][x + 1] === enemyType);
+  const isUnderAttack2 = boardMap[y + 1] !== undefined
+    && (boardMap[y + 1][x - 2] === enemyType || boardMap[y + 1][x + 2] === enemyType);
+  const isUnderAttack3 = boardMap[y + 2] !== undefined
+    && (boardMap[y + 2][x - 1] === enemyType || boardMap[y + 2][x + 1] === enemyType);
+  const isUnderAttack4 = boardMap[y - 1] !== undefined
+    && (boardMap[y - 1][x - 2] === enemyType || boardMap[y - 1][x + 2] === enemyType);
+
+  return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
+}
+
+/**
+ * ...
+ *
+ * @param gameState
+ * @param itemX
+ * @param itemY
+ * @param cellX
+ * @param cellY
+ */
+function applyMove(
+  gameState: GameState,
+  itemX: number,
+  itemY: number,
+  cellX: number,
+  cellY: number,
+): ApplyMoveResult | null {
+  let boardMap: number[][] = [...gameState.boardMap];
+  let lockedCell: number[] = [...gameState.lockedCell];
+  let { isGameOver } = gameState;
+  const itemType: number = boardMap[itemY] ? boardMap[itemY][itemX] : 0;
+
+  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
+    return;
+  }
+
+  const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
+  const enemyType: number = getEnemyType(itemType);
+  const playerTypeName: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  let players: Players = {
+    ...gameState.players,
+    [playerTypeName]: {
+      ...gameState.players[playerTypeName],
+    },
+  };
+
+  // If we land on an enemy statue, we should increase
+  // the `captured` prop of the corresponding player object.
+  // If the player captures the 3rd enemy statue, the game is over
+  if (boardMap[cellY][cellX] === enemyType) {
+    players[playerTypeName].captured += 1;
+
+    if (players[playerTypeName].captured === 3) {
+      isGameOver = true;
+    }
+  }
+
+  boardMap = changeBoardMapValue(boardMap, itemX, itemY, 0);
+  boardMap = changeBoardMapValue(boardMap, cellX, cellY, itemType);
+
+  lockedCell = [cellY, cellX];
+
+  const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
+
+  for (const bead of beadsCoordinates) {
+    boardMap = changeBoardMapValue(boardMap, bead[1], bead[0], ownBead);
+
+    players = {
+      ...players,
+      [playerTypeName]: {
+        ...players[playerTypeName],
+        beads: players[playerTypeName].beads - 1,
+      },
+    };
+
+    // No beads left -- game over, current player wins
+    // Got three beads in a row (horizontally, vertically, or diagonally) -- the game is over
+    if (players[playerTypeName].beads === 0 || checkThreeInARow(boardMap) === true) {
+      isGameOver = true;
+    }
+  }
+
+  // If enemy hasn't got possible moves, current user wins
+  if (!checkEnemyHasMoves({ boardMap, lockedCell }, itemType)) {
+    isGameOver = true;
+  }
+
+  return [
+    // Yes, newly added beads are already written in the board map,
+    // but we return them separately to avoid full redraw of the item canvas,
+    // and to insert them surgically after the move animation completes
+    beadsCoordinates,
+    {
+      boardMap,
+      lockedCell,
+      players: !isGameOver ? {
+        red: {
+          ...players.red,
+          active: itemType === MAP_ITEM_TYPES.blue.statue,
+        },
+        blue: {
+          ...players.blue,
+          active: itemType === MAP_ITEM_TYPES.red.statue,
+        },
+      } : players,
+      isGameOver,
+    },
+  ];
+}
+
 export {
   checkPossibleMoves,
   checkMoveToCell,
-  checkBeadsPlacing,
   checkUnderAttack,
-  checkThreeInARow,
-  checkEnemyHasMoves,
+  applyMove,
 };

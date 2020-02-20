@@ -1,4 +1,4 @@
-import { DrawOptions, DrawOptionsExtended } from '../typings/utils';
+import { DrawOptions, DrawOptionsExtended } from './types';
 
 /**
  * Alias for drawArc, this function draws a circle of the given size and style at the given coordinates

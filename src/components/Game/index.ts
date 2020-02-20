@@ -1,4 +1,5 @@
 import { PageComponent } from '../core/Page';
+import { Menu } from '../Menu';
 
 import {
   CELL_SIZE_VMIN,
@@ -10,12 +11,12 @@ import {
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
 import { getCellSize } from './helpers';
 import { animateCursor } from './animations';
-import { onBoardClick, onNewGameButtonClick, onBackToMenuButtonClick } from './events';
+import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
 
 import { getStorageData } from '../../utils/storage';
 
-import { Player } from '../../typings/game';
+import { Players } from './types';
 
 class Game extends PageComponent {
   protected appRoot: HTMLElement;
@@ -29,8 +30,9 @@ class Game extends PageComponent {
   protected backToMenuButton: HTMLButtonElement;
   protected boardMap: number[][];
   protected cursor: number[];
-  protected players: { red: Player; blue: Player };
+  protected players: Players;
   protected lockedCell: number[];
+  protected difficultyLevel: number;
   protected isComputerOn: boolean;
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
@@ -40,9 +42,11 @@ class Game extends PageComponent {
     const [
       storageBoardSize,
       storageFirstMove,
+      storageDifficultyLevel,
       storageIsComputerOn,
       storageIsShowMovesOn,
     ]: [
+      number | undefined,
       number | undefined,
       number | undefined,
       boolean | undefined,
@@ -50,6 +54,7 @@ class Game extends PageComponent {
     ] = getStorageData([
       'boardSize',
       'firstMove',
+      'difficultyLevel',
       'isComputerOn',
       'isShowMovesOn',
     ]);
@@ -111,12 +116,12 @@ class Game extends PageComponent {
       {
         target: this.newGameButton,
         type: 'click',
-        listener: onNewGameButtonClick.bind(this),
+        listener: onButtonClick.bind(this, Game.bind(null)),
       },
       {
         target: this.backToMenuButton,
         type: 'click',
-        listener: onBackToMenuButtonClick.bind(this),
+        listener: onButtonClick.bind(this, Menu.bind(null)),
       },
     ];
 
@@ -135,13 +140,15 @@ class Game extends PageComponent {
 
     this.lockedCell = [];
 
+    this.difficultyLevel = storageDifficultyLevel ?? 3;
+
     this.isComputerOn = storageIsComputerOn ?? true;
     this.isShowMovesOn = storageIsShowMovesOn ?? true;
     this.isGameOver = false;
     this.isMoving = false;
   }
 
-  public render(): void {
+  public async render(): Promise<void> {
     renderGameWindow.call(this);
     renderGrid.call(this);
     renderMap.call(this);
@@ -149,9 +156,8 @@ class Game extends PageComponent {
 
     animateCursor.call(this);
 
-    // Computer plays if it's on, and the red player is the first to move
     if (this.isComputerOn === true && this.players.red.active === true) {
-      aiMove.call(this);
+      await aiMove.call(this);
     }
   }
 }

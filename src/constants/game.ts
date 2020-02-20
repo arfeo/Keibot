@@ -1,5 +1,3 @@
-import { MapItemProps } from '../typings/game';
-
 export const APP: App = {
   pageInstance: null,
 };
@@ -13,8 +11,6 @@ export const DEFAULT_BOARD_SIZE = 8;
 export const BEADS_COUNT = 10;
 
 export const FADE_OUT_ANIMATION_SPEED = 0.2;
-
-export const COMPUTER_MOVE_TIMEOUT = 1;
 
 export const MAP_ITEM_TYPES: { red: MapItemProps; blue: MapItemProps } = {
   red: {

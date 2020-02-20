@@ -8,6 +8,7 @@ import { saveStorageData, getStorageData } from '../../utils/storage';
 class Settings extends MenuComponent {
   protected firstMove: number | undefined;
   protected boardSize: number | undefined;
+  protected difficultyLevel: number | undefined;
   protected isComputerOn: boolean | undefined;
   protected isShowMovesOn: boolean | undefined;
 
@@ -15,6 +16,7 @@ class Settings extends MenuComponent {
     this.appRoot = document.getElementById('root');
     this.firstMove = getStorageData('firstMove');
     this.boardSize = getStorageData('boardSize');
+    this.difficultyLevel = getStorageData('difficultyLevel');
     this.isComputerOn = getStorageData('isComputerOn');
     this.isShowMovesOn = getStorageData('isShowMovesOn');
 
@@ -88,6 +90,31 @@ class Settings extends MenuComponent {
           type: 'change',
           handler: (event: Event & { target: { value: string; checked: boolean }}) => {
             saveStorageData('isComputerOn', event.target.checked);
+          },
+        },
+      },
+      {
+        type: 'html',
+        value: 'Difficulty level:',
+      },
+      {
+        type: 'select',
+        options: [
+          {
+            value: '1',
+            text: 'Easy',
+            selected: this.difficultyLevel === 1,
+          },
+          {
+            value: '3',
+            text: 'Normal',
+            selected: this.difficultyLevel === 3 || this.difficultyLevel === undefined,
+          },
+        ],
+        action: {
+          type: 'change',
+          handler: (event: Event & { target: { value: string }}) => {
+            saveStorageData('difficultyLevel', parseInt(event.target.value, 10));
           },
         },
       },

@@ -1,3 +1,5 @@
+import { MAP_ITEM_TYPES } from '../../constants/game';
+
 /**
  * Function returns the cell size (atomic canvas measure)
  * depending on the screen size and the given vmin value
@@ -37,25 +39,43 @@ function getMapItemsByType(map: number[][], type: number): number[][] {
 }
 
 /**
- * Returns a random number in a given interval; as an option it discards one or more numbers given
- * in the `discard` array
+ * Returns a random number in a given interval
  *
  * @param min
  * @param max
  * @param discard
  */
-function getRandomNum(min = 1, max = 1000, discard: number[] = []): number {
-  const num: number = Math.floor(min + Math.random() * (max + 1 - min));
+function getRandomNum(min = 1, max = 1000): number {
+  return Math.floor(min + Math.random() * (max + 1 - min));
+}
 
-  if (discard.indexOf(num) > -1) {
-    return getRandomNum(min, max, discard);
-  }
+/**
+ * Returns the item type which is opponent to the given `itemType`
+ *
+ * @param itemType
+ */
+function getEnemyType(itemType: number): number {
+  return itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.blue.statue : MAP_ITEM_TYPES.red.statue;
+}
 
-  return num;
+/**
+ * Immutably change the board map value
+ *
+ * @param boardMap
+ * @param x
+ * @param y
+ * @param value
+ */
+function changeBoardMapValue(boardMap: number[][], x: number, y: number, value: number): number[][] {
+  return boardMap.map((row: number[], rowIndex: number) => row.map((column: number, columnIndex: number) => {
+    return rowIndex === y && columnIndex === x ? value : boardMap[rowIndex][columnIndex];
+  }));
 }
 
 export {
   getCellSize,
   getMapItemsByType,
   getRandomNum,
+  getEnemyType,
+  changeBoardMapValue,
 };

@@ -1,9 +1,10 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
-import { checkBeadsPlacing, checkEnemyHasMoves } from './actions';
+import { applyMove } from './actions';
 import { animateItemFade } from './animations';
-import { aiMove } from './ai';
+
+import { ApplyMoveResult } from './types';
 
 /**
  * Function creates all needed game window elements
@@ -279,32 +280,24 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   }
 
   this.isMoving = true;
-
   this.cursor = [];
 
   clearCanvas.call(this, this.cursorCanvas);
 
   await animateItemFade.call(this, itemX, itemY, 'out');
 
-  const enemyType: number = itemType === MAP_ITEM_TYPES.red.statue
-    ? MAP_ITEM_TYPES.blue.statue
-    : MAP_ITEM_TYPES.red.statue;
+  const moveResult: ApplyMoveResult = applyMove({
+    boardMap: this.boardMap,
+    lockedCell: this.lockedCell,
+    players: this.players,
+    isGameOver: this.isGameOver,
+  }, itemX, itemY, cellX, cellY);
 
-  const playerType: string = itemType === MAP_ITEM_TYPES.red.statue ? 'red' : 'blue';
+  const [beadsCoordinates, gameState]: ApplyMoveResult = moveResult;
 
-  // If we land on an enemy statue, we should increase
-  // the `captured` prop of the corresponding player object.
-  // If the player captures the 3rd enemy statue, the game overs.
-  if (this.boardMap[cellY][cellX] === enemyType) {
-    this.players[playerType].captured += 1;
-
-    if (this.players[playerType].captured === 3) {
-      this.isGameOver = true;
-    }
-  }
-
-  this.boardMap[itemY][itemX] = 0;
-  this.boardMap[cellY][cellX] = itemType;
+  this.boardMap = gameState.boardMap;
+  this.players = gameState.players;
+  this.isGameOver = gameState.isGameOver;
 
   await animateItemFade.call(this, cellX, cellY, 'in');
 
@@ -313,47 +306,32 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     renderMapItem.call(this, this.lockedCell[1], this.lockedCell[0]);
   }
 
-  this.lockedCell = [cellY, cellX];
+  this.lockedCell = gameState.lockedCell;
 
   // Since we move a statue, it should be locked without any doubt
   renderShield.call(this);
 
-  checkBeadsPlacing.call(this, cellX, cellY);
+  // Render new beads on the game board (if any)
+  for (const bead of beadsCoordinates) {
+    renderMapItem.call(this, bead[1], bead[0]);
+  }
 
   this.isMoving = false;
 
-  // If enemy hasn't got possible moves, current user wins
-  if (!checkEnemyHasMoves.call(this, itemType)) {
-    this.isGameOver = true;
-  }
-
-  // End of turn
   if (!this.isGameOver) {
-    this.players = {
-      red: {
-        ...this.players.red,
-        active: itemType === MAP_ITEM_TYPES.blue.statue,
-      },
-      blue: {
-        ...this.players.blue,
-        active: itemType === MAP_ITEM_TYPES.red.statue,
-      },
-    };
-
     renderPanel.call(this);
-
-    // Computer plays if it's on
-    if (itemType === MAP_ITEM_TYPES.blue.statue && this.isComputerOn === true) {
-      aiMove.call(this);
-    }
   } else {
     renderGameOver.call(this, itemType);
   }
+
+  return Promise.resolve();
 }
 
 /**
  * Function renders the game panel which contains visual representation
  * of captured statues count and beads count for each player
+ *
+ * @param lastItemType
  */
 function renderPanel(lastItemType?: number): void {
   const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
@@ -481,6 +459,8 @@ function renderPanel(lastItemType?: number): void {
 /**
  * Function deactivates both users and re-renders the game panel
  * on game over
+ *
+ * @param lastItemType
  */
 function renderGameOver(lastItemType: number): void {
   this.players = {
@@ -517,10 +497,8 @@ export {
   renderGameWindow,
   renderGrid,
   renderMap,
-  renderMapItem,
   renderPossibleMoves,
   renderMove,
   renderPanel,
-  renderGameOver,
   clearCanvas,
 };

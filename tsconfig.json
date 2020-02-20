@@ -10,7 +10,6 @@
     "rootDir": "src",
     "outDir": "dist",
     "noImplicitAny": true,
-    "noUnusedLocals": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true

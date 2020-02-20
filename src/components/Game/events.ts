@@ -1,10 +1,11 @@
-import { Game } from './';
+import { Game } from '.';
 import { Menu } from '../Menu';
 
 import { APP, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
+import { aiMove } from './ai';
 
 /**
  * Function fires on the cursor canvas click event
@@ -34,12 +35,24 @@ function onBoardClick(event: MouseEvent): void {
       : [y, x];
 
     if (this.cursor.length > 0 && this.isShowMovesOn) {
-      renderPossibleMoves.call(this, checkPossibleMoves.call(this, x, y));
+      renderPossibleMoves.call(this, checkPossibleMoves({
+        boardMap: this.boardMap,
+        lockedCell: this.lockedCell,
+      }, x, y));
     }
   } else {
     if (this.cursor.length > 0) {
-      if (checkMoveToCell.call(this, this.cursor[1], this.cursor[0], x, y)) {
-        renderMove.call(this, this.cursor[1], this.cursor[0], x, y);
+      const checkMove: boolean = checkMoveToCell({
+        boardMap: this.boardMap,
+        lockedCell: this.lockedCell,
+      }, this.cursor[1], this.cursor[0], x, y);
+
+      if (checkMove) {
+        renderMove.call(this, this.cursor[1], this.cursor[0], x, y).then(async () => {
+          if (this.isComputerOn === true && !this.isGameOver) {
+            await aiMove.call(this);
+          }
+        });
       }
     }
   }
@@ -48,31 +61,17 @@ function onBoardClick(event: MouseEvent): void {
 /**
  * Function destroys current game and creates a new instance of the `Game` class
  */
-function onNewGameButtonClick(): void {
+function onButtonClick(Instance: typeof Game | typeof Menu): void {
   if (this.isMoving === true) {
     return;
   }
 
   this.destroy();
 
-  APP.pageInstance = new Game();
-}
-
-/**
- * Function destroys current game and creates a new instance of the `Menu` class
- */
-function onBackToMenuButtonClick(): void {
-  if (this.isMoving === true) {
-    return;
-  }
-
-  this.destroy();
-
-  APP.pageInstance = new Menu();
+  APP.pageInstance = new Instance();
 }
 
 export {
   onBoardClick,
-  onNewGameButtonClick,
-  onBackToMenuButtonClick,
+  onButtonClick,
 };
