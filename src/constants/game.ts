@@ -2,6 +2,28 @@ export const APP: App = {
   pageInstance: null,
 };
 
+export const DIFFICULTY_EASY = 1;
+export const DIFFICULTY_NORMAL = 2;
+export const DIFFICULTY_HARD = 3;
+
+export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
+  {
+    id: DIFFICULTY_EASY,
+    name: 'Easy',
+    depth: 1,
+  },
+  {
+    id: DIFFICULTY_NORMAL,
+    name: 'Normal',
+    depth: 3,
+  },
+  {
+    id: DIFFICULTY_HARD,
+    name: 'Hard',
+    depth: 3,
+  },
+];
+
 export const STORAGE_PREFIX = 'keibot';
 
 export const CELL_SIZE_VMIN = 10;

@@ -6,6 +6,7 @@ import {
   DEFAULT_BOARD_SIZE,
   BEADS_COUNT,
   MAP_ITEM_TYPES,
+  DIFFICULTY_EASY,
 } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
@@ -139,7 +140,7 @@ class Game extends PageComponent {
     };
 
     this.lockedCell = [];
-    this.difficultyLevel = storageDifficultyLevel ?? 3;
+    this.difficultyLevel = storageDifficultyLevel ?? DIFFICULTY_EASY;
     this.idleMovesCounter = 0;
 
     this.isComputerOn = storageIsComputerOn ?? true;

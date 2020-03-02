@@ -1,7 +1,7 @@
-import { MenuComponent } from '../core/Menu';
+import { MenuComponent, MenuItemOption } from '../core/Menu';
 import { Menu } from './';
 
-import { APP } from '../../constants/game';
+import { APP, DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';
 
 import { saveStorageData, getStorageData } from '../../utils/storage';
 
@@ -99,18 +99,12 @@ class Settings extends MenuComponent {
       },
       {
         type: 'select',
-        options: [
-          {
-            value: '1',
-            text: 'Easy',
-            selected: this.difficultyLevel === 1,
-          },
-          {
-            value: '3',
-            text: 'Normal',
-            selected: this.difficultyLevel === 3 || this.difficultyLevel === undefined,
-          },
-        ],
+        options: DIFFICULTY_LEVELS.map((level: DifficultyLevel): MenuItemOption => ({
+          value: level.id.toString(),
+          text: level.name,
+          selected: this.difficultyLevel === level.id
+            || (this.difficultyLevel === undefined && level.id === DIFFICULTY_EASY),
+        })),
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {

@@ -1,4 +1,9 @@
-import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
+import {
+  MAP_ITEM_TYPES,
+  IDLE_MOVES_LIMIT,
+  DIFFICULTY_LEVELS,
+  DIFFICULTY_EASY,
+} from '../../constants/game';
 
 import { getEnemyType, getMapItemsByType, getRandomNum, getPlayerTypeName } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
@@ -25,6 +30,9 @@ function aiMove(): Promise<void> {
   return new Promise((resolve): void => {
     window.setTimeout((): void => {
       const { boardMap, lockedCell, players, idleMovesCounter, isGameOver } = this;
+      const difficultyLevelObject: DifficultyLevel = DIFFICULTY_LEVELS.find((level: DifficultyLevel): boolean => {
+        return level.id === this.difficultyLevel;
+      });
 
       ({ difficultyLevel } = this);
 
@@ -36,7 +44,7 @@ function aiMove(): Promise<void> {
           idleMovesCounter,
           isGameOver,
         },
-      }, this.difficultyLevel);
+      }, difficultyLevelObject?.depth ?? DIFFICULTY_EASY);
 
       aiMiniMax(decisionTree);
 

@@ -16,3 +16,9 @@ interface MapItemProps {
   statue: number;
   bead: number;
 }
+
+interface DifficultyLevel {
+  id: number;
+  name: string;
+  depth: number;
+}

@@ -1,4 +1,4 @@
-import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
+import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT, DIFFICULTY_EASY } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType, changeBoardMapValue, getPlayerTypeName } from './helpers';
 
@@ -296,8 +296,8 @@ function applyMove(
   const itemType: number = boardMap[itemY] ? boardMap[itemY][itemX] : 0;
 
   // We've got the idle move presumption. If the move is not idle,
-  // we set `idleMovesCounter` to zero below
-  if (difficultyLevel > 1) {
+  // we set `idleMovesCounter` to zero below (for all difficulty levels beside the Easy one)
+  if (difficultyLevel !== DIFFICULTY_EASY) {
     idleMovesCounter += 1;
   }
 
