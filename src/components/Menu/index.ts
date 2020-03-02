@@ -21,7 +21,7 @@ class Menu extends MenuComponent {
       opponent so he can't move.)
       
       The statues move like knights in chess (an L-shaped move, two squares 
-      horizontally or vertically and then one square perpendicularly).  To move a piece, 
+      horizontally or vertically and then one square perpendicularly). To move a piece, 
       click on its square, then on the destination square.
       
       Place your beads by aligning yourself with your opponent, with one square 
@@ -29,6 +29,9 @@ class Menu extends MenuComponent {
       
       Capture your opponent's statues by landing on them (except for the 
       last to move — he's safe.  He's the one with a shield).
+      
+      On normal and hard levels four idle rounds (without either a capture
+      or bead placement) result in a draw.
     `);
 
     this.items = [
