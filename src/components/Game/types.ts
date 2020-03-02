@@ -14,6 +14,7 @@ export interface GameState {
   boardMap?: number[][];
   lockedCell?: number[];
   players?: Players;
+  idleMovesCounter?: number;
   isGameOver?: boolean;
 }
 

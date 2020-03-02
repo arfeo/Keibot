@@ -33,6 +33,7 @@ class Game extends PageComponent {
   protected players: Players;
   protected lockedCell: number[];
   protected difficultyLevel: number;
+  protected idleMovesCounter: number;
   protected isComputerOn: boolean;
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
@@ -63,7 +64,6 @@ class Game extends PageComponent {
     this.appRoot.innerText = 'Loading...';
 
     this.cellSize = getCellSize(CELL_SIZE_VMIN);
-
     this.boardSize = storageBoardSize ?? DEFAULT_BOARD_SIZE;
 
     this.boardCanvas = document.createElement('canvas');
@@ -139,8 +139,8 @@ class Game extends PageComponent {
     };
 
     this.lockedCell = [];
-
     this.difficultyLevel = storageDifficultyLevel ?? 3;
+    this.idleMovesCounter = 0;
 
     this.isComputerOn = storageIsComputerOn ?? true;
     this.isShowMovesOn = storageIsShowMovesOn ?? true;

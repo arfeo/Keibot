@@ -1,4 +1,4 @@
-import { MAP_ITEM_TYPES } from '../../constants/game';
+import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType, changeBoardMapValue, getPlayerTypeName } from './helpers';
 
@@ -280,6 +280,7 @@ function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
  * @param itemY
  * @param cellX
  * @param cellY
+ * @param difficultyLevel
  */
 function applyMove(
   gameState: GameState,
@@ -287,11 +288,18 @@ function applyMove(
   itemY: number,
   cellX: number,
   cellY: number,
+  difficultyLevel: number,
 ): ApplyMoveResult | null {
   let boardMap: number[][] = [...gameState.boardMap];
   let lockedCell: number[] = [...gameState.lockedCell];
-  let { isGameOver } = gameState;
+  let { isGameOver, idleMovesCounter } = gameState;
   const itemType: number = boardMap[itemY] ? boardMap[itemY][itemX] : 0;
+
+  // We've got the idle move presumption. If the move is not idle,
+  // we set `idleMovesCounter` to zero below
+  if (difficultyLevel > 1) {
+    idleMovesCounter += 1;
+  }
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return;
@@ -311,6 +319,7 @@ function applyMove(
   // the `captured` prop of the corresponding player object.
   // If the player captures the 3rd enemy statue, the game is over
   if (boardMap[cellY][cellX] === enemyType) {
+    idleMovesCounter = 0;
     players[playerTypeName].captured += 1;
 
     if (players[playerTypeName].captured === 3) {
@@ -326,6 +335,7 @@ function applyMove(
   const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
 
   for (const bead of beadsCoordinates) {
+    idleMovesCounter = 0;
     boardMap = changeBoardMapValue(boardMap, bead[1], bead[0], ownBead);
 
     players = {
@@ -348,6 +358,11 @@ function applyMove(
     isGameOver = true;
   }
 
+  // Several idle rounds result in a draw on Normal+ difficulty levels
+  if (idleMovesCounter === IDLE_MOVES_LIMIT) {
+    isGameOver = true;
+  }
+
   return [
     // Yes, newly added beads are already written in the board map,
     // but we return them separately to avoid full redraw of the item canvas,
@@ -367,6 +382,7 @@ function applyMove(
         },
       } : players,
       isGameOver,
+      idleMovesCounter,
     },
   ];
 }

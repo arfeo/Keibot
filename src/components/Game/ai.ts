@@ -1,4 +1,4 @@
-import { MAP_ITEM_TYPES } from '../../constants/game';
+import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
 import { getEnemyType, getMapItemsByType, getRandomNum, getPlayerTypeName } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
@@ -16,18 +16,25 @@ interface MiniMaxNode {
   evaluation?: number;
 }
 
+let difficultyLevel: number;
+
 /**
  * Function renders the chosen best move
  */
 function aiMove(): Promise<void> {
-  return new Promise((resolve) => {
-    window.setTimeout(() => {
+  return new Promise((resolve): void => {
+    window.setTimeout((): void => {
+      const { boardMap, lockedCell, players, idleMovesCounter, isGameOver } = this;
+
+      ({ difficultyLevel } = this);
+
       const decisionTree: MiniMaxNode = aiBuildDecisionTree({
         gameState: {
-          boardMap: this.boardMap,
-          lockedCell: this.lockedCell,
-          players: this.players,
-          isGameOver: this.isGameOver,
+          boardMap,
+          lockedCell,
+          players,
+          idleMovesCounter,
+          isGameOver,
         },
       }, this.difficultyLevel);
 
@@ -51,11 +58,11 @@ function aiMove(): Promise<void> {
  * @param decisionTree
  */
 function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
-  const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode) => {
+  const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode): boolean => {
     return node.score === decisionTree.score;
   });
 
-  const bestNodesEvaluations: number[] = bestNodes.map((node: MiniMaxNode) => {
+  const bestNodesEvaluations: number[] = bestNodes.map((node: MiniMaxNode): number => {
     const evaluation: number = aiEvaluateGameState(node.gameState, MAP_ITEM_TYPES.red.statue);
 
     node.evaluation = evaluation;
@@ -63,7 +70,7 @@ function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
     return evaluation;
   });
 
-  const bestEvaluatedNodes: MiniMaxNode[] = bestNodes.filter((node: MiniMaxNode) => {
+  const bestEvaluatedNodes: MiniMaxNode[] = bestNodes.filter((node: MiniMaxNode): boolean => {
     return node.evaluation === Math.max(...bestNodesEvaluations);
   });
 
@@ -80,8 +87,8 @@ function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
  */
 function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_ITEM_TYPES.red.statue): MiniMaxNode {
   const ownStatues: number[][] = getMapItemsByType(node.gameState.boardMap, itemType);
-  let result: MiniMaxNode = { ...node };
   const children: MiniMaxNode[] = [];
+  let result: MiniMaxNode = { ...node };
 
   for (const statue of ownStatues) {
     const possibleMoves: number[][] | undefined = checkPossibleMoves(node.gameState, statue[1], statue[0]);
@@ -93,7 +100,7 @@ function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_IT
     for (const possibleMove of possibleMoves) {
       const [itemY, itemX] = statue;
       const [cellY, cellX] = possibleMove;
-      const [, newState] = applyMove({ ...node.gameState }, itemX, itemY, cellX, cellY);
+      const [, newState] = applyMove({ ...node.gameState }, itemX, itemY, cellX, cellY, difficultyLevel);
       const newNode: MiniMaxNode = {
         gameState: { ...newState },
         move: [statue, possibleMove],
@@ -135,11 +142,11 @@ function aiMiniMax(node: MiniMaxNode, maximizingPlayer = true): number {
   let bestMoveValue: number = maximizingPlayer ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 
   if (maximizingPlayer) {
-    node.children.forEach((child: MiniMaxNode) => {
+    node.children.forEach((child: MiniMaxNode): void => {
       bestMoveValue = Math.max(bestMoveValue, aiMiniMax(child, false));
     });
   } else {
-    node.children.forEach((child: MiniMaxNode) => {
+    node.children.forEach((child: MiniMaxNode): void => {
       bestMoveValue = Math.min(bestMoveValue, aiMiniMax(child, true));
     });
   }
@@ -157,7 +164,7 @@ function aiMiniMax(node: MiniMaxNode, maximizingPlayer = true): number {
  */
 function aiEvaluateGameState(gameState: GameState, itemType: number): number {
   if (gameState.isGameOver) {
-    return 100;
+    return gameState.idleMovesCounter === IDLE_MOVES_LIMIT ? -100 : 100;
   }
 
   const enemyType: number = getEnemyType(itemType);
@@ -172,8 +179,8 @@ function aiEvaluateGameState(gameState: GameState, itemType: number): number {
   result += player.captured;
   result -= 10 - enemyPlayer.beads;
   result -= enemyPlayer.captured;
-  result -= ownStatues.map(getUnderAttack).filter((value: boolean) => value).length;
-  result += enemyStatues.map(getUnderAttack).filter((value: boolean) => value).length;
+  result -= ownStatues.map(getUnderAttack).filter((value: boolean): boolean => value).length;
+  result += enemyStatues.map(getUnderAttack).filter((value: boolean): boolean => value).length;
 
   return result;
 }

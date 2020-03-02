@@ -1,4 +1,4 @@
-import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES } from '../../constants/game';
+import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
 import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { applyMove } from './actions';
@@ -290,13 +290,15 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     boardMap: this.boardMap,
     lockedCell: this.lockedCell,
     players: this.players,
+    idleMovesCounter: this.idleMovesCounter,
     isGameOver: this.isGameOver,
-  }, itemX, itemY, cellX, cellY);
+  }, itemX, itemY, cellX, cellY, this.difficultyLevel);
 
   const [beadsCoordinates, gameState]: ApplyMoveResult = moveResult;
 
   this.boardMap = gameState.boardMap;
   this.players = gameState.players;
+  this.idleMovesCounter = gameState.idleMovesCounter;
   this.isGameOver = gameState.isGameOver;
 
   await animateItemFade.call(this, cellX, cellY, 'in');
@@ -344,7 +346,7 @@ function renderPanel(lastItemType?: number): void {
     ctx.textAlign = ELEMENT_PROPS.gameOver.align;
     ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
 
-    const message = this.isComputerOn
+    const message = this.idleMovesCounter === IDLE_MOVES_LIMIT ? 'Draw!' : this.isComputerOn
       ? (lastItemType === MAP_ITEM_TYPES.red.statue ? 'You lose!' : 'You win!')
       : (lastItemType === MAP_ITEM_TYPES.red.statue ? 'Red player wins!' : 'Blue player wins!');
 
