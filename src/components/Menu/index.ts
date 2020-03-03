@@ -30,8 +30,10 @@ class Menu extends MenuComponent {
       Capture your opponent's statues by landing on them (except for the 
       last to move — he's safe.  He's the one with a shield).
       
-      On normal and hard levels four idle rounds (without either a capture
+      On normal and hard levels, four idle rounds (without either a capture
       or bead placement) result in a draw.
+      
+      On hard level, the first statue to move can't move on the second round.
     `);
 
     this.items = [
