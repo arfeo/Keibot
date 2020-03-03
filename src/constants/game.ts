@@ -15,7 +15,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
   {
     id: DIFFICULTY_NORMAL,
     name: 'Normal',
-    depth: 3,
+    depth: 1,
   },
   {
     id: DIFFICULTY_HARD,

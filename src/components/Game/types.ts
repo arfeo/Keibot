@@ -2,6 +2,8 @@ export interface Player {
   captured: number;
   beads: number;
   active: boolean;
+  move: number;
+  lockedStatue: number[];
 }
 
 export interface Players {

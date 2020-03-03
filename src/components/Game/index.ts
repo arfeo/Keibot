@@ -131,11 +131,15 @@ class Game extends PageComponent {
         captured: 0,
         beads: BEADS_COUNT,
         active: storageFirstMove === 1,
+        move: 0,
+        lockedStatue: [],
       },
       blue: {
         captured: 0,
         beads: BEADS_COUNT,
         active: storageFirstMove === 2 || storageFirstMove === undefined,
+        move: 0,
+        lockedStatue: [],
       },
     };
 

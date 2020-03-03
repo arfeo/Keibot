@@ -1,4 +1,4 @@
-import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT, DIFFICULTY_EASY } from '../../constants/game';
+import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT, DIFFICULTY_EASY, DIFFICULTY_HARD } from '../../constants/game';
 
 import { getMapItemsByType, getEnemyType, changeBoardMapValue, getPlayerTypeName } from './helpers';
 
@@ -26,8 +26,11 @@ type CellWithBead = Cell & {
 function checkPossibleMoves(gameState: GameState, x: number, y: number): number[][] | undefined {
   const { boardMap, lockedCell } = gameState;
   const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
+  const playerTypeName: string = getPlayerTypeName(itemType);
+  const { lockedStatue } = gameState.players[playerTypeName];
+  const isStatueLocked: boolean = lockedStatue && (lockedStatue[0] === y && lockedStatue[1] === x);
 
-  if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
+  if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) || isStatueLocked) {
     return;
   }
 
@@ -88,13 +91,13 @@ function checkMoveToCell(
   cellX: number,
   cellY: number,
 ): boolean {
-  const { boardMap, lockedCell } = gameState;
+  const { boardMap } = gameState;
 
   if (!boardMap[itemY] || boardMap[itemY][itemX] === undefined) {
     return false;
   }
 
-  const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, itemX, itemY);
+  const possibleMoves: number[][] | undefined = checkPossibleMoves(gameState, itemX, itemY);
 
   return Array.isArray(possibleMoves) && possibleMoves.map((move: number[]) => {
     return JSON.stringify(move);
@@ -210,7 +213,7 @@ function checkThreeInARow(boardMap: number[][]): boolean {
  * @param itemType
  */
 function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
-  const { boardMap, lockedCell } = gameState;
+  const { boardMap } = gameState;
 
   if (itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue) {
     return true;
@@ -225,7 +228,7 @@ function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
   }
 
   for (const statue of enemyStatues) {
-    const possibleMoves: number[][] | undefined = checkPossibleMoves({ boardMap, lockedCell }, statue[1], statue[0]);
+    const possibleMoves: number[][] | undefined = checkPossibleMoves(gameState, statue[1], statue[0]);
 
     if (possibleMoves === undefined || !Array.isArray(possibleMoves) || possibleMoves.length === 0) {
       continue;
@@ -308,10 +311,15 @@ function applyMove(
   const ownBead: number = itemType === MAP_ITEM_TYPES.red.statue ? MAP_ITEM_TYPES.red.bead : MAP_ITEM_TYPES.blue.bead;
   const enemyType: number = getEnemyType(itemType);
   const playerTypeName: string = getPlayerTypeName(itemType);
+
   let players: Players = {
     ...gameState.players,
     [playerTypeName]: {
       ...gameState.players[playerTypeName],
+      lockedStatue: gameState.players[playerTypeName].move === 0 && difficultyLevel === DIFFICULTY_HARD
+        ? [cellY, cellX]
+        : [],
+      move: gameState.players[playerTypeName].move + 1,
     },
   };
 
@@ -354,7 +362,7 @@ function applyMove(
   }
 
   // If enemy hasn't got possible moves, current user wins
-  if (!checkEnemyHasMoves({ boardMap, lockedCell }, itemType)) {
+  if (!checkEnemyHasMoves({ boardMap, lockedCell, players }, itemType)) {
     isGameOver = true;
   }
 

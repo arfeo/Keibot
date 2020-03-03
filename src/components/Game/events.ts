@@ -38,6 +38,7 @@ function onBoardClick(event: MouseEvent): void {
       renderPossibleMoves.call(this, checkPossibleMoves({
         boardMap: this.boardMap,
         lockedCell: this.lockedCell,
+        players: this.players,
       }, x, y));
     }
   } else {
@@ -45,6 +46,7 @@ function onBoardClick(event: MouseEvent): void {
       const checkMove: boolean = checkMoveToCell({
         boardMap: this.boardMap,
         lockedCell: this.lockedCell,
+        players: this.players,
       }, this.cursor[1], this.cursor[0], x, y);
 
       if (checkMove) {
