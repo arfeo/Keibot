@@ -22,6 +22,10 @@ Place your beads by aligning yourself with your opponent, with one square in bet
 
 Capture your opponent's statues by landing on them (except for the last to move — he's safe.  He's the one with a shield).
 
+On normal and hard levels, four idle rounds (without either a capture or bead placement) result in a draw.
+      
+On hard level, the first statue to move can't move on the second round.
+
 ## Scheduled features
    
 - [ ] Timers
