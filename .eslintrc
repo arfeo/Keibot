@@ -48,12 +48,6 @@
     ],
     "@typescript-eslint/no-useless-constructor": "warn",
     "array-bracket-spacing": ["error", "never"],
-    "class-methods-use-this": [
-      "warn",
-      {
-        "exceptMethods": []
-      }
-    ],
     "comma-dangle": ["error", "always-multiline"],
     "default-case": "error",
     "default-param-last": "error",

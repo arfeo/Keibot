@@ -32,7 +32,7 @@ export abstract class PageComponent {
     return Promise.resolve();
   }
 
-  private loadImages = (images: Images): Promise<void[]> => {
+  private loadImages(images: Images): Promise<void[]> {
     if (images === undefined || typeof images !== 'object' || Object.keys(images).length === 0) {
       return Promise.resolve([]);
     }
@@ -50,7 +50,7 @@ export abstract class PageComponent {
     })));
   }
 
-  public setUpEventHandlers(): void {
+  private processEventHandlers(actionType: 'add' | 'remove'): void {
     if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
       return;
     }
@@ -65,27 +65,25 @@ export abstract class PageComponent {
         break;
       }
 
-      element.addEventListener(type, listener);
+      switch (actionType) {
+        case 'add':
+          element.addEventListener(type, listener);
+          break;
+        case 'remove':
+          element.removeEventListener(type, listener);
+          break;
+        default:
+          break;
+      }
     }
   }
 
+  public setUpEventHandlers(): void {
+    this.processEventHandlers('add');
+  }
+
   public removeEventHandlers(): void {
-    if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
-      return;
-    }
-
-    for (const prop of this.eventHandlers) {
-      const { target, type, listener } = prop;
-      const element: HTMLElement = target instanceof Element || target as any instanceof HTMLDocument
-        ? target as HTMLElement
-        : document.getElementById(target as string);
-
-      if (!element) {
-        break;
-      }
-
-      element.removeEventListener(type, listener);
-    }
+    this.processEventHandlers('remove');
   }
 
   public destroy(): void {
