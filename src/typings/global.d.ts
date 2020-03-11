@@ -7,7 +7,7 @@ interface HashMap {
 }
 
 interface EventHandler {
-  target: HTMLElement | string;
+  target: Document | HTMLElement | string;
   type: string;
   listener: EventListener;
 }
