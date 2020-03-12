@@ -5,9 +5,11 @@ import {
   DIFFICULTY_EASY,
 } from '../../constants/game';
 
-import { getEnemyType, getMapItemsByType, getRandomNum, getPlayerTypeName } from './helpers';
+import { getEnemyType, getPlayerTypeName } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
 import { renderMove } from './render';
+import { getRandomNum } from '../../utils/common';
+import { getMapItemsByType } from '../../utils/game';
 
 import { GameState, Player } from './types';
 

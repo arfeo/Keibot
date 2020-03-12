@@ -10,10 +10,10 @@ import {
 } from '../../constants/game';
 
 import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
-import { getCellSize } from './helpers';
 import { animateCursor } from './animations';
 import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
+import { getCellSize } from '../../utils/game';
 
 import { getStorageData } from '../../utils/storage';
 

@@ -1,6 +1,7 @@
 import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT, DIFFICULTY_EASY, DIFFICULTY_HARD } from '../../constants/game';
 
-import { getMapItemsByType, getEnemyType, changeBoardMapValue, getPlayerTypeName } from './helpers';
+import { getEnemyType, getPlayerTypeName } from './helpers';
+import { changeMapValue, getMapItemsByType } from '../../utils/game';
 
 import { GameState, Players, ApplyMoveResult } from './types';
 
@@ -131,7 +132,7 @@ function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType:
       return;
     }
 
-    boardMap = changeBoardMapValue(boardMap, x, y, ownBead);
+    boardMap = changeMapValue(boardMap, x, y, ownBead);
     playerBeads -= 1;
 
     beadsCoordinates.push([beadY, beadX]);
@@ -335,8 +336,8 @@ function applyMove(
     }
   }
 
-  boardMap = changeBoardMapValue(boardMap, itemX, itemY, 0);
-  boardMap = changeBoardMapValue(boardMap, cellX, cellY, itemType);
+  boardMap = changeMapValue(boardMap, itemX, itemY, 0);
+  boardMap = changeMapValue(boardMap, cellX, cellY, itemType);
 
   lockedCell = [cellY, cellX];
 
@@ -344,7 +345,7 @@ function applyMove(
 
   for (const bead of beadsCoordinates) {
     idleMovesCounter = 0;
-    boardMap = changeBoardMapValue(boardMap, bead[1], bead[0], ownBead);
+    boardMap = changeMapValue(boardMap, bead[1], bead[0], ownBead);
 
     players = {
       ...players,
