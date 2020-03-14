@@ -39,6 +39,9 @@ class Game extends PageComponent {
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
   protected isMoving: boolean;
+  public animations: {
+    cursor: number;
+  };
 
   public init(): void {
     const [
@@ -151,6 +154,10 @@ class Game extends PageComponent {
     this.isShowMovesOn = storageIsShowMovesOn ?? true;
     this.isGameOver = false;
     this.isMoving = false;
+
+    this.animations = {
+      cursor: null,
+    };
   }
 
   public async render(): Promise<void> {

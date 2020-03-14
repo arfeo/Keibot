@@ -35,10 +35,10 @@ function animateCursor(): void {
       );
     }
 
-    requestAnimationFrame(animate);
+    this.animations.cursor = requestAnimationFrame(animate);
   };
 
-  requestAnimationFrame(animate);
+  this.animations.cursor = requestAnimationFrame(animate);
 }
 
 /**
