@@ -1,6 +1,8 @@
 /**
  * Function returns the cell size (atomic canvas measure)
- * depending on the screen size and the given vmin value
+ * depending on the screen size and the given vmin value.
+ *
+ * @param vmin
  */
 function getCellSize(vmin: number): number {
   const vpWidth: number = window.innerWidth;
@@ -12,13 +14,13 @@ function getCellSize(vmin: number): number {
 
 /**
  * Function returns an array of items' coordinates for the given board map
- * according to the given item type; if the given map is undefined or not an array,
- * function returns an empty array
+ * according to the given item type (or array of types); if the given map is undefined or not an array,
+ * function returns an empty array.
  *
  * @param map
  * @param type
  */
-function getMapItemsByType(map: number[][], type: number): number[][] {
+function getMapItemsByType(map: number[][], type: number | number[]): number[][] {
   const result: number[][] = [];
 
   if (!map || !Array.isArray(map)) {
@@ -27,7 +29,7 @@ function getMapItemsByType(map: number[][], type: number): number[][] {
 
   for (let y = 0; y < map.length; y += 1) {
     for (let x = 0; x < map[y].length; x += 1) {
-      if (map[y][x] === type) {
+      if ((typeof type === 'number' && map[y][x] === type) || (Array.isArray(type) && type.indexOf(map[y][x]) > - 1)) {
         result.push([y, x]);
       }
     }
@@ -37,7 +39,7 @@ function getMapItemsByType(map: number[][], type: number): number[][] {
 }
 
 /**
- * Immutably changes the board map value
+ * Immutably changes the board map value.
  *
  * @param boardMap
  * @param x
