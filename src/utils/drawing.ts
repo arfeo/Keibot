@@ -1,20 +1,11 @@
-import { DrawOptions, DrawOptionsExtended } from './types';
+import { DrawOptions, DrawOptionsExtended, DrawImageOptions, ImageProps } from './types';
 
-/**
- * Alias for drawArc, this function draws a circle of the given size and style at the given coordinates
- *
- * @param ctx
- * @param dotX
- * @param dotY
- * @param radius
- * @param options
- */
 function drawCircle(
   ctx: CanvasRenderingContext2D,
   dotX: number,
   dotY: number,
   radius: number,
-  options: DrawOptionsExtended = {},
+  options: Omit<DrawOptionsExtended, 'startAngle' | 'endAngle'> = {},
 ): void {
   drawArc(
     ctx,
@@ -29,15 +20,6 @@ function drawCircle(
   );
 }
 
-/**
- * Function draws a circle sector at the given coordinates
- *
- * @param ctx
- * @param dotX
- * @param dotY
- * @param radius
- * @param options
- */
 function drawSector(
   ctx: CanvasRenderingContext2D,
   dotX: number,
@@ -65,15 +47,6 @@ function drawSector(
   }
 }
 
-/**
- * Function draws a circle sector at the given coordinates
- *
- * @param ctx
- * @param cx
- * @param cy
- * @param radius
- * @param options
- */
 function drawArc(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -98,17 +71,6 @@ function drawArc(
   }
 }
 
-/**
- * Function draws a line starting at the given coordinates of the given length at the given angle;
- * it returns an array of start and end positions of the line
- *
- * @param ctx
- * @param x1
- * @param y1
- * @param length
- * @param angle
- * @param options
- */
 function drawLineToAngle(
   ctx: CanvasRenderingContext2D,
   x1: number,
@@ -135,17 +97,6 @@ function drawLineToAngle(
   ];
 }
 
-/**
- * Function draws a star-like object with the given count of spikes at the given coordinates
- *
- * @param ctx
- * @param cx
- * @param cy
- * @param spikes
- * @param outerRadius
- * @param innerRadius
- * @param options
- */
 function drawStar(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -192,16 +143,6 @@ function drawStar(
   }
 }
 
-/**
- * Function draws a filled rectangle of the given size and style at the given coordinates
- *
- * @param ctx
- * @param left
- * @param top
- * @param width
- * @param height
- * @param options
- */
 function drawRectangle(
   ctx: CanvasRenderingContext2D,
   left: number,
@@ -224,15 +165,6 @@ function drawRectangle(
   }
 }
 
-/**
- * Function draws a filled triangle at the given coordinates
- *
- * @param ctx
- * @param c1
- * @param c2
- * @param c3
- * @param options
- */
 function drawTriangle(
   ctx: CanvasRenderingContext2D,
   c1: number[],
@@ -260,6 +192,32 @@ function drawTriangle(
   }
 }
 
+function drawImage(
+  ctx: CanvasRenderingContext2D,
+  image: ImageProps,
+  left: number,
+  top: number,
+  imageWidth: number,
+  imageHeight: number,
+  options: DrawImageOptions = {},
+): void {
+  if (options.smooth !== undefined) {
+    ctx.imageSmoothingEnabled = options.smooth;
+  }
+
+  if (options.smoothingQuality) {
+    ctx.imageSmoothingQuality = options.smoothingQuality;
+  }
+
+  ctx.drawImage(
+    image.loaded ? image.element : new Image(),
+    left,
+    top,
+    imageWidth,
+    imageHeight,
+  );
+}
+
 export {
   drawCircle,
   drawSector,
@@ -268,4 +226,5 @@ export {
   drawStar,
   drawRectangle,
   drawTriangle,
+  drawImage,
 };
