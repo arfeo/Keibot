@@ -18,6 +18,7 @@ import { getCellSize } from '../../utils/game';
 import { getStorageData } from '../../utils/storage';
 
 import { Players } from './types';
+import { ImageProps } from '../../utils/types';
 
 class Game extends PageComponent {
   protected appRoot: HTMLElement;
@@ -39,6 +40,11 @@ class Game extends PageComponent {
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
   protected isMoving: boolean;
+  public images: {
+    statueRed: ImageProps;
+    statueBlue: ImageProps;
+    shield: ImageProps;
+  }
   public animations: {
     cursor: number;
   };

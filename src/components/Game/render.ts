@@ -1,6 +1,6 @@
 import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
-import { drawCircle, drawRectangle, drawTriangle } from '../../utils/drawing';
+import { drawCircle, drawImage, drawRectangle, drawTriangle } from '../../utils/drawing';
 import { applyMove } from './actions';
 import { animateItemFade } from './animations';
 
@@ -193,8 +193,9 @@ function renderMapItem(x: number, y: number): void {
   }
 
   if (item === MAP_ITEM_TYPES.red.statue || item === MAP_ITEM_TYPES.blue.statue) {
-    ctx.drawImage(
-      (item === MAP_ITEM_TYPES.red.statue ? this.images.statueRed.element : this.images.statueBlue.element),
+    drawImage(
+      ctx,
+      item === MAP_ITEM_TYPES.red.statue ? this.images.statueRed : this.images.statueBlue,
       this.cellSize * x + 5,
       this.cellSize * y + 5,
       this.cellSize - 10,
@@ -224,8 +225,9 @@ function renderMapItem(x: number, y: number): void {
 function renderShield(): void {
   const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
 
-  ctx.drawImage(
-    this.images.shield.element,
+  drawImage(
+    ctx,
+    this.images.shield,
     this.cellSize * this.lockedCell[1] + this.cellSize / 3,
     this.cellSize * this.lockedCell[0] + this.cellSize / 2,
     this.cellSize / 3,
@@ -384,8 +386,9 @@ function renderPanel(lastItemType?: number): void {
   // Red statues captured by the blue player
   for (let x = 0; x < 3; x += 1) {
     if (x < this.players.blue.captured) {
-      ctx.drawImage(
-        this.images.statueRed.element,
+      drawImage(
+        ctx,
+        this.images.statueRed,
         this.cellSize + this.cellSize / 1.5 * x,
         this.cellSize * 2.2,
         this.cellSize / 2,
@@ -422,8 +425,9 @@ function renderPanel(lastItemType?: number): void {
   // Blue statues captured by the red player
   for (let x = 0; x < 3; x += 1) {
     if (x < this.players.red.captured) {
-      ctx.drawImage(
-        this.images.statueBlue.element,
+      drawImage(
+        ctx,
+        this.images.statueBlue,
         this.cellSize + this.cellSize / 1.5 * x,
         this.cellSize * 4.7,
         this.cellSize / 2,
