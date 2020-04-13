@@ -6,14 +6,18 @@ export interface Images {
 
 const DEFAULT_LOOP_TIMEOUT = 4;
 
-export abstract class PageComponent {
+export abstract class PageComponent<TState = {}> {
   private loopRequestId: number;
+  public appRoot: HTMLElement;
+  public state: TState;
   public eventHandlers: EventHandler[];
   public images: Images;
   public loopTimeout: number;
   public animations: { [key: string]: number[] | number };
   public init?(...args: any[]): Promise<any> | void;
-  public abstract render(): void;
+  public abstract render(): HTMLElement;
+  public afterRender?(): void;
+  public afterMount?(): void;
   public loop?(): void;
   public beforeUnmount?(): void;
 
@@ -24,7 +28,11 @@ export abstract class PageComponent {
 
     this.beforeMount(...args).then((): void => {
       this.loadImages(this.images).then((): void => {
-        typeof this.render === 'function' && this.render();
+        if (typeof this.render === 'function') {
+          this.renderComponent();
+        }
+
+        typeof this.afterMount === 'function' && this.afterMount();
         typeof this.loop === 'function' && this.startLoop(() => this.loop());
 
         if (Array.isArray(this.eventHandlers) && this.eventHandlers.length > 0) {
@@ -46,8 +54,12 @@ export abstract class PageComponent {
     }
 
     return Promise.all(Object.keys(images).map((key: string): Promise<void> => new Promise((resolve, reject): void => {
-      if (!Object.prototype.hasOwnProperty.call(images, key) || images[key] === undefined) {
+      if (images[key] === undefined) {
         return reject();
+      }
+
+      if (!(images[key].element instanceof Image)) {
+        images[key].element = new Image();
       }
 
       images[key].element.src = images[key].src;
@@ -93,9 +105,14 @@ export abstract class PageComponent {
 
     for (const prop of this.eventHandlers) {
       const { target, type, listener } = prop;
-      const element: HTMLElement = target instanceof Element || target as any instanceof HTMLDocument
-        ? target as HTMLElement
-        : document.getElementById(target as string);
+
+      const isApplicable: boolean = (
+        target instanceof Element ||
+        target instanceof HTMLDocument ||
+        target instanceof Window
+      );
+
+      const element: HTMLElement = isApplicable ? target as HTMLElement : document.getElementById(target as string);
 
       if (!element) {
         break;
@@ -114,6 +131,13 @@ export abstract class PageComponent {
     }
   }
 
+  private renderComponent(): void {
+    this.appRoot.innerHTML = '';
+    this.appRoot.appendChild(this.render());
+
+    typeof this.afterRender === 'function' && this.afterRender();
+  }
+
   public setUpEventHandlers(): void {
     this.processEventHandlers('add');
   }
@@ -122,26 +146,40 @@ export abstract class PageComponent {
     this.processEventHandlers('remove');
   }
 
+  public setState<K extends keyof TState>(state: (Pick<TState, K> | TState | null)): void {
+    this.state = {
+      ...this.state,
+      ...state,
+    };
+
+    if (typeof this.render === 'function' && this.shouldRerender(this.state)) {
+      this.renderComponent();
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public shouldRerender(state: TState): boolean {
+    return true;
+  }
+
   public destroy(): void {
     typeof this.beforeUnmount === 'function' && this.beforeUnmount();
 
     if (typeof this.animations === 'object' && Object.keys(this.animations).length > 0) {
       Object.keys(this.animations).forEach((key: string) => {
-        if (Object.prototype.hasOwnProperty.call(this.animations, key)) {
-          const item: number[] | number = this.animations[key];
+        const item: number[] | number = this.animations[key];
 
-          typeof item === 'number' && window.cancelAnimationFrame(item as number);
+        typeof item === 'number' && window.cancelAnimationFrame(item as number);
 
-          if (Array.isArray(item)) {
-            for (const requestId of item) {
-              typeof requestId === 'number' && window.cancelAnimationFrame(requestId);
-            }
+        if (Array.isArray(item)) {
+          for (const requestId of item) {
+            typeof requestId === 'number' && window.cancelAnimationFrame(requestId);
           }
         }
       });
     }
 
-    cancelAnimationFrame(this.loopRequestId);
+    window.cancelAnimationFrame(this.loopRequestId);
 
     if (Array.isArray(this.eventHandlers) && this.eventHandlers.length > 0) {
       this.removeEventHandlers();

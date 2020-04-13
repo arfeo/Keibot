@@ -210,7 +210,7 @@ function drawImage(
   }
 
   ctx.drawImage(
-    image.loaded ? image.element : new Image(),
+    image && image.loaded ? image.element : new Image(),
     left,
     top,
     imageWidth,

@@ -9,7 +9,7 @@ import {
   DIFFICULTY_EASY,
 } from '../../constants/game';
 
-import { renderGameWindow, renderGrid, renderMap, renderPanel } from './render';
+import { renderGameWindow } from './render';
 import { animateCursor } from './animations';
 import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
@@ -21,7 +21,6 @@ import { Players } from './types';
 import { ImageProps } from '../../utils/types';
 
 class Game extends PageComponent {
-  protected appRoot: HTMLElement;
   protected cellSize: number;
   protected boardSize: number;
   protected boardCanvas: HTMLCanvasElement;
@@ -40,11 +39,13 @@ class Game extends PageComponent {
   protected isShowMovesOn: boolean;
   protected isGameOver: boolean;
   protected isMoving: boolean;
+
   public images: {
     statueRed: ImageProps;
     statueBlue: ImageProps;
     shield: ImageProps;
   }
+
   public animations: {
     cursor: number;
   };
@@ -166,17 +167,16 @@ class Game extends PageComponent {
     };
   }
 
-  public async render(): Promise<void> {
-    renderGameWindow.call(this);
-    renderGrid.call(this);
-    renderMap.call(this);
-    renderPanel.call(this);
-
+  public afterMount(): void {
     animateCursor.call(this);
 
     if (this.isComputerOn === true && this.players.red.active === true) {
-      await aiMove.call(this);
+      aiMove.call(this);
     }
+  }
+
+  public render(): HTMLElement {
+    return renderGameWindow.call(this);
   }
 }
 

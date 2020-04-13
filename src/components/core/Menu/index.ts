@@ -28,7 +28,6 @@ export interface MenuItemAction {
 }
 
 export abstract class MenuComponent extends PageComponent {
-  public appRoot: HTMLElement;
   public items: MenuItem[];
 
   private static processElementProps(
@@ -56,14 +55,10 @@ export abstract class MenuComponent extends PageComponent {
     return Promise.resolve();
   }
 
-  public render(): void {
+  public render(): HTMLElement {
     const menuContainer: HTMLElement = document.createElement('div');
 
     menuContainer.className = 'menuContainer';
-
-    this.appRoot = this.appRoot ?? document.body;
-    this.appRoot.innerHTML = '';
-    this.appRoot.appendChild(menuContainer);
 
     for (const item of this.items) {
       const menuItem: HTMLElement = document.createElement('div');
@@ -141,5 +136,7 @@ export abstract class MenuComponent extends PageComponent {
         });
       }
     }
+
+    return menuContainer;
   }
 }

@@ -1,5 +1,7 @@
 import { PageComponent } from '../Page';
 
+export type ModalSize = 'large' | 'medium' | 'small';
+
 export abstract class ModalComponent {
   protected parent: PageComponent;
   protected modalContainer: HTMLElement;
@@ -13,30 +15,21 @@ export abstract class ModalComponent {
   public abstract render(): void;
   public beforeUnmount?(): void;
 
-  protected constructor(
-    parent: PageComponent,
-    text?: string,
-    size?: 'large' | 'medium' | 'small',
-    ...args: any[]
-  ) {
+  protected constructor(parent: PageComponent, text?: string, size?: ModalSize, ...args: any[]) {
     this.parent = parent;
-
     this.eventHandlers = [];
 
     this.modalContainer = document.createElement('div');
-    this.modalContainer.className = 'modal-container';
-
     this.mask = document.createElement('div');
-    this.mask.className = 'mask';
-
     this.modalWindow = document.createElement('div');
+    this.modalClose = document.createElement('div');
+    this.modal = document.createElement('div');
+
+    this.modalContainer.className = 'modal-container';
+    this.mask.className = 'mask';
     this.modalWindow.classList.add('modal-window');
     this.modalWindow.classList.add(size || 'medium');
-
-    this.modalClose = document.createElement('div');
     this.modalClose.className = 'modal-close';
-
-    this.modal = document.createElement('div');
     this.modal.className = 'modal';
 
     document.body.appendChild(this.modalContainer);
@@ -70,42 +63,45 @@ export abstract class ModalComponent {
     return Promise.resolve();
   }
 
-  private setUpEventHandlers(): void {
+  private processEventHandlers(actionType: 'add' | 'remove'): void {
     if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
       return;
     }
 
     for (const prop of this.eventHandlers) {
       const { target, type, listener } = prop;
-      const element: HTMLElement = target instanceof Element || target as any instanceof HTMLDocument
-        ? target as HTMLElement
-        : document.getElementById(target as string);
+
+      const isApplicable: boolean = (
+        target instanceof Element ||
+        target instanceof HTMLDocument ||
+        target instanceof Window
+      );
+
+      const element: HTMLElement = isApplicable ? target as HTMLElement : document.getElementById(target as string);
 
       if (!element) {
         break;
       }
 
-      element.addEventListener(type, listener);
+      switch (actionType) {
+        case 'add':
+          element.addEventListener(type, listener);
+          break;
+        case 'remove':
+          element.removeEventListener(type, listener);
+          break;
+        default:
+          break;
+      }
     }
   }
 
+  private setUpEventHandlers(): void {
+    this.processEventHandlers('add');
+  }
+
   private removeEventHandlers(): void {
-    if (!Array.isArray(this.eventHandlers) || this.eventHandlers.length === 0) {
-      return;
-    }
-
-    for (const prop of this.eventHandlers) {
-      const { target, type, listener } = prop;
-      const element: HTMLElement = target instanceof Element || target as any instanceof HTMLDocument
-        ? target as HTMLElement
-        : document.getElementById(target as string);
-
-      if (!element) {
-        break;
-      }
-
-      element.removeEventListener(type, listener);
-    }
+    this.processEventHandlers('remove');
   }
 
   public destroy(restoreParentHandlers = true): void {

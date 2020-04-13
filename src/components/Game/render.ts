@@ -9,7 +9,7 @@ import { ApplyMoveResult } from './types';
 /**
  * Function creates all needed game window elements
  */
-function renderGameWindow(): void {
+function renderGameWindow(): HTMLElement {
   const gameWindow: HTMLElement = document.createElement('div');
   const boardGrid: HTMLElement = document.createElement('div');
   const boardPanel: HTMLElement = document.createElement('div');
@@ -32,11 +32,9 @@ function renderGameWindow(): void {
   this.panelCanvas.width = this.cellSize * 4;
   this.panelCanvas.height = this.cellSize * 7;
 
-  this.appRoot.innerHTML = '';
   this.newGameButton.innerText = 'New game';
   this.backToMenuButton.innerText = 'Back to menu';
 
-  this.appRoot.appendChild(gameWindow);
   gameWindow.appendChild(boardGrid);
   boardGrid.appendChild(this.boardCanvas);
   boardGrid.appendChild(this.itemCanvas);
@@ -46,6 +44,12 @@ function renderGameWindow(): void {
   boardPanel.appendChild(panelButtons);
   panelButtons.appendChild(this.newGameButton);
   panelButtons.appendChild(this.backToMenuButton);
+
+  renderGrid.call(this);
+  renderMap.call(this);
+  renderPanel.call(this);
+
+  return gameWindow;
 }
 
 /**
