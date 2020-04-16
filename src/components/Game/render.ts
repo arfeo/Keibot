@@ -101,7 +101,7 @@ function renderGridCell(x: number, y: number): void {
     const randomOpacityTwo = Math.floor((Math.random() * 9) + 1);
 
     if (randomSize > 1) {
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = this.cellSize / 10;
       ctx.shadowColor = ELEMENT_PROPS.cell.shadow;
     }
 

@@ -51,7 +51,7 @@ export const ELEMENT_PROPS: HashMap = {
   cell: {
     background: 'rgb(192, 192, 192)',
     border: 'rgb(0, 0, 0)',
-    shadow: 'rgb(0, 0, 0)',
+    shadow: 'rgba(0, 0, 0, 0.5)',
   },
   cursor: {
     border1: 'rgba(70, 115, 190, 0.7)',
