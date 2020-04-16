@@ -1,3 +1,5 @@
+@import '../../../assets/styles/variables';
+
 .menuContainer {
   display: flex;
   align-items: center;
@@ -67,10 +69,27 @@
       }
 
       &[type=button] {
+        box-shadow: inset 0px 1px 0px 0px $white;
+        background: linear-gradient(to bottom, $white 5%, $lightGray 100%);
+        background-color: $white;
+        border: 1px solid $gray;
+        display: inline-block;
         cursor: pointer;
+        color: $black;
+        padding: $buttonMargin;
+        text-decoration: none;
+        text-shadow: 0px 1px 0px $white;
 
         &:hover {
+          background: linear-gradient(to bottom, $lightGray 5%, $white 100%);
+          background-color: $lightGray;
           animation: glowing 1000ms infinite;
+          color: $darkGray;
+        }
+
+        &:active {
+          position: relative;
+          top: 1px;
         }
       }
     }
@@ -81,6 +100,7 @@
     }
 
     select {
+      -webkit-appearance: menulist-button;
       width: 100%;
       font-size: 3vmin;
       outline: none;
