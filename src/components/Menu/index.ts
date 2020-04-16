@@ -11,8 +11,7 @@ class Menu extends MenuComponent {
   public init(): void {
     this.appRoot = document.getElementById('root');
 
-    this.helpMessage = (`
-      There are 3 ways to win Keibot (pronounced Key-bo):
+    this.helpMessage = (`There are 3 ways to win Keibot (pronounced Key-bo):
 
         1.  Get 3 beads in a row (horizontally, vertically, or diagonally)
         2.  Capture 3 of your opponent's statues
@@ -33,8 +32,7 @@ class Menu extends MenuComponent {
       On normal and hard levels, four idle rounds (without either a capture
       or bead placement) result in a draw.
       
-      On hard level, the first statue to move can't move on the second round.
-    `);
+      On hard level, the first statue to move can't move on the second round.`);
 
     this.items = [
       {

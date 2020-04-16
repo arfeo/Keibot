@@ -12,7 +12,7 @@ export abstract class ModalComponent {
   protected modalContent: string;
   protected eventHandlers: EventHandler[];
   public init?(...args: any[]): Promise<any> | void;
-  public abstract render(): void;
+  public abstract render(): HTMLElement;
   public beforeUnmount?(): void;
 
   protected constructor(parent: PageComponent, text?: string, size?: ModalSize, ...args: any[]) {
@@ -49,7 +49,9 @@ export abstract class ModalComponent {
     this.modalClose.addEventListener('click', this.destroy.bind(this));
 
     this.beforeMount(...args).then((): void => {
-      typeof this.render === 'function' && this.render();
+      if (typeof this.render === 'function') {
+        this.renderComponent();
+      }
 
       if (Array.isArray(this.eventHandlers) && this.eventHandlers.length > 0) {
         this.setUpEventHandlers();
@@ -94,6 +96,11 @@ export abstract class ModalComponent {
           break;
       }
     }
+  }
+
+  private renderComponent(): void {
+    this.modal.innerHTML = '';
+    this.modal.appendChild(this.render());
   }
 
   private setUpEventHandlers(): void {
