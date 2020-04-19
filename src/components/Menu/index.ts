@@ -1,6 +1,6 @@
 import { MenuComponent } from '../core/Menu';
 import { Game } from '../Game';
-import { Alert } from '../common/Alert';
+import { Help } from './Help';
 import { Settings } from './Settings';
 
 class Menu extends MenuComponent {
@@ -47,7 +47,7 @@ class Menu extends MenuComponent {
         action: {
           type: 'click',
           handler: () => {
-            new Alert(
+            new Help(
               this,
               `There are 3 ways to win Keibot (pronounced Key-bo):
 

@@ -2,7 +2,7 @@ import { ModalComponent } from '../core/Modal';
 import { PageComponent } from '../core/Page';
 import { MenuComponent } from '../core/Menu';
 
-class Alert extends ModalComponent {
+class Help extends ModalComponent {
   public constructor(page: PageComponent | MenuComponent, text: string, size?: 'large' | 'medium' | 'small') {
     super(page, text, size);
   }
@@ -30,4 +30,4 @@ class Alert extends ModalComponent {
   }
 }
 
-export { Alert };
+export { Help };
