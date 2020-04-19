@@ -1,7 +1,7 @@
 import { MenuComponent, MenuItemOption } from '../core/Menu';
 import { Menu } from './';
 
-import { APP, DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';
+import { DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';
 
 import { saveStorageData, getStorageData } from '../../utils/storage';
 
@@ -137,7 +137,7 @@ class Settings extends MenuComponent {
           handler: () => {
             this.destroy();
 
-            APP.pageInstance = new Menu();
+            new Menu();
           },
         },
       },

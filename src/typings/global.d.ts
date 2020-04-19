@@ -1,7 +1,3 @@
-interface App {
-  pageInstance: any;
-}
-
 interface HashMap {
   [key: string]: any;
 }
