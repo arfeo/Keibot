@@ -1,5 +1,3 @@
-import { ImageProps } from '../../../utils/types';
-
 export interface Images {
   [key: string]: ImageProps;
 }

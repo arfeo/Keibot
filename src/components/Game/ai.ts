@@ -11,7 +11,7 @@ import { renderMove } from './render';
 import { getRandomNum } from '../../utils/common';
 import { getMapItemsByType } from '../../utils/game';
 
-import { GameState, Player } from './types';
+import { GameState, Player, DifficultyLevel } from './types';
 
 type PossibleMove = number[][];
 

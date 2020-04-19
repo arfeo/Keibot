@@ -18,7 +18,6 @@ import { getCellSize } from '../../utils/game';
 import { getStorageData } from '../../utils/storage';
 
 import { Players } from './types';
-import { ImageProps } from '../../utils/types';
 
 class Game extends PageComponent {
   protected cellSize: number;

@@ -13,9 +13,3 @@ export interface DrawImageOptions {
   smooth?: boolean;
   smoothingQuality?: 'high' | 'low' | 'medium';
 }
-
-export interface ImageProps {
-  element: HTMLImageElement;
-  src: string;
-  loaded?: boolean;
-}

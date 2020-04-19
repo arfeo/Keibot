@@ -8,13 +8,8 @@ interface EventHandler {
   listener: EventListener;
 }
 
-interface MapItemProps {
-  statue: number;
-  bead: number;
-}
-
-interface DifficultyLevel {
-  id: number;
-  name: string;
-  depth: number;
+interface ImageProps {
+  element: HTMLImageElement;
+  src: string;
+  loaded?: boolean;
 }

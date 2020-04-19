@@ -5,6 +5,8 @@ import { DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';
 
 import { saveStorageData, getStorageData } from '../../utils/storage';
 
+import { DifficultyLevel } from '../Game/types';
+
 class Settings extends MenuComponent {
   protected firstMove: number | undefined;
   protected boardSize: number | undefined;

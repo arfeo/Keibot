@@ -21,3 +21,14 @@ export interface GameState {
 }
 
 export type ApplyMoveResult = [number[][], GameState];
+
+export interface MapItemProps {
+  statue: number;
+  bead: number;
+}
+
+export interface DifficultyLevel {
+  id: number;
+  name: string;
+  depth: number;
+}

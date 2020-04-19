@@ -1,4 +1,4 @@
-import { DrawOptions, DrawOptionsExtended, DrawImageOptions, ImageProps } from './types';
+import { DrawOptions, DrawOptionsExtended, DrawImageOptions } from './types';
 
 function drawCircle(
   ctx: CanvasRenderingContext2D,
