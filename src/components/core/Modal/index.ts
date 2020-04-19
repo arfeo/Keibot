@@ -9,13 +9,12 @@ export abstract class ModalComponent {
   protected modalWindow: HTMLElement;
   protected modalClose: HTMLElement;
   protected modal: HTMLElement;
-  protected modalContent: string;
   protected eventHandlers: EventHandler[];
   public init?(...args: any[]): Promise<any> | void;
   public abstract render(): HTMLElement;
   public beforeUnmount?(): void;
 
-  protected constructor(parent: PageComponent, text?: string, size?: ModalSize, ...args: any[]) {
+  protected constructor(parent: PageComponent, size?: ModalSize, ...args: any[]) {
     this.parent = parent;
     this.eventHandlers = [];
 
@@ -37,8 +36,6 @@ export abstract class ModalComponent {
     this.mask.appendChild(this.modalWindow);
     this.modalWindow.appendChild(this.modalClose);
     this.modalWindow.appendChild(this.modal);
-
-    this.modalContent = text || '';
 
     const { eventHandlers: parentEventHandlers } = this.parent;
 
