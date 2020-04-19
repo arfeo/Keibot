@@ -1,4 +1,4 @@
-import { PageComponent } from '../Page';
+import { PageComponent } from '../core/Page';
 
 export interface MenuItem {
   id?: string;

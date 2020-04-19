@@ -1,4 +1,4 @@
-import { MenuComponent } from '../core/Menu';
+import { MenuComponent } from './MenuComponent';
 import { Game } from '../Game';
 import { Help } from './Help';
 import { Settings } from './Settings';

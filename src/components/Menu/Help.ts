@@ -1,6 +1,6 @@
 import { ModalComponent } from '../core/Modal';
 import { PageComponent } from '../core/Page';
-import { MenuComponent } from '../core/Menu';
+import { MenuComponent } from './MenuComponent';
 
 class Help extends ModalComponent {
   public constructor(page: PageComponent | MenuComponent, text: string, size?: 'large' | 'medium' | 'small') {

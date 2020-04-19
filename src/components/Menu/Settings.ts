@@ -1,4 +1,4 @@
-import { MenuComponent, MenuItemOption } from '../core/Menu';
+import { MenuComponent, MenuItemOption } from './MenuComponent';
 import { Menu } from './';
 
 import { DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';

@@ -1,3 +1,5 @@
+@import '../../assets/styles/variables';
+
 .menuContainer {
   display: flex;
   align-items: center;
@@ -5,11 +7,11 @@
   flex-direction: column;
   padding: 4vmin;
   min-width: 35vmin;
-  background-color: rgb(190, 190, 190);
+  background-color: $menuBackgroundColor;
   user-select: none;
   -moz-user-select: none;
-  font-size: 2.5vmin;
-  color: black;
+  font-size: $menuFontSize;
+  color: $black;
 
   .menuItem {
     width: 100%;
@@ -19,25 +21,25 @@
     }
 
     .h1 {
-      font-size: 3vmin;
+      font-size: $largeFontSize;
       font-weight: 700;
-      color: rgb(0, 0, 0);
+      color: $black;
       text-align: center;
       text-transform: uppercase;
     }
 
     .h2 {
-      font-size: 2.5vmin;
+      font-size: $menuFontSize;
       font-weight: 700;
-      color: rgb(0, 0, 0);
+      color: $black;
       text-align: center;
     }
 
     .label {
       margin: 0;
       padding: 0;
-      font-size: 2.5vmin;
-      color: rgb(0, 0, 0);
+      font-size: $menuFontSize;
+      color: $black;
     }
 
     .break {
@@ -52,13 +54,19 @@
 
     hr {
       margin: 0;
+      border: 0;
+      height: 1px;
+      background-image: -webkit-linear-gradient(left, $menuBackgroundColor, $black, $menuBackgroundColor);
+      background-image: -moz-linear-gradient(left, $menuBackgroundColor, $black, $menuBackgroundColor);
+      background-image: -ms-linear-gradient(left, $menuBackgroundColor, $black, $menuBackgroundColor);
+      background-image: -o-linear-gradient(left, $menuBackgroundColor, $black, $menuBackgroundColor);
     }
 
     input:not([type=checkbox]):not([type=radio]) {
       -webkit-appearance: none;
       -moz-appearance: none;
       width: 100%;
-      font-size: 3vmin;
+      font-size: $menuFontSize;
       outline: none;
 
       &[type=text],
@@ -75,7 +83,7 @@
     select {
       -webkit-appearance: menulist-button;
       width: 100%;
-      font-size: 3vmin;
+      font-size: $menuFontSize;
       outline: none;
     }
   }
