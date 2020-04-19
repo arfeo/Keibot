@@ -28,6 +28,10 @@ export abstract class PageComponent<TState = {}> {
 
     this.beforeMount(...args).then((): void => {
       this.loadImages(this.images).then((): void => {
+        if (!this.appRoot) {
+          return;
+        }
+
         if (typeof this.render === 'function') {
           this.renderComponent();
         }
@@ -132,7 +136,10 @@ export abstract class PageComponent<TState = {}> {
   }
 
   private renderComponent(): void {
-    this.appRoot.innerHTML = '';
+    while (this.appRoot.firstChild) {
+      this.appRoot.removeChild(this.appRoot.firstChild);
+    }
+
     this.appRoot.appendChild(this.render());
 
     typeof this.afterUpdate === 'function' && this.afterUpdate();

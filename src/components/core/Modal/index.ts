@@ -99,7 +99,10 @@ export abstract class ModalComponent {
   }
 
   private renderComponent(): void {
-    this.modal.innerHTML = '';
+    while (this.modal.firstChild) {
+      this.modal.removeChild(this.modal.firstChild);
+    }
+
     this.modal.appendChild(this.render());
   }
 
