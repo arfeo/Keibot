@@ -1,20 +1,15 @@
 import { BaseComponent } from '../BaseComponent';
 import { PageComponent } from '../Page';
 
-export type ModalSize = 'large' | 'medium' | 'small';
-
-export interface ModalOptions {
-  className?: string;
-  size?: ModalSize;
-}
+import { ModalOptions } from '../types';
 
 export abstract class ModalComponent extends BaseComponent {
-  protected parent: PageComponent;
-  protected modalContainer: HTMLElement;
-  protected modalMask: HTMLElement;
-  protected modalWindow: HTMLElement;
-  protected modalClose: HTMLElement;
-  protected modalBody: HTMLElement;
+  private readonly parent: PageComponent;
+  private readonly modalContainer: HTMLElement;
+  private readonly modalMask: HTMLElement;
+  private readonly modalWindow: HTMLElement;
+  private readonly modalClose: HTMLElement;
+  private readonly modalBody: HTMLElement;
 
   protected constructor(parent: PageComponent, options: ModalOptions = {}, ...args: any[]) {
     super();
