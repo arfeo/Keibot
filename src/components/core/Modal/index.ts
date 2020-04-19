@@ -5,10 +5,10 @@ export type ModalSize = 'large' | 'medium' | 'small';
 export abstract class ModalComponent {
   protected parent: PageComponent;
   protected modalContainer: HTMLElement;
-  protected mask: HTMLElement;
+  protected modalMask: HTMLElement;
   protected modalWindow: HTMLElement;
   protected modalClose: HTMLElement;
-  protected modal: HTMLElement;
+  protected modalBody: HTMLElement;
   protected eventHandlers: EventHandler[];
   public init?(...args: any[]): Promise<any> | void;
   public abstract render(): HTMLElement;
@@ -19,23 +19,22 @@ export abstract class ModalComponent {
     this.eventHandlers = [];
 
     this.modalContainer = document.createElement('div');
-    this.mask = document.createElement('div');
+    this.modalMask = document.createElement('div');
     this.modalWindow = document.createElement('div');
     this.modalClose = document.createElement('div');
-    this.modal = document.createElement('div');
+    this.modalBody = document.createElement('div');
 
     this.modalContainer.className = 'modal-container';
-    this.mask.className = 'mask';
-    this.modalWindow.classList.add('modal-window');
-    this.modalWindow.classList.add(size || 'medium');
+    this.modalMask.className = 'modal-mask';
+    this.modalWindow.classList.add('modal-window', size || 'medium');
     this.modalClose.className = 'modal-close';
-    this.modal.className = 'modal';
+    this.modalBody.className = 'modal-body';
 
     document.body.appendChild(this.modalContainer);
-    this.modalContainer.appendChild(this.mask);
-    this.mask.appendChild(this.modalWindow);
+    this.modalContainer.appendChild(this.modalMask);
+    this.modalContainer.appendChild(this.modalWindow);
     this.modalWindow.appendChild(this.modalClose);
-    this.modalWindow.appendChild(this.modal);
+    this.modalWindow.appendChild(this.modalBody);
 
     const { eventHandlers: parentEventHandlers } = this.parent;
 
@@ -96,11 +95,11 @@ export abstract class ModalComponent {
   }
 
   private renderComponent(): void {
-    while (this.modal.firstChild) {
-      this.modal.removeChild(this.modal.firstChild);
+    while (this.modalBody.firstChild) {
+      this.modalBody.removeChild(this.modalBody.firstChild);
     }
 
-    this.modal.appendChild(this.render());
+    this.modalBody.appendChild(this.render());
   }
 
   private setUpEventHandlers(): void {
