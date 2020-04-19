@@ -131,7 +131,7 @@ class Settings extends MenuComponent {
       },
       {
         type: 'button',
-        value: '← Back to menu',
+        value: 'Close',
         action: {
           type: 'click',
           handler: () => {
