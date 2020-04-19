@@ -4,7 +4,7 @@ import { MenuComponent } from './MenuComponent';
 
 class Help extends ModalComponent {
   public constructor(page: PageComponent | MenuComponent) {
-    super(page, 'large');
+    super(page, { size: 'large' });
   }
 
   public init(): void {

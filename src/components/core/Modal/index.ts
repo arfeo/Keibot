@@ -2,6 +2,11 @@ import { PageComponent } from '../Page';
 
 export type ModalSize = 'large' | 'medium' | 'small';
 
+export interface ModalOptions {
+  className?: string;
+  size?: ModalSize;
+}
+
 export abstract class ModalComponent {
   protected parent: PageComponent;
   protected modalContainer: HTMLElement;
@@ -14,7 +19,9 @@ export abstract class ModalComponent {
   public abstract render(): HTMLElement;
   public beforeUnmount?(): void;
 
-  protected constructor(parent: PageComponent, size?: ModalSize, ...args: any[]) {
+  protected constructor(parent: PageComponent, options: ModalOptions = {}, ...args: any[]) {
+    const { className, size } = options;
+
     this.parent = parent;
     this.eventHandlers = [];
 
@@ -24,7 +31,7 @@ export abstract class ModalComponent {
     this.modalClose = document.createElement('div');
     this.modalBody = document.createElement('div');
 
-    this.modalContainer.className = 'modal-container';
+    this.modalContainer.classList.add('modal-container', className || 'modal-container');
     this.modalMask.className = 'modal-mask';
     this.modalWindow.classList.add('modal-window', size || 'medium');
     this.modalClose.className = 'modal-close';
