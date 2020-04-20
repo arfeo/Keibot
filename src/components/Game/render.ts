@@ -1,6 +1,6 @@
-import { BEADS_COUNT, ELEMENT_PROPS, MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
+import { BEADS_COUNT, MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
-import { drawCircle, drawImage, drawRectangle, drawTriangle } from '../../utils/drawing';
+import { drawCircle, drawImage, drawRectangle, drawTriangle } from '../../core/utils/drawing';
 import { applyMove } from './actions';
 import { animateItemFade } from './animations';
 
@@ -84,8 +84,8 @@ function renderGridCell(x: number, y: number): void {
     this.cellSize,
     this.cellSize,
     {
-      fillColor: ELEMENT_PROPS.cell.background,
-      edgingColor: ELEMENT_PROPS.cell.border,
+      fillColor: 'rgb(192, 192, 192)',
+      edgingColor: 'rgb(0, 0, 0)',
       edgingWidth: this.cellSize / 40,
     },
   );
@@ -102,7 +102,7 @@ function renderGridCell(x: number, y: number): void {
 
     if (randomSize > 1) {
       ctx.shadowBlur = this.cellSize / 10;
-      ctx.shadowColor = ELEMENT_PROPS.cell.shadow;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
     }
 
     ctx.fillStyle = `hsla(0, 0%, 0%, .${randomOpacityOne + randomOpacityTwo})`;
@@ -121,7 +121,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top],
     [left, top + this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENT_PROPS.cell.border,
+      fillColor: 'rgb(0, 0, 0)',
     },
   );
 
@@ -131,7 +131,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top],
     [left + this.cellSize, top + this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENT_PROPS.cell.border,
+      fillColor: 'rgb(0, 0, 0)',
     },
   );
 
@@ -141,7 +141,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize / cellCornerSize, top + this.cellSize],
     [left, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENT_PROPS.cell.border,
+      fillColor: 'rgb(0, 0, 0)',
     },
   );
 
@@ -151,7 +151,7 @@ function renderGridCell(x: number, y: number): void {
     [left + this.cellSize - this.cellSize / cellCornerSize, top + this.cellSize],
     [left + this.cellSize, top + this.cellSize - this.cellSize / cellCornerSize],
     {
-      fillColor: ELEMENT_PROPS.cell.border,
+      fillColor: 'rgb(0, 0, 0)',
     },
   );
 }
@@ -217,7 +217,9 @@ function renderMapItem(x: number, y: number): void {
       posY,
       this.cellSize / 4,
       {
-        fillColor: item === MAP_ITEM_TYPES.red.bead ? ELEMENT_PROPS.bead.red : ELEMENT_PROPS.bead.blue,
+        fillColor: item === MAP_ITEM_TYPES.red.bead
+          ? 'rgb(255, 0, 0)'
+          : 'rgb(0, 0, 255)',
       },
     );
   }
@@ -261,8 +263,8 @@ function renderPossibleMoves(moves: number[][]): void {
       posY,
       this.cellSize / 8,
       {
-        fillColor: ELEMENT_PROPS.move.background,
-        edgingColor: ELEMENT_PROPS.move.border,
+        fillColor: 'rgb(0, 165, 0)',
+        edgingColor: 'rgb(255, 255, 255)',
         edgingWidth: this.cellSize / 20,
       },
     );
@@ -347,10 +349,10 @@ function renderPanel(lastItemType?: number): void {
   clearCanvas.call(this, this.panelCanvas);
 
   if (this.isGameOver === true && lastItemType !== undefined) {
-    ctx.font = ELEMENT_PROPS.gameOver.font;
-    ctx.fillStyle = ELEMENT_PROPS.gameOver.color;
-    ctx.textAlign = ELEMENT_PROPS.gameOver.align;
-    ctx.textBaseline = ELEMENT_PROPS.gameOver.baseline;
+    ctx.font = '700 4vmin Helvetica, Arial';
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
     const message = this.idleMovesCounter === IDLE_MOVES_LIMIT ? 'Draw!' : this.isComputerOn
       ? (lastItemType === MAP_ITEM_TYPES.red.statue ? 'You lose!' : 'You win!')
@@ -370,7 +372,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 3.5,
     this.cellSize * 2,
     {
-      edgingColor: ELEMENT_PROPS.panel.red,
+      edgingColor: 'rgb(255, 0, 0)',
       edgingWidth: this.players.red.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
@@ -382,7 +384,7 @@ function renderPanel(lastItemType?: number): void {
     this.cellSize * 3.5,
     this.cellSize * 2,
     {
-      edgingColor: ELEMENT_PROPS.panel.blue,
+      edgingColor: 'rgb(0, 0, 255)',
       edgingWidth: this.players.blue.active ? this.cellSize / 6 : this.cellSize / 30,
     },
   );
@@ -417,7 +419,7 @@ function renderPanel(lastItemType?: number): void {
           this.cellSize * 3 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 10,
           this.cellSize / 5,
           {
-            fillColor: ELEMENT_PROPS.bead.red,
+            fillColor: 'rgb(255, 0, 0)',
           },
         );
       }
@@ -456,7 +458,7 @@ function renderPanel(lastItemType?: number): void {
           this.cellSize * 5.4 + this.cellSize / 2.5 * y + this.cellSize / 15 * y + this.cellSize / 5,
           this.cellSize / 5,
           {
-            fillColor: ELEMENT_PROPS.bead.blue,
+            fillColor: 'rgb(0, 0, 255)',
           },
         );
       }

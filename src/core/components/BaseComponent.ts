@@ -1,4 +1,4 @@
-import { Images } from './types';
+import { Images, EventHandler } from './types';
 
 export abstract class BaseComponent {
   public eventHandlers: EventHandler[];

@@ -1,9 +1,9 @@
 import { MenuComponent, MenuItemOption } from './MenuComponent';
 import { Menu } from './';
 
-import { DIFFICULTY_EASY, DIFFICULTY_LEVELS } from '../../constants/game';
+import { DIFFICULTY_EASY, DIFFICULTY_LEVELS, STORAGE_NAME } from '../../constants/game';
 
-import { saveStorageData, getStorageData } from '../../utils/storage';
+import { saveStorageData, getStorageData } from '../../core/utils/storage';
 
 import { DifficultyLevel } from '../Game/types';
 
@@ -16,11 +16,11 @@ class Settings extends MenuComponent {
 
   public init(): void {
     this.appRoot = document.getElementById('root');
-    this.firstMove = getStorageData('firstMove');
-    this.boardSize = getStorageData('boardSize');
-    this.difficultyLevel = getStorageData('difficultyLevel');
-    this.isComputerOn = getStorageData('isComputerOn');
-    this.isShowMovesOn = getStorageData('isShowMovesOn');
+    this.firstMove = getStorageData(STORAGE_NAME, 'firstMove');
+    this.boardSize = getStorageData(STORAGE_NAME, 'boardSize');
+    this.difficultyLevel = getStorageData(STORAGE_NAME, 'difficultyLevel');
+    this.isComputerOn = getStorageData(STORAGE_NAME, 'isComputerOn');
+    this.isShowMovesOn = getStorageData(STORAGE_NAME, 'isShowMovesOn');
 
     this.items = [
       {
@@ -53,7 +53,7 @@ class Settings extends MenuComponent {
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
-            saveStorageData('firstMove', parseInt(event.target.value, 10));
+            saveStorageData(STORAGE_NAME, 'firstMove', parseInt(event.target.value, 10));
           },
         },
       },
@@ -78,7 +78,7 @@ class Settings extends MenuComponent {
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
-            saveStorageData('boardSize', parseInt(event.target.value, 10));
+            saveStorageData(STORAGE_NAME, 'boardSize', parseInt(event.target.value, 10));
           },
         },
       },
@@ -91,7 +91,7 @@ class Settings extends MenuComponent {
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string; checked: boolean }}) => {
-            saveStorageData('isComputerOn', event.target.checked);
+            saveStorageData(STORAGE_NAME, 'isComputerOn', event.target.checked);
           },
         },
       },
@@ -110,7 +110,7 @@ class Settings extends MenuComponent {
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
-            saveStorageData('difficultyLevel', parseInt(event.target.value, 10));
+            saveStorageData(STORAGE_NAME, 'difficultyLevel', parseInt(event.target.value, 10));
           },
         },
       },
@@ -123,7 +123,7 @@ class Settings extends MenuComponent {
         action: {
           type: 'change',
           handler: (event: Event & { target: { value: string; checked: boolean }}) => {
-            saveStorageData('isShowMovesOn', event.target.checked);
+            saveStorageData(STORAGE_NAME, 'isShowMovesOn', event.target.checked);
           },
         },
       },
@@ -133,7 +133,7 @@ class Settings extends MenuComponent {
       },
       {
         type: 'button',
-        value: 'Close',
+        value: 'Back to main menu',
         action: {
           type: 'click',
           handler: () => {

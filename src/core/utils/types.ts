@@ -13,3 +13,5 @@ export interface DrawImageOptions {
   smooth?: boolean;
   smoothingQuality?: 'high' | 'low' | 'medium';
 }
+
+export type ErrorHandlerFunc = (error: string) => void;

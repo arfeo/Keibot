@@ -1,5 +1,4 @@
-import { ModalComponent } from '../core/Modal';
-import { PageComponent } from '../core/Page';
+import { ModalComponent, PageComponent } from '../../core/components';
 import { MenuComponent } from './MenuComponent';
 
 class Help extends ModalComponent {

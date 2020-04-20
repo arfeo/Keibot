@@ -46,7 +46,9 @@ class Menu extends MenuComponent {
         value: 'Help',
         action: {
           type: 'click',
-          handler: () => new Help(this),
+          handler: () => {
+            new Help(this);
+          },
         },
       },
     ];

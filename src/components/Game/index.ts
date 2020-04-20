@@ -1,4 +1,4 @@
-import { PageComponent } from '../core/Page';
+import { PageComponent } from '../../core/components';
 import { Menu } from '../Menu';
 
 import {
@@ -7,17 +7,19 @@ import {
   BEADS_COUNT,
   MAP_ITEM_TYPES,
   DIFFICULTY_EASY,
+  STORAGE_NAME,
 } from '../../constants/game';
 
 import { renderGameWindow } from './render';
 import { animateCursor } from './animations';
 import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
-import { getCellSize } from '../../utils/game';
+import { getCellSize } from '../../core/utils/game';
 
-import { getStorageData } from '../../utils/storage';
+import { getStorageData } from '../../core/utils/storage';
 
 import { Players } from './types';
+import { ImageProps } from '../../core/components/types';
 
 class Game extends PageComponent {
   protected cellSize: number;
@@ -62,7 +64,7 @@ class Game extends PageComponent {
       number | undefined,
       boolean | undefined,
       boolean | undefined,
-    ] = getStorageData([
+    ] = getStorageData(STORAGE_NAME, [
       'boardSize',
       'firstMove',
       'difficultyLevel',

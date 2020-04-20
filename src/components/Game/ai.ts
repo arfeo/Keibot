@@ -8,8 +8,8 @@ import {
 import { getEnemyType, getPlayerTypeName } from './helpers';
 import { checkPossibleMoves, applyMove, checkUnderAttack } from './actions';
 import { renderMove } from './render';
-import { getRandomNum } from '../../utils/common';
-import { getMapItemsByType } from '../../utils/game';
+import { getRandomNum } from '../../core/utils/common';
+import { getMapItemsByType } from '../../core/utils/game';
 
 import { GameState, Player, DifficultyLevel } from './types';
 

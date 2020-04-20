@@ -1,6 +1,6 @@
-import { ELEMENT_PROPS, FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
+import { FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
 
-import { drawRectangle } from '../../utils/drawing';
+import { drawRectangle } from '../../core/utils/drawing';
 
 /**
  * Function animates the cursor if current cursor position is not empty;
@@ -22,6 +22,16 @@ function animateCursor(): void {
         start = time;
       }
 
+      const getBorderColor = (): string => {
+        switch (state) {
+          case 1: return 'rgba(70, 115, 190, 0.7)';
+          case 2: return 'rgba(100, 145, 220, 0.7)';
+          case 3: return 'rgba(145, 180, 250, 0.7)';
+          case 4: return 'rgba(100, 145, 220, 0.7)';
+          default: return '';
+        }
+      };
+
       drawRectangle(
         ctx,
         posX + this.cellSize / 40,
@@ -30,7 +40,7 @@ function animateCursor(): void {
         this.cellSize - this.cellSize / 20,
         {
           edgingWidth: this.cellSize / 20,
-          edgingColor: ELEMENT_PROPS.cursor[`border${state}`],
+          edgingColor: getBorderColor(),
         },
       );
     }

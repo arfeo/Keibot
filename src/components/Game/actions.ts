@@ -1,7 +1,7 @@
 import { MAP_ITEM_TYPES, IDLE_MOVES_LIMIT, DIFFICULTY_EASY, DIFFICULTY_HARD } from '../../constants/game';
 
 import { getEnemyType, getPlayerTypeName } from './helpers';
-import { changeMapValue, getMapItemsByType } from '../../utils/game';
+import { changeMapValue, getMapItemsByType } from '../../core/utils/game';
 
 import { GameState, Players, ApplyMoveResult } from './types';
 
