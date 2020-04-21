@@ -86,15 +86,12 @@ class Game extends PageComponent {
 
     this.images = {
       statueRed: {
-        element: new Image(),
         src: './static/statue_red.svg',
       },
       statueBlue: {
-        element: new Image(),
         src: './static/statue_blue.svg',
       },
       shield: {
-        element: new Image(),
         src: './static/shield.svg',
       },
     };

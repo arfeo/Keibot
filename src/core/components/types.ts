@@ -5,7 +5,7 @@ export interface EventHandler {
 }
 
 export interface ImageProps {
-  element: HTMLImageElement;
+  element?: HTMLImageElement;
   src: string;
   loaded?: boolean;
 }
