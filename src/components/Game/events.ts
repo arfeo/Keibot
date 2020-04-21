@@ -7,11 +7,6 @@ import { clearCanvas, renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
 import { aiMove } from './ai';
 
-/**
- * Function fires on the cursor canvas click event
- *
- * @param event
- */
 function onBoardClick(event: MouseEvent): void {
   const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / this.boardSize;
   const x: number = Math.trunc(event.offsetX / actualCellSize);
@@ -60,11 +55,6 @@ function onBoardClick(event: MouseEvent): void {
   }
 }
 
-/**
- * Function destroys current game and creates a new instance of the given component
- *
- * @param component
- */
 function onButtonClick(component: typeof Game | typeof Menu): void {
   if (this.isMoving === true) {
     return;

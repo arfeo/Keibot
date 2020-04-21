@@ -1,14 +1,11 @@
 import { BEADS_COUNT, MAP_ITEM_TYPES, IDLE_MOVES_LIMIT } from '../../constants/game';
 
-import { drawCircle, drawImage, drawRectangle, drawTriangle } from '../../core/utils/drawing';
+import { drawCircle, drawImage, drawRectangle, drawSector, drawTriangle } from '../../core/utils/drawing';
 import { applyMove } from './actions';
 import { animateItemFade } from './animations';
 
 import { ApplyMoveResult } from './types';
 
-/**
- * Function creates all needed game window elements
- */
 function renderGameWindow(): HTMLElement {
   const gameWindow: HTMLElement = document.createElement('div');
   const boardGrid: HTMLElement = document.createElement('div');
@@ -52,9 +49,6 @@ function renderGameWindow(): HTMLElement {
   return gameWindow;
 }
 
-/**
- * Function renders game board grid according to the `boardSize` prop
- */
 function renderGrid(): void {
   clearCanvas.call(this, this.boardCanvas);
 
@@ -65,12 +59,6 @@ function renderGrid(): void {
   }
 }
 
-/**
- * Function renders a single grid cell
- *
- * @param x
- * @param y
- */
 function renderGridCell(x: number, y: number): void {
   const ctx: CanvasRenderingContext2D = this.boardCanvas.getContext('2d');
   const left: number = this.cellSize * x;
@@ -156,9 +144,6 @@ function renderGridCell(x: number, y: number): void {
   );
 }
 
-/**
- * Function renders players' statues and beads according to the `boardMap` prop
- */
 function renderMap(): void {
   if (!Array.isArray(this.boardMap) || this.boardMap.length === 0) {
     return;
@@ -171,12 +156,6 @@ function renderMap(): void {
   }
 }
 
-/**
- * Function renders a single game board map item found by its position
- *
- * @param x
- * @param y
- */
 function renderMapItem(x: number, y: number): void {
   if (!this.boardMap[y]) {
     return;
@@ -225,9 +204,6 @@ function renderMapItem(x: number, y: number): void {
   }
 }
 
-/**
- * Function renders a shield icon for the locked cell
- */
 function renderShield(): void {
   const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
 
@@ -241,11 +217,6 @@ function renderShield(): void {
   );
 }
 
-/**
- * Function renders a statue movement from one cell to another
- *
- * @param moves
- */
 function renderPossibleMoves(moves: number[][]): void {
   if (!Array.isArray(moves) || moves.length === 0) {
     return;
@@ -271,15 +242,6 @@ function renderPossibleMoves(moves: number[][]): void {
   });
 }
 
-/**
- * Function renders the movement of a statue from its original position to a cell
- * with the given coordinates
- *
- * @param itemX
- * @param itemY
- * @param cellX
- * @param cellY
- */
 async function renderMove(itemX: number, itemY: number, cellX: number, cellY: number): Promise<void> {
   const itemType: number = this.boardMap[itemY] ? this.boardMap[itemY][itemX] : 0;
 
@@ -337,16 +299,14 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
   return Promise.resolve();
 }
 
-/**
- * Function renders the game panel which contains visual representation
- * of captured statues count and beads count for each player
- *
- * @param lastItemType
- */
 function renderPanel(lastItemType?: number): void {
   const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
 
   clearCanvas.call(this, this.panelCanvas);
+
+  if (this.timer > 0) {
+    renderTimers.call(this);
+  }
 
   if (this.isGameOver === true && lastItemType !== undefined) {
     ctx.font = '700 4vmin Helvetica, Arial';
@@ -361,7 +321,7 @@ function renderPanel(lastItemType?: number): void {
     ctx.fillText(
       message,
       this.cellSize * 2,
-      this.cellSize,
+      this.cellSize - this.cellSize / 4,
     );
   }
 
@@ -468,12 +428,94 @@ function renderPanel(lastItemType?: number): void {
   }
 }
 
-/**
- * Function deactivates both users and re-renders the game panel
- * on game over
- *
- * @param lastItemType
- */
+function renderTimers(): void {
+  if (this.isGameOver) {
+    return;
+  }
+
+  const ctx: CanvasRenderingContext2D = this.panelCanvas.getContext('2d');
+  const blueTimeUsed: number = this.timer - this.players.blue.timer;
+  const redTimeUsed: number = this.timer - this.players.red.timer;
+  const timerStep: number = Math.PI * 2 / this.timer;
+
+  const clearTimersRect = (): void => {
+    ctx.clearRect(
+      0,
+      0,
+      this.cellSize * 4,
+      this.cellSize * 2 - this.cellSize / 2
+    );
+  };
+
+  if (this.players.blue.timer === 0) {
+    this.isGameOver = true;
+
+    clearTimersRect();
+    renderGameOver.call(this, 1);
+
+    return;
+  }
+
+  clearTimersRect();
+
+  // Blue timer
+  drawCircle(
+    ctx,
+    this.cellSize,
+    this.cellSize - this.cellSize / 4,
+    this.cellSize / 2,
+    {
+      fillColor: 'rgb(0, 0, 255)',
+    },
+  );
+
+  drawSector(
+    ctx,
+    this.cellSize,
+    this.cellSize - this.cellSize / 4,
+    this.cellSize / 2 + this.cellSize / 10,
+    {
+      fillColor: 'rgb(0, 0, 0)',
+      startAngle: -Math.PI / 2,
+      endAngle: timerStep * blueTimeUsed - Math.PI / 2,
+    },
+  );
+
+  // Red timer
+  if (!this.isComputerOn) {
+    if (this.players.red.timer === 0) {
+      this.isGameOver = true;
+
+      clearTimersRect();
+      renderGameOver.call(this, 2);
+
+      return;
+    }
+
+    drawCircle(
+      ctx,
+      this.cellSize * 3,
+      this.cellSize - this.cellSize / 4,
+      this.cellSize / 2,
+      {
+        fillColor: 'rgb(255, 0, 0)',
+      },
+    );
+
+    drawSector(
+      ctx,
+      this.cellSize * 3,
+      this.cellSize - this.cellSize / 4,
+      this.cellSize / 2 + this.cellSize / 10,
+      {
+        fillColor: 'rgb(0, 0, 0)',
+        startAngle: -Math.PI / 2,
+        endAngle: timerStep * redTimeUsed - Math.PI / 2,
+      },
+    );
+  }
+}
+
 function renderGameOver(lastItemType: number): void {
   this.players = {
     red: {
@@ -486,14 +528,11 @@ function renderGameOver(lastItemType: number): void {
     },
   };
 
+  this.cursor = [];
+
   renderPanel.call(this, lastItemType);
 }
 
-/**
- * Function clears the canvas given by the corresponding HTML element
- *
- * @param canvas
- */
 function clearCanvas(canvas: HTMLCanvasElement): void {
   const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
 
@@ -512,5 +551,6 @@ export {
   renderPossibleMoves,
   renderMove,
   renderPanel,
+  renderTimers,
   clearCanvas,
 };

@@ -4,6 +4,7 @@ export interface Player {
   active: boolean;
   move: number;
   lockedStatue: number[];
+  timer: number;
 }
 
 export interface Players {

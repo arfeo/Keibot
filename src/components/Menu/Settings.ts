@@ -8,19 +8,22 @@ import { saveStorageData, getStorageData } from '../../core/utils/storage';
 import { DifficultyLevel } from '../Game/types';
 
 class Settings extends MenuComponent {
-  protected firstMove: number | undefined;
-  protected boardSize: number | undefined;
-  protected difficultyLevel: number | undefined;
-  protected isComputerOn: boolean | undefined;
-  protected isShowMovesOn: boolean | undefined;
+  private firstMove: number | undefined;
+  private boardSize: number | undefined;
+  private difficultyLevel: number | undefined;
+  private isComputerOn: boolean | undefined;
+  private isShowMovesOn: boolean | undefined;
+  private timer: number | undefined;
 
   public init(): void {
     this.appRoot = document.getElementById('root');
+
     this.firstMove = getStorageData(STORAGE_NAME, 'firstMove');
     this.boardSize = getStorageData(STORAGE_NAME, 'boardSize');
     this.difficultyLevel = getStorageData(STORAGE_NAME, 'difficultyLevel');
     this.isComputerOn = getStorageData(STORAGE_NAME, 'isComputerOn');
     this.isShowMovesOn = getStorageData(STORAGE_NAME, 'isShowMovesOn');
+    this.timer = getStorageData(STORAGE_NAME, 'timer');
 
     this.items = [
       {
@@ -111,6 +114,41 @@ class Settings extends MenuComponent {
           type: 'change',
           handler: (event: Event & { target: { value: string }}) => {
             saveStorageData(STORAGE_NAME, 'difficultyLevel', parseInt(event.target.value, 10));
+          },
+        },
+      },
+      {
+        type: 'html',
+        value: 'Timer:',
+      },
+      {
+        type: 'select',
+        options: [
+          {
+            value: '0',
+            text: 'Off',
+            selected: this.timer === 0 || this.timer === undefined,
+          },
+          {
+            value: '2',
+            text: '2 minutes',
+            selected: this.timer === 2,
+          },
+          {
+            value: '5',
+            text: '5 minutes',
+            selected: this.timer === 5,
+          },
+          {
+            value: '10',
+            text: '10 minutes',
+            selected: this.timer === 10,
+          },
+        ],
+        action: {
+          type: 'change',
+          handler: (event: Event & { target: { value: string }}) => {
+            saveStorageData(STORAGE_NAME, 'timer', parseInt(event.target.value, 10));
           },
         },
       },

@@ -11,7 +11,7 @@ import {
 } from '../../constants/game';
 
 import { renderGameWindow } from './render';
-import { animateCursor } from './animations';
+import { animateCursor, animateTimers } from './animations';
 import { onBoardClick, onButtonClick } from './events';
 import { aiMove } from './ai';
 import { getCellSize } from '../../core/utils/game';
@@ -22,24 +22,25 @@ import { Players } from './types';
 import { ImageProps } from '../../core/components/types';
 
 class Game extends PageComponent {
-  protected cellSize: number;
-  protected boardSize: number;
-  protected boardCanvas: HTMLCanvasElement;
-  protected itemCanvas: HTMLCanvasElement;
-  protected cursorCanvas: HTMLCanvasElement;
-  protected panelCanvas: HTMLCanvasElement;
-  protected newGameButton: HTMLButtonElement;
-  protected backToMenuButton: HTMLButtonElement;
-  protected boardMap: number[][];
-  protected cursor: number[];
-  protected players: Players;
-  protected lockedCell: number[];
-  protected difficultyLevel: number;
-  protected idleMovesCounter: number;
-  protected isComputerOn: boolean;
-  protected isShowMovesOn: boolean;
-  protected isGameOver: boolean;
-  protected isMoving: boolean;
+  private cellSize: number;
+  private boardSize: number;
+  private boardCanvas: HTMLCanvasElement;
+  private itemCanvas: HTMLCanvasElement;
+  private cursorCanvas: HTMLCanvasElement;
+  private panelCanvas: HTMLCanvasElement;
+  private newGameButton: HTMLButtonElement;
+  private backToMenuButton: HTMLButtonElement;
+  private boardMap: number[][];
+  private cursor: number[];
+  private players: Players;
+  private lockedCell: number[];
+  private difficultyLevel: number;
+  private idleMovesCounter: number;
+  private isComputerOn: boolean;
+  private isShowMovesOn: boolean;
+  private timer: number;
+  private isGameOver: boolean;
+  private isMoving: boolean;
 
   public images: {
     statueRed: ImageProps;
@@ -49,6 +50,7 @@ class Game extends PageComponent {
 
   public animations: {
     cursor: number;
+    timers: number;
   };
 
   public init(): void {
@@ -58,18 +60,14 @@ class Game extends PageComponent {
       storageDifficultyLevel,
       storageIsComputerOn,
       storageIsShowMovesOn,
-    ]: [
-      number | undefined,
-      number | undefined,
-      number | undefined,
-      boolean | undefined,
-      boolean | undefined,
+      storageTimer,
     ] = getStorageData(STORAGE_NAME, [
       'boardSize',
       'firstMove',
       'difficultyLevel',
       'isComputerOn',
       'isShowMovesOn',
+      'timer',
     ]);
 
     this.appRoot = document.getElementById('root');
@@ -137,6 +135,16 @@ class Game extends PageComponent {
       },
     ];
 
+    this.lockedCell = [];
+    this.difficultyLevel = storageDifficultyLevel ?? DIFFICULTY_EASY;
+    this.idleMovesCounter = 0;
+
+    this.isComputerOn = storageIsComputerOn ?? true;
+    this.isShowMovesOn = storageIsShowMovesOn ?? true;
+    this.timer = (storageTimer ?? 0) * 60;
+    this.isGameOver = false;
+    this.isMoving = false;
+
     this.players = {
       red: {
         captured: 0,
@@ -144,6 +152,7 @@ class Game extends PageComponent {
         active: storageFirstMove === 1,
         move: 0,
         lockedStatue: [],
+        timer: this.timer,
       },
       blue: {
         captured: 0,
@@ -151,25 +160,22 @@ class Game extends PageComponent {
         active: storageFirstMove === 2 || storageFirstMove === undefined,
         move: 0,
         lockedStatue: [],
+        timer: this.timer,
       },
     };
 
-    this.lockedCell = [];
-    this.difficultyLevel = storageDifficultyLevel ?? DIFFICULTY_EASY;
-    this.idleMovesCounter = 0;
-
-    this.isComputerOn = storageIsComputerOn ?? true;
-    this.isShowMovesOn = storageIsShowMovesOn ?? true;
-    this.isGameOver = false;
-    this.isMoving = false;
-
     this.animations = {
       cursor: null,
+      timers: null,
     };
   }
 
   public afterMount(): void {
     animateCursor.call(this);
+
+    if (this.timer > 0) {
+      animateTimers.call(this);
+    }
 
     if (this.isComputerOn === true && this.players.red.active === true) {
       aiMove.call(this);

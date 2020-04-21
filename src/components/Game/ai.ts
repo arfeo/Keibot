@@ -25,9 +25,6 @@ interface MiniMaxNode {
 
 let difficultyLevel: number;
 
-/**
- * Function renders the chosen best move
- */
 function aiMove(): Promise<void> {
   return new Promise((resolve): void => {
     window.setTimeout((): void => {
@@ -58,15 +55,6 @@ function aiMove(): Promise<void> {
   });
 }
 
-/**
- * After using minimax algorithm for scoring the decision tree leafs,
- * we pick all nodes with the best score for the next move.
- * Then we evaluate each node's state and get nodes with the best state evaluation.
- * Then we pick a random node of the resulting array of nodes --
- * this will be our best move.
- *
- * @param decisionTree
- */
 function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
   const bestNodes: MiniMaxNode[] = decisionTree.children.filter((node: MiniMaxNode): boolean => {
     return node.score === decisionTree.score;
@@ -87,14 +75,6 @@ function aiGetBestMove(decisionTree: MiniMaxNode): PossibleMove {
   return bestEvaluatedNodes[getRandomNum(0, bestEvaluatedNodes.length - 1)].move;
 }
 
-/**
- * Build a tree of players' possible moves starting from the current game state
- * to the given depth
- *
- * @param node
- * @param depth
- * @param itemType
- */
 function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_ITEM_TYPES.red.statue): MiniMaxNode {
   const ownStatues: number[][] = getMapItemsByType(node.gameState.boardMap, itemType);
   const children: MiniMaxNode[] = [];
@@ -132,12 +112,6 @@ function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_IT
   return result;
 }
 
-/**
- * Use minimax algorithm to get the best move(s) for the computer player
- *
- * @param node
- * @param maximizingPlayer
- */
 function aiMiniMax(node: MiniMaxNode, maximizingPlayer = true): number {
   const itemType: number = maximizingPlayer ? MAP_ITEM_TYPES.red.statue : MAP_ITEM_TYPES.blue.statue;
 
@@ -166,12 +140,6 @@ function aiMiniMax(node: MiniMaxNode, maximizingPlayer = true): number {
   return bestMoveValue;
 }
 
-/**
- * Heuristically evaluate game state for the specified player
- *
- * @param gameState
- * @param itemType
- */
 function aiEvaluateGameState(gameState: GameState, itemType: number): number {
   if (gameState.isGameOver) {
     return gameState.idleMovesCounter === IDLE_MOVES_LIMIT ? -100 : 100;

@@ -15,15 +15,6 @@ type CellWithBead = Cell & {
   targetY: number;
 }
 
-/**
- * Function checks the ability of a statue with the given coordinates to move;
- * it returns an array of possible coordinates or undefined if no statue found
- * on the board by the given coordinates
- *
- * @param gameState
- * @param x
- * @param y
- */
 function checkPossibleMoves(gameState: GameState, x: number, y: number): number[][] | undefined {
   const { boardMap, lockedCell } = gameState;
   const itemType: number = boardMap[y] ? boardMap[y][x] : 0;
@@ -75,16 +66,6 @@ function checkPossibleMoves(gameState: GameState, x: number, y: number): number[
   return moves;
 }
 
-/**
- * Function checks the ability to move a statue with the given coordinates to move to a cell
- * with the given coordinates; returns true if the move is possible, otherwise returns false
- *
- * @param gameState
- * @param itemX
- * @param itemY
- * @param cellX
- * @param cellY
- */
 function checkMoveToCell(
   gameState: GameState,
   itemX: number,
@@ -105,16 +86,6 @@ function checkMoveToCell(
   }).indexOf(JSON.stringify([cellY, cellX])) > -1;
 }
 
-/**
- * Function checks whether new beads are needed to be placed on the board or not
- * after placing a statue to a cell with the given coordinates;
- * it returns an array of coordinates of beads to be places on the game board
- *
- * @param gameState
- * @param x
- * @param y
- * @param itemType
- */
 function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType: number): number[][] {
   if ((itemType !== MAP_ITEM_TYPES.red.statue && itemType !== MAP_ITEM_TYPES.blue.statue)) {
     return [];
@@ -168,12 +139,6 @@ function checkBeadsPlacing(gameState: GameState, x: number, y: number, itemType:
   return beadsCoordinates;
 }
 
-/**
- * Function checks whether there're three beads in a row on the game board
- * (vertically, horizontally, or diagonally)
- *
- * @param boardMap
- */
 function checkThreeInARow(boardMap: number[][]): boolean {
   if (!boardMap || !Array.isArray(boardMap)) {
     return false;
@@ -204,15 +169,6 @@ function checkThreeInARow(boardMap: number[][]): boolean {
   return false;
 }
 
-/**
- * Function checks possible moves for each enemy's statue, and returns true
- * if there's at least one statue and one possible move; it also returns true
- * if the `itemType` attribute is not a statue type (to avoid blocking the game);
- * otherwise it returns false
- *
- * @param gameState
- * @param itemType
- */
 function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
   const { boardMap } = gameState;
 
@@ -241,14 +197,6 @@ function checkEnemyHasMoves(gameState: GameState, itemType: number): boolean {
   return moves.length > 0;
 }
 
-/**
- * Function checks is there any enemies within one turn reach about
- * the cell with the given coordinates
- *
- * @param gameState
- * @param x
- * @param y
- */
 function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
   const { boardMap, lockedCell } = gameState;
   const itemType = boardMap[y] ? boardMap[y][x] : 0;
@@ -274,18 +222,6 @@ function checkUnderAttack(gameState: GameState, x: number, y: number): boolean {
   return isUnderAttack1 || isUnderAttack2 || isUnderAttack3 || isUnderAttack4;
 }
 
-/**
- * Write down to the board map all the corresponding changes after the given
- * statue moves from one cell to another; update `lockedCell`, `players` and `isGameOver`
- * props of the current game state
- *
- * @param gameState
- * @param itemX
- * @param itemY
- * @param cellX
- * @param cellY
- * @param difficultyLevel
- */
 function applyMove(
   gameState: GameState,
   itemX: number,

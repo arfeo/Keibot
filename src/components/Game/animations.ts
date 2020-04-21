@@ -1,11 +1,8 @@
 import { FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawRectangle } from '../../core/utils/drawing';
+import { clearCanvas, renderTimers } from './render';
 
-/**
- * Function animates the cursor if current cursor position is not empty;
- * otherwise it draws nothing
- */
 function animateCursor(): void {
   const ctx: CanvasRenderingContext2D = this.cursorCanvas.getContext('2d');
   let start: number = performance.now();
@@ -13,7 +10,13 @@ function animateCursor(): void {
   const step = 150;
 
   const animate = (time: number): void => {
-    if (Array.isArray(this.cursor) && this.cursor.length > 0) {
+    if (this.isGameOver) {
+      clearCanvas.call(this, this.cursorCanvas);
+
+      return cancelAnimationFrame(this.animations.cursor);
+    }
+
+    if (Array.isArray(this.cursor) && this.cursor.length > 0 && !this.isGameOver) {
       const posX: number = this.cellSize * this.cursor[1];
       const posY: number = this.cellSize * this.cursor[0];
 
@@ -51,13 +54,6 @@ function animateCursor(): void {
   this.animations.cursor = requestAnimationFrame(animate);
 }
 
-/**
- * Function animates an item fading in or out on the specified coordinates
- *
- * @param x
- * @param y
- * @param fadeType
- */
 function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): Promise<void> {
   return new Promise((resolve) => {
     const ctx: CanvasRenderingContext2D = this.itemCanvas.getContext('2d');
@@ -105,7 +101,36 @@ function animateItemFade(x: number, y: number, fadeType: 'in' | 'out' = 'out'): 
   });
 }
 
+function animateTimers(): void {
+  let start: number = performance.now();
+
+  const animate = (time: number): void => {
+    if (time - start > 1000 && !this.isMoving) {
+      start = time;
+
+      if (this.players.blue.active) {
+        this.players.blue.timer -= 1;
+      }
+
+      if (this.players.red.active && !this.isComputerOn) {
+        this.players.red.timer -= 1;
+      }
+
+      renderTimers.call(this);
+
+      if (this.players.blue.timer === 0 || this.players.red.timer === 0) {
+        return cancelAnimationFrame(this.animations.timers);
+      }
+    }
+
+    this.animations.timers = requestAnimationFrame(animate);
+  };
+
+  this.animations.timers = requestAnimationFrame(animate);
+}
+
 export {
   animateCursor,
   animateItemFade,
+  animateTimers,
 };
