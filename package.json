@@ -1,6 +1,6 @@
 {
   "name": "keibot",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "description": "An original board game that combines elements of chess and tic-tac-toe",
   "main": "index.js",
   "scripts": {
