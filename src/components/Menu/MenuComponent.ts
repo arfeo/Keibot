@@ -29,6 +29,8 @@ export interface MenuItemAction {
 
 export abstract class MenuComponent extends PageComponent {
   public items: MenuItem[];
+  public isClosable: boolean;
+  public onClose?(): void;
 
   private static processElementProps(
     element: Partial<HTMLInputElement>,
@@ -58,14 +60,39 @@ export abstract class MenuComponent extends PageComponent {
   public render(): HTMLElement {
     const menuContainer: HTMLElement = document.createElement('div');
 
-    menuContainer.className = 'menuContainer';
+    if (this.isClosable) {
+      const menuClose: HTMLElement = document.createElement('div');
 
-    for (const item of this.items) {
+      menuClose.className = 'menu-close';
+
+      menuContainer.appendChild(menuClose);
+
+      this.eventHandlers.push(
+        {
+          target: menuClose,
+          type: 'click',
+          listener: () => {
+            typeof this.onClose === 'function' && this.onClose();
+          },
+        },
+        {
+          target: window,
+          type: 'keydown',
+          listener: (e: KeyboardEvent) => {
+            typeof this.onClose === 'function' && e && e.key === 'Escape' && this.onClose();
+          },
+        },
+      );
+    }
+
+    menuContainer.className = 'menu-container';
+
+    Array.isArray(this.items) && this.items.map((item: MenuItem) => {
       const menuItem: HTMLElement = document.createElement('div');
       let menuElement: Partial<HTMLInputElement>;
       let elementLabel: HTMLLabelElement;
 
-      menuItem.className = 'menuItem';
+      menuItem.className = 'menu-item';
 
       if (item.style) {
         menuItem.style.cssText = item.style;
@@ -135,7 +162,7 @@ export abstract class MenuComponent extends PageComponent {
           listener: item.action.handler,
         });
       }
-    }
+    });
 
     return menuContainer;
   }

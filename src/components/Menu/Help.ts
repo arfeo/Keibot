@@ -12,9 +12,7 @@ class Help extends ModalComponent {
         target: window,
         type: 'keydown',
         listener: (e: KeyboardEvent) => {
-          if (e && e.key === 'Escape') {
-            this.destroy();
-          }
+          e && e.key === 'Escape' && this.destroy();
         },
       },
     ];

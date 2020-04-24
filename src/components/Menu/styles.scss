@@ -1,6 +1,7 @@
 @import '../../assets/styles/variables';
 
-.menuContainer {
+.menu-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,7 +14,7 @@
   font-size: $menuFontSize;
   color: $black;
 
-  .menuItem {
+  .menu-item {
     width: 100%;
 
     &:not(:last-child) {
@@ -85,6 +86,22 @@
       width: 100%;
       font-size: $menuFontSize;
       outline: none;
+    }
+  }
+
+  .menu-close {
+    position: absolute;
+    top: 0.5vmin;
+    right: 0.7vmin;
+    color: rgb(76, 76, 76);
+
+    &:before {
+      content: '\2715';
+      cursor: pointer;
+    }
+
+    &:hover {
+      color: rgb(0, 0, 0);
     }
   }
 }

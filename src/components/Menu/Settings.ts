@@ -18,6 +18,8 @@ class Settings extends MenuComponent {
   public init(): void {
     this.appRoot = document.getElementById('root');
 
+    this.isClosable = true;
+
     this.firstMove = getStorageData(STORAGE_NAME, 'firstMove');
     this.boardSize = getStorageData(STORAGE_NAME, 'boardSize');
     this.difficultyLevel = getStorageData(STORAGE_NAME, 'difficultyLevel');
@@ -165,23 +167,13 @@ class Settings extends MenuComponent {
           },
         },
       },
-      {
-        type: 'html',
-        value: '<hr />',
-      },
-      {
-        type: 'button',
-        value: 'Back to main menu',
-        action: {
-          type: 'click',
-          handler: () => {
-            this.destroy();
-
-            new Menu();
-          },
-        },
-      },
     ];
+  }
+
+  public onClose(): void {
+    this.destroy();
+
+    new Menu();
   }
 }
 
