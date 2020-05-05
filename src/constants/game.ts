@@ -1,5 +1,7 @@
 import { DifficultyLevel, MapItemProps } from '../components/Game/types';
 
+export const STORAGE_NAME = 'keibot';
+
 export const DIFFICULTY_EASY = 1;
 export const DIFFICULTY_NORMAL = 2;
 export const DIFFICULTY_HARD = 3;
@@ -22,14 +24,13 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
   },
 ];
 
-export const STORAGE_NAME = 'keibot';
 export const CELL_SIZE_VMIN = 10;
 export const DEFAULT_BOARD_SIZE = 8;
 export const BEADS_COUNT = 10;
 export const FADE_OUT_ANIMATION_SPEED = 0.2;
 export const IDLE_MOVES_LIMIT = 8;
 
-export const MAP_ITEM_TYPES: { red: MapItemProps; blue: MapItemProps } = {
+export const MAP_ITEM_TYPES: Record<'red' | 'blue', MapItemProps> = {
   red: {
     statue: 1,
     bead: 2,
@@ -38,4 +39,4 @@ export const MAP_ITEM_TYPES: { red: MapItemProps; blue: MapItemProps } = {
     statue: 3,
     bead: 4,
   },
-};
+} as const;
