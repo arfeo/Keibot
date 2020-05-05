@@ -277,7 +277,11 @@ function applyMove(
 
   lockedCell = [cellY, cellX];
 
-  const beadsCoordinates: number[][] = checkBeadsPlacing({ boardMap, players }, cellX, cellY, itemType);
+  const beadsCoordinates: number[][] = checkBeadsPlacing({
+    boardMap,
+    players,
+    difficultyLevel,
+  }, cellX, cellY, itemType);
 
   for (const bead of beadsCoordinates) {
     idleMovesCounter = 0;
@@ -299,7 +303,7 @@ function applyMove(
   }
 
   // If enemy hasn't got possible moves, current user wins
-  if (!checkEnemyHasMoves({ boardMap, lockedCell, players }, itemType)) {
+  if (!checkEnemyHasMoves({ boardMap, lockedCell, players, difficultyLevel }, itemType)) {
     isGameOver = true;
   }
 
@@ -328,6 +332,7 @@ function applyMove(
       } : players,
       isGameOver,
       idleMovesCounter,
+      difficultyLevel,
     },
   ];
 }

@@ -19,6 +19,7 @@ export interface GameState {
   players?: Players;
   idleMovesCounter?: number;
   isGameOver?: boolean;
+  difficultyLevel?: number;
 }
 
 export type ApplyMoveResult = [number[][], GameState];

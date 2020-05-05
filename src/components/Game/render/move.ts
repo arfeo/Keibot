@@ -30,6 +30,7 @@ async function renderMove(itemX: number, itemY: number, cellX: number, cellY: nu
     players: this.players,
     idleMovesCounter: this.idleMovesCounter,
     isGameOver: this.isGameOver,
+    difficultyLevel: this.difficultyLevel,
   }, itemX, itemY, cellX, cellY, this.difficultyLevel);
 
   const [beadsCoordinates, gameState]: ApplyMoveResult = moveResult;

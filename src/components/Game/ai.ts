@@ -23,17 +23,13 @@ interface MiniMaxNode {
   evaluation?: number;
 }
 
-let difficultyLevel: number;
-
 function aiMove(): Promise<void> {
   return new Promise((resolve): void => {
     window.setTimeout((): void => {
-      const { boardMap, lockedCell, players, idleMovesCounter, isGameOver } = this;
+      const { boardMap, lockedCell, players, idleMovesCounter, isGameOver, difficultyLevel } = this;
       const difficultyLevelObject: DifficultyLevel = DIFFICULTY_LEVELS.find((level: DifficultyLevel): boolean => {
-        return level.id === this.difficultyLevel;
+        return level.id === difficultyLevel;
       });
-
-      ({ difficultyLevel } = this);
 
       const decisionTree: MiniMaxNode = aiBuildDecisionTree({
         gameState: {
@@ -42,6 +38,7 @@ function aiMove(): Promise<void> {
           players,
           idleMovesCounter,
           isGameOver,
+          difficultyLevel,
         },
       }, difficultyLevelObject?.depth ?? DIFFICULTY_EASY);
 
@@ -90,7 +87,7 @@ function aiBuildDecisionTree(node: MiniMaxNode, depth: number, itemType = MAP_IT
     for (const possibleMove of possibleMoves) {
       const [itemY, itemX] = statue;
       const [cellY, cellX] = possibleMove;
-      const [, newState] = applyMove({ ...node.gameState }, itemX, itemY, cellX, cellY, difficultyLevel);
+      const [, newState] = applyMove({ ...node.gameState }, itemX, itemY, cellX, cellY, node.gameState.difficultyLevel);
       const newNode: MiniMaxNode = {
         gameState: { ...newState },
         move: [statue, possibleMove],

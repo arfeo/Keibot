@@ -35,6 +35,7 @@ function onBoardClick(event: MouseEvent): void {
         boardMap: this.boardMap,
         lockedCell: this.lockedCell,
         players: this.players,
+        difficultyLevel: this.difficultyLevel,
       }, x, y));
     }
   } else {
@@ -43,6 +44,7 @@ function onBoardClick(event: MouseEvent): void {
         boardMap: this.boardMap,
         lockedCell: this.lockedCell,
         players: this.players,
+        difficultyLevel: this.difficultyLevel,
       }, this.cursor[1], this.cursor[0], x, y);
 
       if (checkMove) {
