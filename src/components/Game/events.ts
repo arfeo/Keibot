@@ -3,9 +3,10 @@ import { Menu } from '../Menu';
 
 import { MAP_ITEM_TYPES } from '../../constants/game';
 
-import { clearCanvas, renderMove, renderPossibleMoves } from './render';
+import { renderMove, renderPossibleMoves } from './render';
 import { checkMoveToCell, checkPossibleMoves } from './actions';
 import { aiMove } from './ai';
+import { clearCanvas } from './helpers';
 
 function onBoardClick(event: MouseEvent): void {
   const actualCellSize: number = this.cursorCanvas.getBoundingClientRect().width / this.boardSize;

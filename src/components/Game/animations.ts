@@ -1,7 +1,8 @@
 import { FADE_OUT_ANIMATION_SPEED, MAP_ITEM_TYPES } from '../../constants/game';
 
 import { drawRectangle } from '../../core/utils/drawing';
-import { clearCanvas, renderTimers } from './render';
+import { renderTimers } from './render';
+import { clearCanvas } from './helpers';
 
 function animateCursor(): void {
   const ctx: CanvasRenderingContext2D = this.cursorCanvas.getContext('2d');
